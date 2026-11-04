@@ -17,6 +17,7 @@ function startBattle(revival){
     buildPool();
   }
   S.qi = 0; S.round = 1; S.scores = [0,0]; S.streak = [0,0]; S.maxStreak = [0,0];
+  S.right = [0,0]; S.bad = [0,0];
   S.left = S.dur; S.pendingNext = false;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = "0"; $("s2").textContent = "0";
@@ -125,9 +126,11 @@ function scheduleNext(delay){
   clearQuestionTimer();
   setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, delay);
 }
-/* 计分：答对 +10（连击每层 +5，封顶 +20）；答错记入错词/错块本 */
+/* 计分：答对 +10（连击每层 +5，封顶 +20）；答错记入错词/错块本。
+   同时统计双方各自的答对 / 答错题数，供结算页展示（超时未答不计入任一方）。 */
 function score(k, ok){
   if(ok){
+    S.right[k-1]++;
     S.streak[k-1]++;
     S.maxStreak[k-1] = Math.max(S.maxStreak[k-1], S.streak[k-1]);
     const bonus = Math.min((S.streak[k-1]-1)*5, 20);
@@ -139,6 +142,7 @@ function score(k, ok){
       $("st"+k).textContent = "🔥 " + S.streak[k-1] + " 连击！";
     beep(880, .12);
   }else{
+    S.bad[k-1]++;
     S.streak[k-1] = 0;
     $("st"+k).textContent = "";
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
@@ -258,6 +262,11 @@ function endBattle(){
     : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩");
   $("finalScore").innerHTML =
     '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span> : " + b + ' <span class="b">' + esc(dispName(S.p2)) + "</span>"
+    /* 双方正答 / 错答题数（如 32/2），左右分列对应红蓝双方 */
+    + '<div class="accRow">'
+      + '<div class="acc red"><b>' + S.right[0] + "/" + S.bad[0] + '</b><i>正答/错答</i></div>'
+      + '<div class="acc blue"><b>' + S.right[1] + "/" + S.bad[1] + '</b><i>正答/错答</i></div>'
+    + "</div>"
     + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒") + "</div>";
   const wc = $("wrongChips");
   wc.innerHTML = "";

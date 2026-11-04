@@ -221,6 +221,13 @@
   #winName{font-size:58px;font-weight:800;margin:6px 0 4px;}
   #finalScore{font-size:40px;color:var(--ink2);margin-bottom:24px;}
   #finalScore .r{color:var(--red);font-weight:800;} #finalScore .b{color:var(--blue);font-weight:800;}
+  /* 结算页：双方正答 / 错答（32/2），左右分列对应红蓝 */
+  .accRow{display:flex;justify-content:center;gap:64px;margin-top:10px;}
+  .acc{display:flex;flex-direction:column;align-items:center;line-height:1.15;}
+  .acc b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .acc.red b{color:var(--red);}
+  .acc.blue b{color:var(--blue);}
+  .acc i{font-style:normal;font-size:20px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
   .wrongBox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 26px;
             max-width:900px;width:100%;box-shadow:var(--shadow-sm);margin-bottom:26px;}
   .wrongBox h4{font-size:28px;color:var(--red-d);margin-bottom:14px;}
@@ -256,6 +263,8 @@
     .pname{font-size:24px;} .pscore{font-size:38px;} .timer{font-size:38px;}
     .prole,.tlabel{font-size:16px;}
     #winName{font-size:40px;} #finalScore{font-size:30px;}
+    .accRow{gap:40px;margin-top:8px;}
+    .acc b{font-size:24px;} .acc i{font-size:15px;}
     .btnRow button{font-size:24px;padding:14px 24px;}
     .stepItem{font-size:18px;}
     .stepNum{width:32px;height:32px;font-size:16px;}

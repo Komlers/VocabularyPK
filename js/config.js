@@ -57,6 +57,7 @@ let S = {
   units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false, rememberWrong:false,
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
   pool:[], qi:0, round:1, scores:[0,0], streak:[0,0], maxStreak:[0,0],
+  right:[0,0], bad:[0,0],   /* 双方各自的答对 / 答错题数，仅用于结算页展示 */
   locked:[false,false], timer:null, left:0, pendingNext:false,
   wrongSet:new Set(), revival:false, basePoints:10, curQ:null, reviewList:[],
   trialChamp:""   /* 临时体验（无班级）时的擂主：只在本会话内继承，不写 localStorage */
