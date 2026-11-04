@@ -17,7 +17,7 @@ function startBattle(revival){
     buildPool();
   }
   S.qi = 0; S.round = 1; S.scores = [0,0]; S.streak = [0,0]; S.maxStreak = [0,0];
-  S.right = [0,0]; S.bad = [0,0];
+  S.right = [0,0]; S.bad = [0,0]; S.badStreak = [0,0];
   S.asked = 0;
   S.left = S.dur; S.pendingNext = false;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
@@ -128,15 +128,20 @@ function scheduleNext(delay){
   clearQuestionTimer();
   setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, delay);
 }
-/* 计分：答对 +10（连击每层 +5，封顶 +20）；答错记入错词/错块本。
-   同时统计双方各自的答对 / 答错题数，供结算页展示（超时未答不计入任一方）。 */
+/* 计分：
+   · 答对：「连击加分」开启时 +10，且每层连击再 +5（封顶 +20）；关闭时固定 +10。
+   · 答错：「答错扣分」开启时扣分——连击加分开启时按连续答错 5 / 10 / 15 / 20 递增，
+           未开启时固定 -5；最低扣到 0 分，不会出现负分。关闭则不扣分。
+   · 加时赛（revival）是错词复盘，既不加连击奖励也不扣分。
+   同时统计双方答对 / 答错题数，供结算页展示（超时未答不计入任一方）。 */
 function score(k, ok){
   if(ok){
     S.right[k-1]++;
+    S.badStreak[k-1] = 0;                 /* 答对即打断连续答错 */
     S.streak[k-1]++;
     S.maxStreak[k-1] = Math.max(S.maxStreak[k-1], S.streak[k-1]);
-    const bonus = Math.min((S.streak[k-1]-1)*5, 20);
-    const pts = S.basePoints + (S.revival ? 0 : bonus);
+    let pts = S.basePoints;
+    if(S.comboBonus && !S.revival) pts += Math.min((S.streak[k-1]-1)*5, 20);
     S.scores[k-1] += pts;
     $("s"+k).textContent = S.scores[k-1];
     fx("+" + pts, k===1 ? "#e05555" : "#4a7fe0", k===1 ? 18 : 82);
@@ -147,6 +152,15 @@ function score(k, ok){
     S.bad[k-1]++;
     S.streak[k-1] = 0;
     $("st"+k).textContent = "";
+    if(S.wrongPenalty && !S.revival){
+      S.badStreak[k-1]++;
+      const pen = S.comboBonus ? Math.min(5 * S.badStreak[k-1], 20) : 5;
+      const before = S.scores[k-1];
+      S.scores[k-1] = Math.max(0, before - pen);
+      $("s"+k).textContent = S.scores[k-1];
+      const lost = before - S.scores[k-1];
+      if(lost > 0) fx("-" + lost, "#79808f", k===1 ? 18 : 82);
+    }
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
     beep(220, .18);
   }

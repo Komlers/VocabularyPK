@@ -286,6 +286,17 @@ $("wordsOnlyChk").addEventListener("change", e=>{
   planInfo();
   renderSettingStatus();
 });
+/* 连击加分 / 答错扣分：只影响计分，不改变题型与题池 */
+$("comboBonusChk").addEventListener("change", e=>{
+  S.comboBonus = e.target.checked;
+  saveCfg();
+  renderSettingStatus();
+});
+$("wrongPenaltyChk").addEventListener("change", e=>{
+  S.wrongPenalty = e.target.checked;
+  saveCfg();
+  renderSettingStatus();
+});
 
 /* ================== 本次PK不计入战绩（临时赛，不持久化） ================== */
 $("noRecordChk").addEventListener("change", e=>{

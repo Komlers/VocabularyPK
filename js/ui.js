@@ -434,6 +434,8 @@ function restoreCfg(){
   S.rememberWrong = false;
   S.questionTimeout = true;
   S.questionTimeoutDur = 5;
+  S.comboBonus = true;
+  S.wrongPenalty = false;
   try{
     const c = JSON.parse(localStorage.getItem("vpk_cfg_" + S.cls));
     if(c){
@@ -443,6 +445,8 @@ function restoreCfg(){
       if(c.rememberWrong !== undefined) S.rememberWrong = !!c.rememberWrong;
       if(c.questionTimeout !== undefined) S.questionTimeout = !!c.questionTimeout;
       if(c.questionTimeoutDur) S.questionTimeoutDur = c.questionTimeoutDur;
+      if(c.comboBonus !== undefined) S.comboBonus = !!c.comboBonus;
+      if(c.wrongPenalty !== undefined) S.wrongPenalty = !!c.wrongPenalty;
     }
   }catch(e){}
   /* 首次使用不默认勾选任何词库，由用户手动选择；
@@ -451,6 +455,8 @@ function restoreCfg(){
   $("wordsOnlyChk").checked = S.wordsOnly;
   $("rememberWrongChk").checked = S.rememberWrong;
   $("questionTimeoutChk").checked = S.questionTimeout;
+  $("comboBonusChk").checked = S.comboBonus;
+  $("wrongPenaltyChk").checked = S.wrongPenalty;
   renderQuestionTimeoutUI();
   renderSettingStatus();
   /* 临时赛选项不持久化，每次恢复配置时重置 */
@@ -472,6 +478,8 @@ function renderSettingStatus(){
   const box = $("setStatusLine");
   if(!box) return;
   const parts = [
+    S.comboBonus ? "连击加分" : "连击不加分",
+    S.wrongPenalty ? "答错扣分" : "答错不扣分",
     S.rememberWrong ? "错词将记忆" : "错词不记忆",
     S.wordsOnly ? "只加载纯单词" : "加载完整词库",
     S.questionTimeout ? "单题超时：" + S.questionTimeoutDur + "s" : "单题不限时"

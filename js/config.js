@@ -56,8 +56,10 @@ let S = {
   cls:"", p1:"红方选手", p2:"蓝方选手",
   units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false, rememberWrong:false,
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
+  comboBonus:true, wrongPenalty:false,   /* 连击加分 / 答错扣分（擂台设置） */
   pool:[], qi:0, round:1, scores:[0,0], streak:[0,0], maxStreak:[0,0],
   right:[0,0], bad:[0,0],   /* 双方各自的答对 / 答错题数，仅用于结算页展示 */
+  badStreak:[0,0],          /* 连续答错次数：答错扣分递增用，答对即清零 */
   asked:0,                  /* 本局出现过的题目总数（含超时跳过、双方都没答的） */
   locked:[false,false], timer:null, left:0, pendingNext:false,
   wrongSet:new Set(), revival:false, basePoints:10, curQ:null, reviewList:[],

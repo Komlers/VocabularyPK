@@ -496,8 +496,10 @@
   .libGroup .libChips{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
 
   /* 擂台设置：设置项与小号解释 */
-  .setItem{margin-top:20px;}
-  .setItem:first-of-type{margin-top:14px;}
+  /* 设置项较多，弹窗允许更高一些，常见 1080p 屏可一屏放下 */
+  #settingModal .modalBox{max-height:88vh;}
+  .setItem{margin-top:16px;}
+  .setItem:first-of-type{margin-top:10px;}
   .setHint{font-size:16px;color:var(--muted);line-height:1.55;margin:5px 0 0 34px;}
 
   /* 复选框标题 */
