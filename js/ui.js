@@ -198,15 +198,18 @@ function renderHistory(){
   }else{
     const wins = {};
     h.matches.forEach(m => {
+      if(m.solo) return;                       /* 单人记录不参与胜负统计 */
       if(m.s1 > m.s2) wins[m.p1] = (wins[m.p1]||0)+1;
       else if(m.s2 > m.s1) wins[m.p2] = (wins[m.p2]||0)+1;
     });
     const winTop = Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
     const stTop = Object.entries(h.streaks||{}).sort((a,b)=>b[1]-a[1])[0];
+    const soloCount = h.matches.filter(m=>m.solo).length;
     let html = '<div class="row">'
       + '<div class="stat">总场次 <b>' + h.matches.length + '</b></div>';
     if(winTop) html += '<div class="stat">胜场王 <b>' + esc(dispName(winTop[0])) + ' ' + winTop[1] + '胜</b></div>';
     if(stTop) html += '<div class="stat">连击纪录 <b>' + esc(dispName(stTop[0])) + ' x' + stTop[1] + '</b></div>';
+    if(soloCount) html += '<div class="stat">单人作答 <b>' + soloCount + ' 场</b></div>';
     html += "</div>";
     /* 全部记录：按时间戳倒序（最新在前），再按日期分组，同一天折叠在一个日期标题下 */
     const all = h.matches.slice().sort((a, b) => b.t - a.t);
@@ -220,8 +223,14 @@ function renderHistory(){
         lastDay = k;
         list += '<div class="dateHead">' + dayLabel(d) + ' <i>' + dayCount[k] + ' 场</i></div>';
       }
-      const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
       const hm = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+      if(m.solo){
+        /* 单人记录：只有名字、得分与题量 */
+        list += '<div class="recentItem"><span>' + esc(dispName(m.p)) + ' <i class="tagSolo">单人</i>'
+          + '</span><span class="mini">' + m.unit + " · " + m.s + " 分 · " + hm + '</span></div>';
+        return;
+      }
+      const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
       list += '<div class="recentItem"><span>' + esc(dispName(m.p1)) + ' ' + m.s1 + ' : ' + m.s2 + ' ' + esc(dispName(m.p2))
         + '</span><span class="mini">' + m.unit + " · " + res + " · " + hm + '</span></div>';
     });
@@ -462,6 +471,9 @@ function restoreCfg(){
   /* 临时赛选项不持久化，每次恢复配置时重置 */
   S.noRecord = false;
   $("noRecordChk").checked = false;
+  /* 单人作答同样按“本局”生效，不持久化 */
+  S.solo = false;
+  $("soloChk").checked = false;
   updateDurBtn();
   updateLibBtn();
 }

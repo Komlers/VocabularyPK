@@ -138,13 +138,21 @@ function scheduleNext(delay){
 function score(k, ok){
   if(ok){
     S.right[k-1]++;
-    S.badStreak[k-1] = 0;                 /* 答对即打断连续答错 */
     S.streak[k-1]++;
     S.maxStreak[k-1] = Math.max(S.maxStreak[k-1], S.streak[k-1]);
     let pts = S.basePoints;
     if(S.comboBonus && !S.revival) pts += Math.min((S.streak[k-1]-1)*5, 20);
-    S.scores[k-1] += pts;
-    $("s"+k).textContent = S.scores[k-1];
+    if(S.solo){
+      /* 单人作答：两侧共用一个总分，显示同步；连击仍各侧独立，故奖励只按答题的那一侧算 */
+      S.badStreak = [0,0];
+      const v = S.scores[0] + pts;
+      S.scores = [v, v];
+      $("s1").textContent = v; $("s2").textContent = v;
+    }else{
+      S.badStreak[k-1] = 0;               /* 答对即打断连续答错 */
+      S.scores[k-1] += pts;
+      $("s"+k).textContent = S.scores[k-1];
+    }
     fx("+" + pts, k===1 ? "#e05555" : "#4a7fe0", k===1 ? 18 : 82);
     if(!S.revival && S.streak[k-1] >= 2)
       $("st"+k).textContent = "🔥 " + S.streak[k-1] + " 连击！";
@@ -154,12 +162,26 @@ function score(k, ok){
     S.streak[k-1] = 0;
     $("st"+k).textContent = "";
     if(S.wrongPenalty && !S.revival){
-      S.badStreak[k-1]++;
-      const pen = S.comboBonus ? Math.min(5 * S.badStreak[k-1], 20) : 5;
-      const before = S.scores[k-1];
-      S.scores[k-1] = Math.max(0, before - pen);
-      $("s"+k).textContent = S.scores[k-1];
-      const lost = before - S.scores[k-1];
+      let pen;
+      if(S.solo){
+        /* 连续扣分在两侧之间同步：换边再错仍算同一次连错 */
+        const n = Math.max(S.badStreak[0], S.badStreak[1]) + 1;
+        S.badStreak = [n, n];
+        pen = S.comboBonus ? Math.min(5 * n, 20) : 5;
+      }else{
+        S.badStreak[k-1]++;
+        pen = S.comboBonus ? Math.min(5 * S.badStreak[k-1], 20) : 5;
+      }
+      const before = S.solo ? S.scores[0] : S.scores[k-1];
+      const after = Math.max(0, before - pen);
+      if(S.solo){
+        S.scores = [after, after];
+        $("s1").textContent = after; $("s2").textContent = after;
+      }else{
+        S.scores[k-1] = after;
+        $("s"+k).textContent = after;
+      }
+      const lost = before - after;
       if(lost > 0) fx("-" + lost, "#79808f", k===1 ? 18 : 82);
     }
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
@@ -219,10 +241,15 @@ function endBattle(){
      临时体验（无班级，手输名字试玩）同样不落库，只在本次会话里保留比分与错词 */
   if(!S.revival && !S.noRecord && S.cls){
     const h = loadHis(S.cls);
-    h.matches.push({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, unit:S.units.join("+")});
-    [S.p1, S.p2].forEach((n,i)=>{
-      if(S.maxStreak[i] > (h.streaks[n]||0)) h.streaks[n] = S.maxStreak[i];
-    });
+    if(S.solo){
+      /* 单人作答按「单人记录」保存：只有名字、总分与题量，不参与胜负统计与擂主 */
+      h.matches.push({t:Date.now(), solo:1, p:S.p1, s:a, unit:S.units.join("+")});
+    }else{
+      h.matches.push({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, unit:S.units.join("+")});
+      [S.p1, S.p2].forEach((n,i)=>{
+        if(S.maxStreak[i] > (h.streaks[n]||0)) h.streaks[n] = S.maxStreak[i];
+      });
+    }
     saveHis(S.cls, h);
   }
   if(!S.noRecord && S.rememberWrong && S.cls){
@@ -240,7 +267,7 @@ function endBattle(){
     });
     saveHis(S.cls, h);
   }
-  if(!S.revival && !S.noRecord){
+  if(!S.revival && !S.noRecord && !S.solo){
     /* 守擂规则：
        1) 有胜负 → 败者成为下期擂主（红方）
        2) 平局 → 连击纪录低者做下期擂主
@@ -264,28 +291,39 @@ function endBattle(){
     else S.trialChamp = clearChamp ? "" : champ;
   }
   let title;
-  if(a===b){
+  if(S.solo){
+    title = dispName(S.p1) + " 完成单人作答";
+  }else if(a===b){
     title = S.wrongSet.size===0
       ? "双方全对平局！下期重新选擂主 🎉"
       : "平局！连击纪录低者守擂，纪录相同则更换擂主";
   }
   else title = dispName(a>b ? S.p1 : S.p2) + " 获胜！";
-  if(a!==b) beep(660,.3); else beep(440,.3);
+  if(S.solo) beep(660,.3);
+  else if(a!==b) beep(660,.3); else beep(440,.3);
   show("result");
   $("winName").textContent = title;
-  $("winName").style.color = a===b ? "#3a4150" : (a>b ? "#e05555" : "#4a7fe0");
-  /* 临时体验（无班级）不写战绩，结算页明确告知 */
+  $("winName").style.color = (S.solo || a===b) ? "#3a4150" : (a>b ? "#e05555" : "#4a7fe0");
+  /* 临时体验（无班级）不写战绩，结算页明确告知；单人作答同样不区分胜负 */
   const scopeTxt = S.revival ? "错词加时赛"
-    : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩");
-  $("finalScore").innerHTML =
-    '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span> : " + b + ' <span class="b">' + esc(dispName(S.p2)) + "</span>"
-    /* 双方正答 / 错答题数（如 32/2），左右分列对应红蓝双方 */
-    + '<div class="accRow">'
+    : (S.solo
+        ? ("单人作答" + (S.cls ? "" : " · 不记录战绩"))
+        : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩"));
+  /* 正答 / 错答：单人作答把两侧合并成一个人的成绩 */
+  const accHtml = S.solo
+    ? '<div class="accRow"><div class="acc red"><b>' + (S.right[0] + S.right[1]) + "/" + (S.bad[0] + S.bad[1]) + '</b><i>正答/错答</i></div></div>'
+    : '<div class="accRow">'
       + '<div class="acc red"><b>' + S.right[0] + "/" + S.bad[0] + '</b><i>正答/错答</i></div>'
       + '<div class="acc blue"><b>' + S.right[1] + "/" + S.bad[1] + '</b><i>正答/错答</i></div>'
-    + "</div>"
+    + "</div>";
+  const scoreHtml = S.solo
+    ? '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span>"
+    : '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span> : " + b + ' <span class="b">' + esc(dispName(S.p2)) + "</span>";
+  $("finalScore").innerHTML = scoreHtml + accHtml
     + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒")
     + " · 共答 " + S.asked + " 道题</div>";
+  /* 单人作答没有“败者守擂/抽新蓝方”，按钮文案单独给 */
+  $("againBtn").textContent = S.solo ? "下一局：同一位选手再战" : "下一局：败者守擂，抽新蓝方";
   const wc = $("wrongChips");
   wc.innerHTML = "";
   const ws = [...S.wrongSet].map(w=>w.split("|"));

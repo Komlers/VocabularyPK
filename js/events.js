@@ -302,6 +302,10 @@ $("wrongPenaltyChk").addEventListener("change", e=>{
 $("noRecordChk").addEventListener("change", e=>{
   S.noRecord = e.target.checked;
 });
+/* 单人作答：一位选手即可开局，另一侧作为答错后的补救通道 */
+$("soloChk").addEventListener("change", e=>{
+  S.solo = e.target.checked;
+});
 
 /* ================== 擂台设置弹窗 ================== */
 $("settingBtn").addEventListener("click", ()=>$("settingModal").classList.remove("hidden"));
@@ -386,25 +390,41 @@ $("hisModal").addEventListener("click", e=>{
 
 /* ================== 开始 PK / 限时 ================== */
 $("startBtn").addEventListener("click", async ()=>{
-  if(!redName || !blueName){
-    dlgAlert(hasRoster()
-      ? "请先抽取（或手输）红蓝双方选手！"
-      : "请先输入红蓝双方选手的名字。",
-      { type: "warning", title: "选手未就位" });
-    if(!hasRoster()) enterManualMode(redName ? "m2" : "m1");
-    return;
-  }
-  /* 手输名字与名单共用一套字符规则，避免出现奇怪的符号进到战绩里 */
-  if(!validName(redName) || !validName(blueName)){
-    dlgAlert("选手名字只能包含中文、英文字母、数字及 · . - 等符号。",
-      { type: "warning", title: "名字无效" });
-    return;
-  }
-  if(dispName(redName) === dispName(blueName)){
-    const same = await dlgConfirm(
-      "红蓝双方名字相同（" + dispName(redName) + "），仍要开始吗？",
-      { type: "warning", title: "名字重复", okText: "仍要开始", cancelText: "改一下" });
-    if(!same) return;
+  /* 单人作答只要一位选手：两边都填则取红方；另一侧在比赛中作为补救通道 */
+  const soloPlayer = redName || blueName;
+  if(S.solo){
+    if(!soloPlayer){
+      dlgAlert(hasRoster() ? "请先抽取（或手输）一位选手！" : "请先输入选手名字。",
+        { type: "warning", title: "选手未就位" });
+      if(!hasRoster()) enterManualMode("m1");
+      return;
+    }
+    if(!validName(soloPlayer)){
+      dlgAlert("选手名字只能包含中文、英文字母、数字及 · . - 等符号。",
+        { type: "warning", title: "名字无效" });
+      return;
+    }
+  }else{
+    if(!redName || !blueName){
+      dlgAlert(hasRoster()
+        ? "请先抽取（或手输）红蓝双方选手！"
+        : "请先输入红蓝双方选手的名字。",
+        { type: "warning", title: "选手未就位" });
+      if(!hasRoster()) enterManualMode(redName ? "m2" : "m1");
+      return;
+    }
+    /* 手输名字与名单共用一套字符规则，避免出现奇怪的符号进到战绩里 */
+    if(!validName(redName) || !validName(blueName)){
+      dlgAlert("选手名字只能包含中文、英文字母、数字及 · . - 等符号。",
+        { type: "warning", title: "名字无效" });
+      return;
+    }
+    if(dispName(redName) === dispName(blueName)){
+      const same = await dlgConfirm(
+        "红蓝双方名字相同（" + dispName(redName) + "），仍要开始吗？",
+        { type: "warning", title: "名字重复", okText: "仍要开始", cancelText: "改一下" });
+      if(!same) return;
+    }
   }
   if(!S.units.length){
     dlgAlert("请先选择词库！", { type: "warning", title: "未选择词库" });
@@ -412,7 +432,8 @@ $("startBtn").addEventListener("click", async ()=>{
   }
   syncUseChunks();
   saveCfg();
-  S.p1 = redName; S.p2 = blueName;
+  if(S.solo){ S.p1 = soloPlayer; S.p2 = "补救"; }
+  else { S.p1 = redName; S.p2 = blueName; }
   /* 未全屏则自动进入全屏，保证对战体验 */
   if(!fsElement()){ toggleFullscreen(); }
   startBattle(false);
@@ -449,16 +470,19 @@ $("side2").addEventListener("click", e=>answer(2, e));
 /* ================== 结算页按钮 ================== */
 $("againBtn").addEventListener("click", ()=>{
   /* 败者/连击低者守擂：红方已定，只需重抽蓝方；全对平局则擂主已清空，红蓝都重抽。
-     临时体验没有班级可存擂主，用本会话的 S.trialChamp 承接。 */
-  redName = S.cls ? loadChamp(S.cls) : S.trialChamp;
-  champFixed = !!redName; blueName = "";
+     临时体验没有班级可存擂主，用本会话的 S.trialChamp 承接。
+     单人作答没有对手，直接沿用同一位选手再开一局。 */
+  if(S.solo){ redName = S.p1; blueName = ""; }
+  else { redName = S.cls ? loadChamp(S.cls) : S.trialChamp; blueName = ""; }
+  champFixed = !!redName;
   show("setup"); refreshNameBoxes(); renderHistory();
 });
 $("reviveBtn").addEventListener("click", ()=>startBattle(true));
 $("homeBtn").addEventListener("click", ()=>{
   show("setup");
-  redName = S.cls ? loadChamp(S.cls) : S.trialChamp;
-  champFixed = !!redName; blueName = "";
+  if(S.solo){ redName = S.p1; blueName = ""; }
+  else { redName = S.cls ? loadChamp(S.cls) : S.trialChamp; blueName = ""; }
+  champFixed = !!redName;
   refreshNameBoxes(); renderHistory();
 });
 
