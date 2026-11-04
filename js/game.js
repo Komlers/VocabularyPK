@@ -23,6 +23,9 @@ function startBattle(revival){
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = "0"; $("s2").textContent = "0";
   $("st1").textContent = ""; $("st2").textContent = "";
+  /* 单人作答：顶栏隐藏对侧名字栏，只留分数，计时器随之向该侧靠拢 */
+  const topbar = document.querySelector(".topbar");
+  if(topbar) topbar.classList.toggle("solo", !!S.solo);
   show("battle");
   nextQuestion();
   clearInterval(S.timer);
@@ -292,7 +295,7 @@ function endBattle(){
   }
   let title;
   if(S.solo){
-    title = dispName(S.p1) + " 完成单人作答";
+    title = dispName(S.p1) + " 完成作答";
   }else if(a===b){
     title = S.wrongSet.size===0
       ? "双方全对平局！下期重新选擂主 🎉"

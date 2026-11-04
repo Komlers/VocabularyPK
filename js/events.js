@@ -432,7 +432,7 @@ $("startBtn").addEventListener("click", async ()=>{
   }
   syncUseChunks();
   saveCfg();
-  if(S.solo){ S.p1 = soloPlayer; S.p2 = "补救"; }
+  if(S.solo){ S.p1 = soloPlayer; S.p2 = ""; }
   else { S.p1 = redName; S.p2 = blueName; }
   /* 未全屏则自动进入全屏，保证对战体验 */
   if(!fsElement()){ toggleFullscreen(); }

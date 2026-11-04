@@ -500,17 +500,14 @@ function renderSettingStatus(){
                        .join('<span class="setSep">|</span>');
 }
 /* 题池提示：随选词库与时长实时更新 */
+/* 题池提示：时长 · 词库数 · 词条量（只做概览，不再推算本局题数） */
 function planInfo(){
-  const p = planFor(S.dur);
-  const total = S.useChunks ? p.w + p.c1 + p.c2 + p.c3 : p.w;
-  const mins = (S.dur/60).toFixed(1).replace(/\.0$/,"");
+  const mins = (S.dur/60).toFixed(1).replace(/\.0$/, "");
   const rg = poolRange();
-  const poolN = rg.words + rg.chunks;
-  const head = S.useChunks
-    ? mins + " 分钟 | " + p.w + " 单词 + " + p.c1 + " 词块选义 + " + p.c2 + " 词块配对 + " + p.c3 + " 词块重组 ＝ " + total + " 题"
-    : mins + " 分钟 | 纯单词 " + p.w + " 题";
-  $("planInfo").textContent = head + "｜本题池 " + poolN + " 条（"
-    + rg.words + " 单词" + (rg.chunks ? " + " + rg.chunks + " 词块" : "") + "）";
+  let s = mins + "分钟 | " + (S.units.length ? S.units.length + "个词库" : "未选择词库");
+  if(rg.words) s += " | " + rg.words + "个单词";
+  if(rg.chunks) s += " & " + rg.chunks + "个词块";
+  $("planInfo").textContent = s;
 }
 /* 没有指定班级时，自动选 LocalStorage 里第一个班级 */
 function autoSelectClass(){

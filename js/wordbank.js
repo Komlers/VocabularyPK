@@ -226,21 +226,6 @@ function poolRange(){
   return { words:(ens ? words.filter(w=>!ens.has(w[0])) : words).length,
            chunks:(S.useChunks ? chunkIdxInScope().length : 0) };
 }
-/* 开场配比：按时长（秒）在锚点间线性插值 */
-function planFor(sec){
-  const A = [[30,2,0,0,0],[120,5,4,2,1],[180,7,6,3,2],[240,10,8,4,3],[300,13,10,5,4]];
-  if(sec <= A[0][0]) return {w:A[0][1],c1:A[0][2],c2:A[0][3],c3:A[0][4]};
-  for(let i=1;i<A.length;i++){
-    if(sec <= A[i][0]){
-      const r = (sec-A[i-1][0])/(A[i][0]-A[i-1][0]);
-      return { w:Math.round(A[i-1][1]+(A[i][1]-A[i-1][1])*r),
-               c1:Math.round(A[i-1][2]+(A[i][2]-A[i-1][2])*r),
-               c2:Math.round(A[i-1][3]+(A[i][3]-A[i-1][3])*r),
-               c3:Math.round(A[i-1][4]+(A[i][4]-A[i-1][4])*r) };
-    }
-  }
-  return {w:13,c1:10,c2:5,c3:4};
-}
 /* 按当前选词库过滤 */
 function libFiltered(){
   if(!S.units.length) return [];
@@ -248,50 +233,24 @@ function libFiltered(){
 }
 
 /* ================== 组卷 ================== */
-/* 题池 = 选中词库的全部词条，开场按 planFor 配比，错项优先注入 */
+/* 题池 = 选中词库的全部词条（词块题型轮转），整池打散，错词优先注入 */
 function buildPool(){
-  const plan = planFor(S.dur);
-  const mix = S.useChunks;
-  const words = shuffle(wordSource());
-  const cAll = shuffle(chunkIdxInScope());
   const used = new Set();                       // 键=en：同一词条本局只出一道题（不分题型）
-  const mk = (arr, s) => { const e = specEn(s); if(used.has(e)) return; used.add(e); arr.push(s); };
-  /* ① 开场段：按 PLAN 配比选词（保证课堂节奏与设计一致，内部乱序） */
-  const open = [];
-  let wi = 0;
-  for(let i=0;i<plan.w && wi<words.length;i++) mk(open, {t:"w", w:words[wi++]});
-  if(mix){
-    const taken = new Set();
-    const take = (k, n) => {
-      if(!n) return;
-      const cand = k === "c2" ? cAll.filter(i=>CHUNKS[i][3])
-                 : k === "c3" ? cAll.filter(i=>CHUNKS[i][5]) : cAll;
-      let c = 0;
-      for(const i of cand){ if(c >= n) break; if(taken.has(i)) continue; taken.add(i); mk(open, {t:k, i:i}); c++; }
-    };
-    /* 稀缺题型优先取题：c3 需要重组片段、数量最少，若排在 c1/c2 之后，
-       单册（约 15 条词块）时会被先占完，导致整局没有词块重组题 */
-    take("c3", plan.c3); take("c2", plan.c2); take("c1", plan.c1);
-    /* ② 续题段：其余全部单词 + 其余全部词块（轮转题型），打散后整段续在题池尾部 */
-    const restW = [], restC = [];
-    for(; wi<words.length; wi++) mk(restW, {t:"w", w:words[wi]});
+  const list = [];
+  const mk = s => { const e = specEn(s); if(used.has(e)) return; used.add(e); list.push(s); };
+  shuffle(wordSource()).forEach(w => mk({t:"w", w:w}));
+  if(S.useChunks){
     let n = 0;
-    for(const i of cAll){ if(taken.has(i)) continue; mk(restC, {t:chunkKindFor(i, n++), i:i}); }
-    const rest = [];
-    const len = Math.max(restW.length, restC.length);
-    for(let i=0;i<len;i++){ if(restW[i]) rest.push(restW[i]); if(restC[i]) rest.push(restC[i]); }
-    const pool = shuffle(open).concat(shuffle(rest));
-    const rv = reviewSpecs(S.cls);
-    S.reviewList = rv.map(specEn);
-    const rvKeys = new Set(S.reviewList);
-    S.pool = rv.concat(pool.filter(s=>!rvKeys.has(specEn(s))));
-  }else{
-    /* 纯单词模式：题池 = 该单元/全书的全部单词 */
-    for(; wi<words.length; wi++) mk(open, {t:"w", w:words[wi]});
-    const pool = shuffle(open);
-    const rv = reviewSpecs(S.cls);
-    S.reviewList = rv.map(specEn);
-    const rvKeys = new Set(S.reviewList);
-    S.pool = rv.concat(pool.filter(s=>!rvKeys.has(specEn(s))));
+    shuffle(chunkIdxInScope()).forEach(i => mk({t:chunkKindFor(i, n++), i:i}));
+    /* 保证本局能出现重组题：若整池没有 c3，但存在带片段的词块，借一道改成 c3 */
+    if(!list.some(s => s.t === "c3")){
+      const s = list.find(s => s.i !== undefined && CHUNKS[s.i][5]);
+      if(s) s.t = "c3";
+    }
   }
+  const pool = shuffle(list);
+  const rv = reviewSpecs(S.cls);
+  S.reviewList = rv.map(specEn);
+  const rvKeys = new Set(S.reviewList);
+  S.pool = rv.concat(pool.filter(s => !rvKeys.has(specEn(s))));
 }

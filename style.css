@@ -187,6 +187,10 @@
   .pscore{font-size:52px;font-weight:800;line-height:1;}
   .pcard.red .pscore{color:var(--red);} .pcard.blue .pscore{color:var(--blue);}
   .timerWrap{flex:none;text-align:center;padding:0 8px;}
+  /* 单人作答：对侧不显示名字栏，只保留居中的分数；计时器随之向该侧靠，但不到边距 */
+  .topbar.solo .pcard.blue .pinfo{display:none;}
+  .topbar.solo .pcard.blue{flex:0 0 22%;justify-content:center;}
+  .topbar.solo .timerWrap{margin-right:2vw;}
   .tlabel{font-size:19px;color:var(--muted);letter-spacing:1px;}
   .timer{font-size:52px;font-weight:800;color:var(--ink2);min-width:2.4em;line-height:1.05;}
   .timer.warn{color:var(--red);animation:blink 1s infinite;}
