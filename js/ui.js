@@ -196,7 +196,8 @@ function renderHistory(){
     if(winTop) html += '<div class="stat">胜场王 <b>' + esc(dispName(winTop[0])) + ' ' + winTop[1] + '胜</b></div>';
     if(stTop) html += '<div class="stat">连击纪录 <b>' + esc(dispName(stTop[0])) + ' x' + stTop[1] + '</b></div>';
     html += "</div>";
-    html += '<div id="recentList">' + h.matches.slice(-5).reverse().map(m=>{
+    /* 全部记录，最新在前；弹窗内容区可滚动，不再只显示最近 5 条 */
+    html += '<div id="recentList">' + h.matches.slice().reverse().map(m=>{
       const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
       const d = new Date(m.t);
       const tag = (d.getMonth()+1) + "/" + d.getDate();
