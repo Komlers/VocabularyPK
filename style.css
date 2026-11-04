@@ -135,6 +135,12 @@
                   padding:12px 22px;font-size:25px;}
   #hisModal .stat b{color:var(--blue-d);}
   #recentList{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+  /* 战绩按日期分组：日期标题 + 当天场次 */
+  .dateHead{display:flex;align-items:center;gap:10px;margin-top:14px;
+            font-size:21px;font-weight:800;color:var(--blue-d);letter-spacing:1px;}
+  .dateHead:first-child{margin-top:2px;}
+  .dateHead i{font-style:normal;font-size:17px;font-weight:600;color:var(--muted2);
+              background:#eef2f9;border-radius:8px;padding:2px 10px;letter-spacing:0;}
   .recentItem{display:flex;justify-content:space-between;align-items:center;gap:14px;
               background:#f8f9fc;border-radius:12px;padding:11px 18px;font-size:25px;}
   .clearBtn{margin-top:16px;padding:10px 26px;border-radius:12px;border:2px solid #f0b9b9;

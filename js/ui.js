@@ -175,6 +175,18 @@ function renderChips(){
   const row = document.querySelector(".classRow");
   if(row) row.classList.toggle("has-roster", names.length > 0);
 }
+/* 战绩列表的日期标题：今天 / 昨天 / 11月2日 周日（跨年带年份） */
+function dayLabel(d){
+  const now = new Date();
+  const dayStart = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((dayStart(now) - dayStart(d)) / 86400000);
+  if(diff === 0) return "今天";
+  if(diff === 1) return "昨天";
+  const md = (d.getMonth()+1) + "月" + d.getDate() + "日";
+  const w = "日一二三四五六"[d.getDay()];
+  const date = d.getFullYear() === now.getFullYear() ? md : d.getFullYear() + "年" + md;
+  return date + " 周" + w;
+}
 function renderHistory(){
   const h = loadHis(S.cls);
   const t = $("hisTitle"); if(t) t.textContent = S.cls ? ("📊 " + S.cls + " 战绩") : "📊 战绩";
@@ -196,14 +208,24 @@ function renderHistory(){
     if(winTop) html += '<div class="stat">胜场王 <b>' + esc(dispName(winTop[0])) + ' ' + winTop[1] + '胜</b></div>';
     if(stTop) html += '<div class="stat">连击纪录 <b>' + esc(dispName(stTop[0])) + ' x' + stTop[1] + '</b></div>';
     html += "</div>";
-    /* 全部记录，最新在前；弹窗内容区可滚动，不再只显示最近 5 条 */
-    html += '<div id="recentList">' + h.matches.slice().reverse().map(m=>{
+    /* 全部记录：按时间戳倒序（最新在前），再按日期分组，同一天折叠在一个日期标题下 */
+    const all = h.matches.slice().sort((a, b) => b.t - a.t);
+    const dayKey = d => d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    const dayCount = {};
+    all.forEach(m => { const k = dayKey(new Date(m.t)); dayCount[k] = (dayCount[k] || 0) + 1; });
+    let lastDay = "", list = "";
+    all.forEach(m => {
+      const d = new Date(m.t), k = dayKey(d);
+      if(k !== lastDay){
+        lastDay = k;
+        list += '<div class="dateHead">' + dayLabel(d) + ' <i>' + dayCount[k] + ' 场</i></div>';
+      }
       const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
-      const d = new Date(m.t);
-      const tag = (d.getMonth()+1) + "/" + d.getDate();
-      return '<div class="recentItem"><span>' + esc(dispName(m.p1)) + ' ' + m.s1 + ' : ' + m.s2 + ' ' + esc(dispName(m.p2))
-        + '</span><span class="mini">' + m.unit + " · " + res + " · " + tag + '</span></div>';
-    }).join("") + "</div>";
+      const hm = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+      list += '<div class="recentItem"><span>' + esc(dispName(m.p1)) + ' ' + m.s1 + ' : ' + m.s2 + ' ' + esc(dispName(m.p2))
+        + '</span><span class="mini">' + m.unit + " · " + res + " · " + hm + '</span></div>';
+    });
+    html += '<div id="recentList">' + list + "</div>";
     body.innerHTML = html;
     clearBtn.classList.remove("hidden");
   }
