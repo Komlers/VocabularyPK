@@ -18,6 +18,7 @@ function startBattle(revival){
   }
   S.qi = 0; S.round = 1; S.scores = [0,0]; S.streak = [0,0]; S.maxStreak = [0,0];
   S.right = [0,0]; S.bad = [0,0];
+  S.asked = 0;
   S.left = S.dur; S.pendingNext = false;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = "0"; $("s2").textContent = "0";
@@ -44,6 +45,7 @@ function nextQuestion(){
     S.pool = shuffle(S.pool); S.qi = 0; S.round = (S.round || 1) + 1;
   }
   const spec = S.pool[S.qi++];
+  S.asked++;   /* 本局出过的题数：只要题目出现过就计入，与是否作答、是否超时无关 */
   let q;
   if(spec.t === "w"){
     const en = spec.w[0], cn = spec.w[1];
@@ -267,7 +269,8 @@ function endBattle(){
       + '<div class="acc red"><b>' + S.right[0] + "/" + S.bad[0] + '</b><i>正答/错答</i></div>'
       + '<div class="acc blue"><b>' + S.right[1] + "/" + S.bad[1] + '</b><i>正答/错答</i></div>'
     + "</div>"
-    + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒") + "</div>";
+    + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒")
+    + " · 共答 " + S.asked + " 道题</div>";
   const wc = $("wrongChips");
   wc.innerHTML = "";
   const ws = [...S.wrongSet].map(w=>w.split("|"));
