@@ -18,14 +18,15 @@ function startBattle(revival){
   }
   S.qi = 0; S.round = 1; S.scores = [0,0]; S.streak = [0,0]; S.maxStreak = [0,0];
   S.right = [0,0]; S.bad = [0,0]; S.badStreak = [0,0];
-  S.asked = 0;
+  S.asked = 0; S.done = 0;
   S.left = S.dur; S.pendingNext = false;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = "0"; $("s2").textContent = "0";
   $("st1").textContent = ""; $("st2").textContent = "";
-  /* 单人作答：顶栏隐藏对侧名字栏，只留分数，计时器随之向该侧靠拢 */
+  /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽保证计时器居中 */
   const topbar = document.querySelector(".topbar");
   if(topbar) topbar.classList.toggle("solo", !!S.solo);
+  syncSoloStats();
   show("battle");
   nextQuestion();
   clearInterval(S.timer);
@@ -139,6 +140,8 @@ function scheduleNext(delay){
    · 加时赛（revival）是错词复盘，既不加连击奖励也不扣分。
    同时统计双方答对 / 答错题数，供结算页展示（超时未答不计入任一方）。 */
 function score(k, ok){
+  /* 一题只要有一次作答并判定（对或错）就计为「已答」，超时跳过的不算 */
+  if(S.curQ && !S.curQ.scored){ S.curQ.scored = true; S.done++; }
   if(ok){
     S.right[k-1]++;
     S.streak[k-1]++;
@@ -156,7 +159,8 @@ function score(k, ok){
       S.scores[k-1] += pts;
       $("s"+k).textContent = S.scores[k-1];
     }
-    fx("+" + pts, k===1 ? "#e05555" : "#4a7fe0", k===1 ? 18 : 82);
+    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧 */
+    fx("+" + pts, S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0"), S.solo ? 82 : (k===1 ? 18 : 82));
     if(!S.revival && S.streak[k-1] >= 2)
       $("st"+k).textContent = "🔥 " + S.streak[k-1] + " 连击！";
     beep(880, .12);
@@ -185,11 +189,20 @@ function score(k, ok){
         $("s"+k).textContent = after;
       }
       const lost = before - after;
-      if(lost > 0) fx("-" + lost, "#79808f", k===1 ? 18 : 82);
+      if(lost > 0) fx("-" + lost, "#79808f", S.solo ? 82 : (k===1 ? 18 : 82));
     }
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
     beep(220, .18);
   }
+  syncSoloStats();
+}
+/* 单人作答：顶栏右侧实时统计——已答题数（有作答的）与两侧合并的正答 / 错答 */
+function syncSoloStats(){
+  if(!S.solo) return;
+  const put = (id, v) => { const el = $(id); if(el) el.textContent = v; };
+  put("soloDone", S.done || 0);
+  put("soloRight", S.right[0] + S.right[1]);
+  put("soloBad", S.bad[0] + S.bad[1]);
 }
 function answer(k, e){
   if(S.locked[k-1] || S.pendingNext) return;

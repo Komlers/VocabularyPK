@@ -187,10 +187,15 @@
   .pscore{font-size:52px;font-weight:800;line-height:1;}
   .pcard.red .pscore{color:var(--red);} .pcard.blue .pscore{color:var(--blue);}
   .timerWrap{flex:none;text-align:center;padding:0 8px;}
-  /* 单人作答：对侧不显示名字栏，只保留居中的分数；计时器随之向该侧靠，但不到边距 */
+  /* 单人作答：左边只显示名字，右边显示分数与实时统计；两卡等宽，计时器仍在正中。
+     左右留出角按钮的宽度，避免统计文字被「安装 / 退出」压住 */
+  .topbar.solo{padding-left:max(4vw,118px);padding-right:max(4vw,118px);}
+  .soloStats{display:none;flex-direction:column;align-items:flex-end;gap:1px;
+             font-size:19px;color:var(--muted);line-height:1.25;white-space:nowrap;}
+  .soloStats b{font-size:24px;font-weight:800;color:var(--ink2);margin:0 2px;}
+  .topbar.solo .pcard.red .pscore{display:none;}
   .topbar.solo .pcard.blue .pinfo{display:none;}
-  .topbar.solo .pcard.blue{flex:0 0 22%;justify-content:center;}
-  .topbar.solo .timerWrap{margin-right:2vw;}
+  .topbar.solo .pcard.blue .soloStats{display:flex;}
   .tlabel{font-size:19px;color:var(--muted);letter-spacing:1px;}
   .timer{font-size:52px;font-weight:800;color:var(--ink2);min-width:2.4em;line-height:1.05;}
   .timer.warn{color:var(--red);animation:blink 1s infinite;}
