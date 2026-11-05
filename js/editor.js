@@ -200,7 +200,7 @@
     let shown = roster.map((n, i) => ({ n, i }));
     if (kw) shown = shown.filter(o => dispName(o.n).includes(kw));
     if (!shown.length) {
-      box.innerHTML = '<div class="edEmpty">' + (kw ? "没有匹配「" + kw + "」的名字。" : "该班级名单为空，在下方添加名字。") + "</div>";
+      box.innerHTML = '<div class="edEmpty">' + (kw ? "没有匹配「" + esc(kw) + "」的名字。" : "该班级名单为空，在下方添加名字。") + "</div>";
       return;
     }
     shown.forEach(({ n, i }) => {

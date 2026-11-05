@@ -149,7 +149,7 @@ $("rosterFile").addEventListener("change", e=>{
       redName = ""; blueName = ""; champFixed = false;
       resetDrawn(); restoreCfg(); refreshNameBoxes(); renderHistory();
     }
-    dlgAlert("已导入「" + cls + "」共 " + names.length + " 人。"
+    dlgAlert("已导入「" + esc(cls) + "」共 " + names.length + " 人。"
       + (skip.length ? "<br>跳过：" + skip.join("、") : ""),
       { type: "success", title: "导入成功", html: true });
   };
@@ -258,7 +258,7 @@ $("libFile").addEventListener("change", e=>{
       const r = importCustomLib(reader.result);
       tempUnits.push(r.tag);
       renderLibChips();
-      await dlgAlert("已导入词库「" + r.name + "」：" + r.count + " 个单词"
+      await dlgAlert("已导入词库「" + esc(r.name) + "」：" + r.count + " 个单词"
         + (r.chunks ? " + " + r.chunks + " 个词块" : "") + "。<br>已自动选中，点确定后生效。",
         { type: "success", title: "✅ 词库导入成功", html: true });
     }catch(err){

@@ -8,6 +8,12 @@ function startBattle(revival){
       const p = s.split("|");
       return specFromWrong(p[0], p[1], p[2]);
     }).filter(Boolean);
+    /* 错词在词库里已经找不到（比如换过词库）时不要开局，否则题池为空会直接崩 */
+    if(!items.length){
+      S.revival = false; S.basePoints = 10;
+      dlgAlert("本题没有可以复现的错词，直接开下一局吧。", { type: "warning", title: "无法加时" });
+      return;
+    }
     S.reviewList = items.map(specEn);
     S.pool = shuffle(items);
     S.wrongSet = new Set();

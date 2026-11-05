@@ -63,14 +63,14 @@
 | 选必1 | People of Achievement、Looking into the Future、Fascinating Parks、Body Language、Working the Land |
 | 选必2 | Science and Scientists、Bridging Cultures、Food and Culture、Journey Across a Vast Land、First Aid |
 
-支持多选词库混合出题，开场题按方案配比，后续题池包含所选词库全部词条。
+支持多选词库混合出题：题池包含所选词库的全部词条，单词题与词块题按数量比例均匀穿插。
 
 ---
 
 ## 目录结构
 
 ```
-Word/
+vcpk/
 ├── index.html            # 主页面（含所有弹窗结构）
 ├── 404.html              # 404 页面
 ├── style.css             # 全局样式
@@ -100,6 +100,8 @@ Word/
 │   ├── tips.md           # 使用说明（「关于项目」弹窗内打开）
 │   ├── import.md         # 名单添加帮助
 │   └── custom.md         # 自定义词库制作帮助
+├── old/                  # 历史版本更新说明
+│   └── update_v2.0.md
 └── template/
     ├── template.json     # 自定义词库模板
     └── template.md       # 词库格式说明文档

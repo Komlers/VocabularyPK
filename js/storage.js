@@ -7,8 +7,13 @@
    名单持久化在本机浏览器 LocalStorage，不上传服务器，可直接托管到互联网。 */
 const ROSTER_KEY = "vpk_rosters";
 function loadRosters(){
-  try{ return JSON.parse(localStorage.getItem(ROSTER_KEY)) || {}; }
-  catch(e){ return {}; }
+  try{
+    const o = JSON.parse(localStorage.getItem(ROSTER_KEY));
+    /* 只接受「班级 -> 名单数组」的普通对象，防止历史脏数据把界面搞崩 */
+    if(!o || typeof o !== "object" || Array.isArray(o)) return {};
+    for(const k in o) if(!Array.isArray(o[k])) delete o[k];
+    return o;
+  }catch(e){ return {}; }
 }
 function saveRosters(o){
   try{ localStorage.setItem(ROSTER_KEY, JSON.stringify(o)); }catch(e){}
@@ -51,10 +56,19 @@ const champKey = c => "vpk_champ_" + c;   /* 擂主（上一局败者）名字�
 /* 读取/写入本班擂主名字。名字为空则删除记录；下次打开自动回填，仍可随时手改。 */
 function loadChamp(c){ if(!c) return ""; try{ return localStorage.getItem(champKey(c)) || ""; }catch(e){ return ""; } }
 function saveChamp(c, name){ if(!c) return; try{ if(name) localStorage.setItem(champKey(c), name); else localStorage.removeItem(champKey(c)); }catch(e){} }
+/* 历史记录：缺字段的老数据补齐成空值，避免旧版本 / 手工改坏的条目让战绩弹窗报错 */
 function loadHis(c){
-  if(!c) return {matches:[],wrongs:{},streaks:{}};
-  try{ return JSON.parse(localStorage.getItem(hisKey(c))) || {matches:[],wrongs:{},streaks:{}}; }
-  catch(e){ return {matches:[],wrongs:{},streaks:{}}; }
+  const def = {matches:[], wrongs:{}, streaks:{}};
+  if(!c) return def;
+  try{
+    const h = JSON.parse(localStorage.getItem(hisKey(c)));
+    if(!h || typeof h !== "object" || Array.isArray(h)) return def;
+    return {
+      matches: Array.isArray(h.matches) ? h.matches : [],
+      wrongs:  (h.wrongs  && typeof h.wrongs  === "object") ? h.wrongs  : {},
+      streaks: (h.streaks && typeof h.streaks === "object") ? h.streaks : {}
+    };
+  }catch(e){ return def; }
 }
 function saveHis(c, h){ if(!c) return; try{ localStorage.setItem(hisKey(c), JSON.stringify(h)); }catch(e){} }
 /* 待复现错词：按历史错误次数取前 8 */
@@ -70,8 +84,10 @@ function reviewWords(c){
      solo     「本次PK为单人作答」 */
 const UI_KEY = "vpk_ui";
 function loadUI(){
-  try{ return JSON.parse(localStorage.getItem(UI_KEY)) || {}; }
-  catch(e){ return {}; }
+  try{
+    const o = JSON.parse(localStorage.getItem(UI_KEY));
+    return (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  }catch(e){ return {}; }
 }
 function saveUI(patch){
   try{
