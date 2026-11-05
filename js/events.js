@@ -79,6 +79,7 @@ $("classChips").addEventListener("click", async e=>{
     }catch(err){}
     if(S.cls === cls){ S.cls = ""; redName = ""; blueName = ""; champFixed = false; }
     autoSelectClass();
+    saveUI({cls:S.cls});
     resetDrawn(); refreshNameBoxes(); restoreCfg(); renderHistory();
     /* 删到没有班级了：直接进入临时体验的手输形态 */
     if(!S.cls) enterManualMode();
@@ -87,6 +88,7 @@ $("classChips").addEventListener("click", async e=>{
   document.querySelectorAll("#classChips .chip").forEach(x=>x.classList.remove("on"));
   chip.classList.add("on");
   S.cls = cls;
+  saveUI({cls:cls});   /* 记住这次选的班级，下次打开直接进来 */
   redName = ""; blueName = "";
   redName = loadChamp(S.cls);
   champFixed = !!redName;
@@ -143,6 +145,7 @@ $("rosterFile").addEventListener("change", e=>{
     }else{
       /* 主页面首次导入：切换到该班级并刷新主界面 */
       S.cls = cls;
+      saveUI({cls:cls});
       redName = ""; blueName = ""; champFixed = false;
       resetDrawn(); restoreCfg(); refreshNameBoxes(); renderHistory();
     }
@@ -298,13 +301,16 @@ $("wrongPenaltyChk").addEventListener("change", e=>{
   renderSettingStatus();
 });
 
-/* ================== 本次PK不计入战绩（临时赛，不持久化） ================== */
+/* ================== 本次PK不计入战绩（临时赛） / 单人作答 ==================
+   两项都随改随存，下次打开保持上次的选择 */
 $("noRecordChk").addEventListener("change", e=>{
   S.noRecord = e.target.checked;
+  saveUI({noRecord:S.noRecord});
 });
 /* 单人作答：一位选手即可开局，另一侧作为答错后的补救通道 */
 $("soloChk").addEventListener("change", e=>{
   S.solo = e.target.checked;
+  saveUI({solo:S.solo});
 });
 
 /* ================== 擂台设置弹窗 ================== */

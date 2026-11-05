@@ -468,12 +468,12 @@ function restoreCfg(){
   $("wrongPenaltyChk").checked = S.wrongPenalty;
   renderQuestionTimeoutUI();
   renderSettingStatus();
-  /* 临时赛选项不持久化，每次恢复配置时重置 */
-  S.noRecord = false;
-  $("noRecordChk").checked = false;
-  /* 单人作答同样按“本局”生效，不持久化 */
-  S.solo = false;
-  $("soloChk").checked = false;
+  /* 临时赛 / 单人作答：沿用上次退出前的勾选，改动即落盘（不分班级） */
+  const ui = loadUI();
+  S.noRecord = !!ui.noRecord;
+  $("noRecordChk").checked = S.noRecord;
+  S.solo = !!ui.solo;
+  $("soloChk").checked = S.solo;
   updateDurBtn();
   updateLibBtn();
 }
@@ -512,6 +512,9 @@ function planInfo(){
 /* 没有指定班级时，自动选 LocalStorage 里第一个班级 */
 function autoSelectClass(){
   if(S.cls && rosters()[S.cls]) return;
-  const names = Object.keys(rosters());
-  S.cls = names[0] || "";
+  /* 优先回到上次退出前选中的班级，其次才退到第一个班级 */
+  const last = loadUI().cls;
+  if(last && rosters()[last]){ S.cls = last; return; }
+  S.cls = Object.keys(rosters())[0] || "";
+  saveUI({cls:S.cls});
 }

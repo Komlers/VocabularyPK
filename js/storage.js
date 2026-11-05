@@ -63,6 +63,24 @@ function reviewWords(c){
   return Object.entries(h.wrongs||{}).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
 }
 
+/* ================== 界面记忆（上次选的班级 + 两个临时开关） ==================
+   不分班级，改动即落盘，下次打开还原到上次退出时的状态：
+     cls      上次选中的班级（空字符串 = 临时体验）
+     noRecord 「本次PK不计入战绩」
+     solo     「本次PK为单人作答」 */
+const UI_KEY = "vpk_ui";
+function loadUI(){
+  try{ return JSON.parse(localStorage.getItem(UI_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveUI(patch){
+  try{
+    const d = loadUI();
+    for(const k in patch) d[k] = patch[k];
+    localStorage.setItem(UI_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+
 /* ================== 配置（词库选择 + 时长，按班级存） ==================
    临时体验（无班级）不落配置：下次打开仍是默认值，不会残留 vpk_cfg_ 空键。 */
 function saveCfg(){

@@ -145,7 +145,7 @@
       if (oldChamp !== null) localStorage.setItem(champKey(to), oldChamp);
       if (oldCfg !== null) localStorage.setItem("vpk_cfg_" + to, oldCfg);
     } catch (e) {}
-    if (S.cls === oldName) S.cls = to;
+    if (S.cls === oldName) { S.cls = to; saveUI({cls:to}); }
     saveRosters(rs);
     edCls = to;
     renderEdAll();
@@ -177,6 +177,7 @@
     renderEdAll();
     /* 主界面重新自动选择班级并刷新 */
     autoSelectClass();
+    saveUI({cls:S.cls});
     resetDrawn();
     refreshNameBoxes();
     restoreCfg();
