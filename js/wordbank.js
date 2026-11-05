@@ -233,22 +233,37 @@ function libFiltered(){
 }
 
 /* ================== 组卷 ================== */
-/* 题池 = 选中词库的全部词条（词块题型轮转），整池打散，错词优先注入 */
+/* 单词与词块按数量比例均匀穿插：两边内部顺序仍是随机的，
+   这样既不会连着出好几道同一类题，也不需要按时间来推算配比 */
+function interleaveSpecs(a, b){
+  if(!b.length) return a.slice();
+  if(!a.length) return b.slice();
+  const out = [];
+  let i = 0, j = 0;
+  while(i < a.length || j < b.length){
+    /* b 的已用比例落后于 a 时插一道词块，保证词块被均匀摊开 */
+    if(j < b.length && (i >= a.length || (j + 1) * a.length <= (i + 1) * b.length)) out.push(b[j++]);
+    else out.push(a[i++]);
+  }
+  return out;
+}
+
+/* 题池 = 选中词库的全部词条；单词与词块均匀穿插，错词优先注入 */
 function buildPool(){
   const used = new Set();                       // 键=en：同一词条本局只出一道题（不分题型）
-  const list = [];
-  const mk = s => { const e = specEn(s); if(used.has(e)) return; used.add(e); list.push(s); };
-  shuffle(wordSource()).forEach(w => mk({t:"w", w:w}));
+  const words = [], chunks = [];
+  const mk = (arr, s) => { const e = specEn(s); if(used.has(e)) return; used.add(e); arr.push(s); };
+  shuffle(wordSource()).forEach(w => mk(words, {t:"w", w:w}));
   if(S.useChunks){
     let n = 0;
-    shuffle(chunkIdxInScope()).forEach(i => mk({t:chunkKindFor(i, n++), i:i}));
+    shuffle(chunkIdxInScope()).forEach(i => mk(chunks, {t:chunkKindFor(i, n++), i:i}));
     /* 保证本局能出现重组题：若整池没有 c3，但存在带片段的词块，借一道改成 c3 */
-    if(!list.some(s => s.t === "c3")){
-      const s = list.find(s => s.i !== undefined && CHUNKS[s.i][5]);
+    if(!chunks.some(s => s.t === "c3")){
+      const s = chunks.find(s => CHUNKS[s.i][5]);
       if(s) s.t = "c3";
     }
   }
-  const pool = shuffle(list);
+  const pool = interleaveSpecs(words, chunks);
   const rv = reviewSpecs(S.cls);
   S.reviewList = rv.map(specEn);
   const rvKeys = new Set(S.reviewList);
