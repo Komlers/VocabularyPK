@@ -375,9 +375,18 @@ function createLibChip(tag, file, displayText){
   return chip;
 }
 
+/* 词库 tag 属于哪一册（b1~b5）；自定义词库返回空串 */
+function bookOfTag(tag){
+  const f = WORD_BANK_FILES.find(x => x.tag === tag);
+  const m = f && /^(b[1-5])u/.exec(f.file);
+  return m ? m[1] : "";
+}
+
 function renderLibChips(){
-  /* ===== 内置词库：按册分组 ===== */
+  /* ===== 内置词库：按册分组，每册可折叠（默认收起，已选词库所在册展开） ===== */
   const groupsBox = $("builtinGroups");
+  const panel = $("builtinPanel");
+  const keepScroll = panel ? panel.scrollTop : 0;
   groupsBox.innerHTML = "";
   const bookNames = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2" };
   const builtin = WORD_BANK_FILES.filter(x => x.file !== "custom");
@@ -385,11 +394,26 @@ function renderLibChips(){
     const items = builtin.filter(x => x.file.startsWith(bk));
     if(!items.length) return;
     const group = document.createElement("div");
-    group.className = "libGroup";
-    const heading = document.createElement("div");
-    heading.className = "libGroupTitle";
-    heading.textContent = bookNames[bk];
-    group.appendChild(heading);
+    group.className = "libGroup" + (libOpenBooks.has(bk) ? "" : " collapsed");
+
+    const picked = items.filter(x => tempUnits.includes(x.tag)).length;
+    const head = document.createElement("button");
+    head.type = "button";
+    head.className = "libGroupTitle";
+    head.innerHTML = '<span class="libGTName">' + bookNames[bk] + '</span>'
+      + '<span class="libGTMeta">' + (picked ? "已选 " + picked + " 个" : "共 " + items.length + " 个单元") + '</span>'
+      + '<span class="libGTArrow" aria-hidden="true"></span>';
+    head.addEventListener("click", ()=>{
+      const collapsed = group.classList.toggle("collapsed");
+      if(collapsed) libOpenBooks.delete(bk);
+      else{
+        libOpenBooks.add(bk);
+        /* 展开靠下的册时，把它带进可视区，免得只看到半截内容 */
+        group.scrollIntoView({block:"nearest", behavior:"smooth"});
+      }
+    });
+    group.appendChild(head);
+
     const chipsBox = document.createElement("div");
     chipsBox.className = "libChips";
     items.forEach(({file, tag}) => {
@@ -401,6 +425,7 @@ function renderLibChips(){
     group.appendChild(chipsBox);
     groupsBox.appendChild(group);
   });
+  if(panel) panel.scrollTop = keepScroll;
   /* ===== 自定义词库 ===== */
   const customBox = $("customChips");
   customBox.innerHTML = "";

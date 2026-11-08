@@ -216,7 +216,12 @@ $("clearBtn").addEventListener("click", async ()=>{
 /* ================== 词库弹窗 ================== */
 $("openLibModal").addEventListener("click", ()=>{
   tempUnits = S.units.slice();
+  /* 每次打开：只展开已选词库所在的册，其余收起 */
+  libOpenBooks = new Set(tempUnits.map(bookOfTag).filter(Boolean));
   renderLibChips();
+  /* 每次打开从顶部开始，否则会停在上次浏览的位置、连册标题都看不到 */
+  const libPanel = $("builtinPanel");
+  if(libPanel) libPanel.scrollTop = 0;
   /* 每次打开默认显示内置词库选项卡 */
   switchLibTab("builtin");
   $("libModal").classList.remove("hidden");

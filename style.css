@@ -492,14 +492,26 @@
   .libModalBox{display:flex;flex-direction:column;overflow:hidden;max-height:82vh;}
   .libModalBox .btnRow{flex:none;}
 
-  /* ============ 内置词库按册分组 ============ */
-  .libGroup{margin-bottom:22px;}
+  /* ============ 内置词库按册分组（可折叠） ============ */
+  .libGroup{margin-bottom:12px;}
   .libGroup:last-child{margin-bottom:0;}
-  .libGroupTitle{font-size:21px;font-weight:800;color:var(--ink);
-                 padding:6px 14px;margin-bottom:12px;
-                 border-left:5px solid var(--blue);
+  .libGroupTitle{display:flex;align-items:center;gap:12px;width:100%;
+                 font:inherit;font-size:21px;font-weight:800;color:var(--ink);
+                 text-align:left;padding:10px 16px;margin-bottom:12px;cursor:pointer;
+                 border:none;border-left:5px solid var(--blue);
                  background:linear-gradient(90deg,var(--blue-bg),transparent);
-                 border-radius:0 8px 8px 0;}
+                 border-radius:0 8px 8px 0;transition:background .15s;}
+  .libGroupTitle:hover{background:linear-gradient(90deg,#d9e6fc,#eef4fe);}
+  .libGroupTitle:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .libGTName{flex:none;}
+  .libGTMeta{font-size:17px;font-weight:600;color:var(--muted);margin-left:auto;}
+  .libGTArrow{flex:none;width:20px;height:20px;position:relative;color:var(--blue-d);}
+  .libGTArrow::before{content:"";position:absolute;left:3px;top:4px;width:9px;height:9px;
+                      border-right:3px solid currentColor;border-bottom:3px solid currentColor;
+                      transform:rotate(-45deg);transition:transform .18s;}
+  .libGroup:not(.collapsed) .libGTArrow::before{transform:rotate(45deg);}
+  .libGroup.collapsed .libChips{display:none;}
+  .libGroup.collapsed .libGroupTitle{margin-bottom:0;}
   .libGroup .libChips{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
 
   /* 擂台设置：设置项与小号解释 */

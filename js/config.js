@@ -61,6 +61,7 @@ let S = {
 let redName = "", blueName = "", champFixed = false, manualMode = false, drawnPool = [];
 let pickSide = "red";       /* 选名弹窗当前选中方 */
 let tempUnits = [];          /* 词库弹窗临时选择 */
+let libOpenBooks = new Set();  /* 词库弹窗里已展开的册（b1~b5）；默认只展开有已选词库的册 */
 let pendingClass = "";       /* 导入名单时暂存班级名 */
 let pendingImportInEditor = false;  /* 导入是否从名单编辑器发起（决定导入后刷新范围） */
 
