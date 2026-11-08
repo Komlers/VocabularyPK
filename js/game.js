@@ -336,12 +336,15 @@ function endBattle(){
   else if(a!==b) beep(660,.3); else beep(440,.3);
   show("result");
   $("winName").textContent = title;
-  $("winName").style.color = (S.solo || a===b) ? "#3a4150" : (a>b ? "#e05555" : "#4a7fe0");
+  S.resultTitle = title;
+  S.resultColor = (S.solo || a===b) ? "#3a4150" : (a>b ? "#e05555" : "#4a7fe0");
+  $("winName").style.color = S.resultColor;
   /* 临时体验（无班级）不写战绩，结算页明确告知；单人作答同样不区分胜负 */
   const scopeTxt = S.revival ? "错词加时赛"
     : (S.solo
         ? ("单人作答" + (S.cls ? "" : " · 不记录战绩"))
         : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩"));
+  S.resultScope = scopeTxt;
   /* 正答 / 错答：单人作答把两侧合并成一个人的成绩 */
   const accHtml = S.solo
     ? '<div class="accRow"><div class="acc red"><b>' + (S.right[0] + S.right[1]) + "/" + (S.bad[0] + S.bad[1]) + '</b><i>正答/错答</i></div></div>'
@@ -373,68 +376,130 @@ function endBattle(){
   }
 }
 
-/* ================== 保存作答结果 ==================
-   结算页点「保存作答结果」时导出一份 txt：时间、班级、模式、词库、
-   时长与题量、双方得分与正误、本局错词清单。纯文本，任何设备都能打开。 */
-function resultText(){
-  const pad = n => String(n).padStart(2, "0");
+/* ================== 保存作答结果（导出独立 HTML） ==================
+   把结算页原样存成一份可离线打开的网页：奖杯、标题、比分、正误、题量、错词本都在；
+   去掉「返回主页 / 加时赛 / 保存」这些在线交互按钮，只留信息。 */
+function pad2(n){ return String(n).padStart(2, "0"); }
+function resultStamp(){
   const d = new Date();
-  const day = d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
-  const hm  = pad(d.getHours()) + ":" + pad(d.getMinutes());
-  const dur = S.dur >= 60 ? (S.dur/60) + " 分钟" : S.dur + " 秒";
-  const mode = S.revival ? "错词加时赛" : (S.solo ? "单人作答" : "双人对战");
+  return {
+    day: d.getFullYear() + "-" + pad2(d.getMonth()+1) + "-" + pad2(d.getDate()),
+    hm: pad2(d.getHours()) + ":" + pad2(d.getMinutes()),
+    file: "" + d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate())
+      + "_" + pad2(d.getHours()) + pad2(d.getMinutes())
+  };
+}
+
+/* 导出的网页自带样式，不依赖 style.css，双击就能看 */
+const RESULT_HTML_CSS = [
+":root{--red:#e05555;--red-d:#c0392b;--red-bg:#fdecea;--blue:#4a7fe0;--blue-d:#2c5cb8;",
+"      --ink:#1f242e;--ink2:#3a4150;--muted:#79808f;--line:#e3e8f1;--ok:#27a457;--ok-bg:#e9f9ef;}",
+"*{box-sizing:border-box;}",
+"body{margin:0;min-height:100vh;font-family:'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif;",
+"     font-size:26px;line-height:1.42;color:var(--ink);background-color:#eef1f8;",
+"     background-image:radial-gradient(1100px 620px at 50% -8%,#fff 0%,#eef1f8 58%,#e6ebf5 100%);}",
+".wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;",
+"      padding:30px 6vw;text-align:center;}",
+".crown{font-size:88px;line-height:1.1;}",
+".win{font-size:58px;font-weight:800;margin:8px 0 6px;line-height:1.2;}",
+".score{font-size:40px;color:var(--ink2);margin-bottom:6px;}",
+".score .r{color:var(--red);font-weight:800;}",
+".score .b{color:var(--blue);font-weight:800;}",
+".accRow{display:flex;justify-content:center;gap:64px;margin-top:10px;}",
+".acc{display:flex;flex-direction:column;align-items:center;line-height:1.15;}",
+".acc b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;}",
+".acc.red b{color:var(--red);}",
+".acc.blue b{color:var(--blue);}",
+".acc i{font-style:normal;font-size:20px;color:var(--muted);letter-spacing:1px;margin-top:2px;}",
+".mini{font-size:21px;color:var(--muted);margin-top:8px;}",
+".wrongBox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 26px;",
+"          max-width:900px;width:100%;box-shadow:0 3px 14px rgba(28,39,72,.06);margin-top:26px;}",
+".wrongBox h4{font-size:28px;color:var(--red-d);margin:0 0 14px;}",
+".chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}",
+".chips span{background:var(--red-bg);color:var(--red-d);border-radius:12px;padding:8px 18px;font-size:26px;}",
+".chips span.ok{background:var(--ok-bg);color:#1d7a3f;}",
+".foot{margin-top:26px;font-size:18px;color:var(--muted);letter-spacing:1px;}",
+"@media (max-width:820px){",
+"  .win{font-size:40px;} .score{font-size:30px;} .crown{font-size:64px;}",
+"  .accRow{gap:40px;} .acc b{font-size:24px;} .acc i{font-size:15px;}",
+"  .wrongBox h4{font-size:22px;} .chips span{font-size:22px;} .mini{font-size:18px;} .foot{font-size:15px;}",
+"}",
+"@media print{",
+"  body{background:#fff;}",
+"  .wrap{min-height:auto;padding:24px;}",
+"  .wrongBox{box-shadow:none;}",
+"}"
+].join("\n");
+
+function buildResultHtml(){
   const [a, b] = S.scores;
-  const out = [];
-  out.push("词汇擂台 PK · 作答结果");
-  out.push("时间：" + day + " " + hm);
-  out.push("班级：" + (S.cls || "临时体验（未选班级）"));
-  out.push("模式：" + mode);
-  out.push("词库：" + (S.units.length ? S.units.join(" + ") + "（" + S.units.length + " 个）" : "未选择"));
-  out.push("时长：" + dur + " · 共答 " + S.asked + " 道题");
-  out.push("");
-  if(S.solo){
-    out.push("选手：" + dispName(S.p1));
-    out.push("得分：" + a + " 分");
-    out.push("正答/错答：" + (S.right[0] + S.right[1]) + " / " + (S.bad[0] + S.bad[1]));
-  }else{
-    out.push("红方：" + dispName(S.p1) + "　" + a + " 分　正答/错答 " + S.right[0] + "/" + S.bad[0]);
-    out.push("蓝方：" + dispName(S.p2) + "　" + b + " 分　正答/错答 " + S.right[1] + "/" + S.bad[1]);
-    out.push("结果：" + (a === b ? "平局" : (a > b ? dispName(S.p1) : dispName(S.p2)) + " 获胜"));
-  }
-  const wrongs = [...S.wrongSet].map(w=>{
-    const p = w.split("|");
-    return p[1] ? p[0] + "　" + p[1] : p[0];
-  });
-  out.push("");
-  if(wrongs.length){
-    out.push("错词/错块（" + wrongs.length + " 条）：");
-    wrongs.forEach((w, i) => out.push("  " + (i+1) + ". " + w));
-  }else{
-    out.push("错词/错块：无（全对）");
-  }
-  return out.join("\r\n");
+  const st = resultStamp();
+  const dur = S.dur >= 60 ? (S.dur/60) + " 分钟" : S.dur + " 秒";
+  const title = S.resultTitle || (dispName(S.p1) + " 完成作答");
+  const color = S.resultColor || "#3a4150";
+  const score = S.solo
+    ? '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span>"
+    : '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span> : " + b
+      + ' <span class="b">' + esc(dispName(S.p2)) + "</span>";
+  const acc = S.solo
+    ? '<div class="accRow"><div class="acc red"><b>' + (S.right[0] + S.right[1]) + "/" + (S.bad[0] + S.bad[1])
+      + '</b><i>正答/错答</i></div></div>'
+    : '<div class="accRow">'
+      + '<div class="acc red"><b>' + S.right[0] + "/" + S.bad[0] + '</b><i>正答/错答</i></div>'
+      + '<div class="acc blue"><b>' + S.right[1] + "/" + S.bad[1] + '</b><i>正答/错答</i></div>'
+      + "</div>";
+  const wrongs = [...S.wrongSet].map(w => w.split("|"));
+  const chips = wrongs.length
+    ? wrongs.map(([en, cn]) => "<span>" + esc(en) + (cn ? "　" + esc(cn) : "") + "</span>").join("")
+    : '<span class="ok">全对！零错词 🎉</span>';
+  const cls = S.cls ? esc(S.cls) : "临时体验（未选班级）";
+  return [
+    "<!DOCTYPE html>",
+    '<html lang="zh-CN">',
+    "<head>",
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    "<title>词汇擂台 PK · " + esc(title) + "</title>",
+    "<style>",
+    RESULT_HTML_CSS,
+    "</style>",
+    "</head>",
+    "<body>",
+    '<div class="wrap">',
+    '<div class="crown">🏆</div>',
+    '<div class="win" style="color:' + color + '">' + esc(title) + "</div>",
+    '<div class="score">' + score + "</div>",
+    acc,
+    '<div class="mini">' + esc(S.resultScope || "")
+      + " · " + dur + " · 共答 " + S.asked + " 道题</div>",
+    '<div class="wrongBox">',
+    "<h4>错词/错块本（本局错的单词与词块）</h4>",
+    '<div class="chips">' + chips + "</div>",
+    "</div>",
+    '<div class="foot">' + cls + "　·　" + st.day + " " + st.hm + "　·　词汇擂台 PK</div>",
+    "</div>",
+    "</body>",
+    "</html>"
+  ].join("\n");
 }
+
 function resultFileName(){
-  const pad = n => String(n).padStart(2, "0");
-  const d = new Date();
-  const stamp = "" + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate())
-    + "_" + pad(d.getHours()) + pad(d.getMinutes());
   const cls = (S.cls || "临时体验").replace(/[\\/:*?"<>|\s]/g, "");
-  return "词汇擂台_" + cls + "_" + stamp + ".txt";
+  return "词汇擂台_" + cls + "_" + resultStamp().file + ".html";
 }
+
 function saveResult(){
   const name = resultFileName();
   try{
-    /* 带 BOM，Windows 记事本打开不会乱码 */
-    const blob = new Blob(["\uFEFF" + resultText()], {type:"text/plain;charset=utf-8"});
+    const blob = new Blob([buildResultHtml()], {type:"text/html;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url; a.download = name;
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url), 3000);
-    dlgAlert("已保存「" + esc(name) + "」<br>文件在浏览器的下载目录里。",
+    setTimeout(()=>URL.revokeObjectURL(url), 15000);
+    dlgAlert("已保存「" + esc(name) + "」<br>双击就能用浏览器打开，也可以直接发给学生。",
       { type:"success", title:"已保存", html:true });
   }catch(e){
     dlgAlert("保存失败：" + e.message, { type:"error", title:"保存失败" });
