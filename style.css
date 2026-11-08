@@ -492,17 +492,19 @@
   .libModalBox{display:flex;flex-direction:column;overflow:hidden;max-height:82vh;}
   .libModalBox .btnRow{flex:none;}
 
-  /* ============ 内置词库按册分组（可折叠） ============ */
+  /* ============ 内置词库按册分组（可折叠 + 每册全选/清空） ============ */
   .libGroup{margin-bottom:12px;}
   .libGroup:last-child{margin-bottom:0;}
-  .libGroupTitle{display:flex;align-items:center;gap:12px;width:100%;
+  .libGroupHead{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 16px;
+                margin-bottom:12px;border-left:5px solid var(--blue);
+                border-radius:0 8px 8px 0;
+                background:linear-gradient(90deg,var(--blue-bg),transparent);
+                transition:background .15s;}
+  .libGroupHead:hover{background:linear-gradient(90deg,#d9e6fc,#eef4fe);}
+  .libGroupTitle{display:flex;align-items:center;gap:12px;flex:1;min-width:0;
                  font:inherit;font-size:21px;font-weight:800;color:var(--ink);
-                 text-align:left;padding:10px 16px;margin-bottom:12px;cursor:pointer;
-                 border:none;border-left:5px solid var(--blue);
-                 background:linear-gradient(90deg,var(--blue-bg),transparent);
-                 border-radius:0 8px 8px 0;transition:background .15s;}
-  .libGroupTitle:hover{background:linear-gradient(90deg,#d9e6fc,#eef4fe);}
-  .libGroupTitle:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+                 text-align:left;padding:2px 0;border:none;background:transparent;cursor:pointer;}
+  .libGroupTitle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px;}
   .libGTName{flex:none;}
   .libGTMeta{font-size:17px;font-weight:600;color:var(--muted);margin-left:auto;}
   .libGTArrow{flex:none;width:20px;height:20px;position:relative;color:var(--blue-d);}
@@ -511,8 +513,20 @@
                       transform:rotate(-45deg);transition:transform .18s;}
   .libGroup:not(.collapsed) .libGTArrow::before{transform:rotate(45deg);}
   .libGroup.collapsed .libChips{display:none;}
-  .libGroup.collapsed .libGroupTitle{margin-bottom:0;}
+  .libGroup.collapsed .libGroupHead{margin-bottom:0;}
   .libGroup .libChips{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
+
+  /* 全选 / 清空按钮：每册一个，顶部一行管全部单元 */
+  .libGTActs{display:flex;gap:8px;flex:none;}
+  .libAct{font:inherit;font-size:16px;font-weight:700;color:var(--blue-d);background:#fff;
+          border:2px solid #c9d8f2;border-radius:10px;padding:3px 12px;cursor:pointer;
+          transition:all .15s;}
+  .libAct:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .libAct:active{transform:scale(.95);}
+  .libBulkRow{display:flex;flex:none;align-items:center;gap:8px;
+              padding:2px 0 10px;margin:0 0 2px;
+              box-shadow:0 9px 12px -9px rgba(30,50,90,.35);}
+  .libBulkInfo{font-size:17px;color:var(--muted);letter-spacing:.5px;margin-right:auto;}
 
   /* 擂台设置：设置项与小号解释 */
   /* 设置项较多，弹窗允许更高一些，常见 1080p 屏可一屏放下 */

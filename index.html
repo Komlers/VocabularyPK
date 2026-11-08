@@ -133,6 +133,12 @@
       <button class="libTab active" data-tab="builtin">📚 内置词库</button>
       <button class="libTab" data-tab="custom">📥 自定义词库</button>
     </div>
+    <!-- 全部内置单元的全选 / 清空：固定在滚动区外，始终可见 -->
+    <div class="libBulkRow" id="libBulkRow">
+      <span class="libBulkInfo">全部单元</span>
+      <button class="libAct" id="libSelectAll">全选</button>
+      <button class="libAct" id="libSelectNone">清空</button>
+    </div>
     <!-- 内置词库面板（按册分组） -->
     <div class="libTabPanel" id="builtinPanel">
       <div class="libGroups" id="builtinGroups"></div>

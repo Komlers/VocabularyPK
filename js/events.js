@@ -230,12 +230,17 @@ $("libCancel").addEventListener("click", ()=>$("libModal").classList.add("hidden
 $("libModal").addEventListener("click", e=>{
   if(e.target.classList.contains("modalMask")) $("libModal").classList.add("hidden");
 });
+/* 全部内置单元：一键全选 / 清空（自定义词库不受影响，它在另一个页签） */
+$("libSelectAll").addEventListener("click", ()=>setLibUnits(builtinTags(), true));
+$("libSelectNone").addEventListener("click", ()=>setLibUnits(builtinTags(), false));
 
 /* ================== 词库选项卡切换 ================== */
 function switchLibTab(name){
   document.querySelectorAll(".libTab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
   $("builtinPanel").classList.toggle("hidden", name !== "builtin");
   $("customPanel").classList.toggle("hidden", name !== "custom");
+  /* 全选 / 清空只管内置单元，切到自定义页签时收起 */
+  $("libBulkRow").classList.toggle("hidden", name !== "builtin");
 }
 document.querySelectorAll(".libTab").forEach(tab => {
   tab.addEventListener("click", () => switchLibTab(tab.dataset.tab));

@@ -382,6 +382,17 @@ function bookOfTag(tag){
   return m ? m[1] : "";
 }
 
+/* 内置词库的全部 tag */
+function builtinTags(){
+  return WORD_BANK_FILES.filter(x => x.file !== "custom").map(x => x.tag);
+}
+/* 批量选中 / 取消：一次改完再重绘，避免连点多次 */
+function setLibUnits(tags, on){
+  if(on) tags.forEach(t => { if(!tempUnits.includes(t)) tempUnits.push(t); });
+  else tempUnits = tempUnits.filter(t => !tags.includes(t));
+  renderLibChips();
+}
+
 function renderLibChips(){
   /* ===== 内置词库：按册分组，每册可折叠（默认收起，已选词库所在册展开） ===== */
   const groupsBox = $("builtinGroups");
@@ -395,15 +406,22 @@ function renderLibChips(){
     if(!items.length) return;
     const group = document.createElement("div");
     group.className = "libGroup" + (libOpenBooks.has(bk) ? "" : " collapsed");
+    group.dataset.book = bk;
 
+    const tags = items.map(x => x.tag);
     const picked = items.filter(x => tempUnits.includes(x.tag)).length;
-    const head = document.createElement("button");
-    head.type = "button";
-    head.className = "libGroupTitle";
-    head.innerHTML = '<span class="libGTName">' + bookNames[bk] + '</span>'
+
+    /* 标题条：左侧是可点击的折叠开关，右侧是本册的全选 / 清空 */
+    const head = document.createElement("div");
+    head.className = "libGroupHead";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "libGroupTitle";
+    toggle.innerHTML = '<span class="libGTName">' + bookNames[bk] + '</span>'
       + '<span class="libGTMeta">' + (picked ? "已选 " + picked + " 个" : "共 " + items.length + " 个单元") + '</span>'
       + '<span class="libGTArrow" aria-hidden="true"></span>';
-    head.addEventListener("click", ()=>{
+    toggle.addEventListener("click", ()=>{
       const collapsed = group.classList.toggle("collapsed");
       if(collapsed) libOpenBooks.delete(bk);
       else{
@@ -412,6 +430,26 @@ function renderLibChips(){
         group.scrollIntoView({block:"nearest", behavior:"smooth"});
       }
     });
+    head.appendChild(toggle);
+
+    const acts = document.createElement("span");
+    acts.className = "libGTActs";
+    const mkAct = (label, fn) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "libAct";
+      btn.textContent = label;
+      btn.addEventListener("click", fn);
+      return btn;
+    };
+    acts.appendChild(mkAct("全选", ()=>{
+      libOpenBooks.add(bk);          /* 选完顺手展开，让用户看到结果 */
+      setLibUnits(tags, true);
+      const g = groupsBox.querySelector('.libGroup[data-book="' + bk + '"]');
+      if(g) g.scrollIntoView({block:"nearest", behavior:"smooth"});
+    }));
+    acts.appendChild(mkAct("清空", ()=> setLibUnits(tags, false)));
+    head.appendChild(acts);
     group.appendChild(head);
 
     const chipsBox = document.createElement("div");
