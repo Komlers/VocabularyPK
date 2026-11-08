@@ -173,27 +173,37 @@
 
   /* ============ 对战页 ============ */
   #battle{padding:0;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 4vw 6px;gap:2vw;}
-  .pcard{flex:1;border-radius:18px;padding:12px 22px;display:flex;align-items:center;
-         justify-content:space-between;gap:16px;}
+  /* 左右留出角按钮（安装 / 全屏）的宽度，避免名字与统计被压住 */
+  .topbar{display:flex;align-items:center;justify-content:space-between;
+          padding:16px max(4vw,118px) 6px;gap:2vw;}
+  .pcard{flex:1;border-radius:18px;padding:9px 22px 10px;display:flex;flex-direction:column;
+         justify-content:center;gap:1px;}
+  .prow{display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .pcard.red{background:var(--red-bg);border:2px solid #f0b4b4;}
   .pcard.blue{background:var(--blue-bg);border:2px solid #b6cbf4;}
   .pinfo{display:flex;flex-direction:column;min-width:0;}
   .pinfo.right{align-items:flex-end;text-align:right;}
-  .prole{font-size:19px;color:var(--muted);letter-spacing:1px;margin-bottom:2px;}
+  .prole{font-size:19px;color:var(--muted);letter-spacing:1px;line-height:1.15;}
   .pname{font-size:32px;font-weight:800;max-width:8em;overflow:hidden;
-         text-overflow:ellipsis;white-space:nowrap;line-height:1.2;}
+         text-overflow:ellipsis;white-space:nowrap;line-height:1.12;}
   .pcard.red .pname{color:var(--red-d);} .pcard.blue .pname{color:var(--blue-d);}
   .pscore{font-size:52px;font-weight:800;line-height:1;}
   .pcard.red .pscore{color:var(--red);} .pcard.blue .pscore{color:var(--blue);}
+  /* 实时统计：对 / 错 / 总，独占卡片下方一行，随分数一侧对齐 */
+  .pmeter{font-size:18px;color:var(--muted);white-space:nowrap;letter-spacing:.5px;text-align:right;}
+  .pcard.blue .pmeter{text-align:left;}
+  .pmeter b{font-size:19px;font-weight:800;color:var(--ink2);margin:0 1px;}
   .timerWrap{flex:none;text-align:center;padding:0 8px;}
-  /* 单人作答：左边只显示名字，右边显示分数与实时统计；两卡等宽，计时器仍在正中。
-     左右留出角按钮的宽度，避免统计文字被「安装 / 退出」压住 */
-  .topbar.solo{padding-left:max(4vw,118px);padding-right:max(4vw,118px);}
+  /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽、计时器仍在正中 */
   .soloStats{display:none;flex-direction:column;align-items:flex-end;gap:1px;
              font-size:19px;color:var(--muted);line-height:1.25;white-space:nowrap;}
   .soloStats b{font-size:24px;font-weight:800;color:var(--ink2);margin:0 2px;}
-  .topbar.solo .pcard.red .pscore{display:none;}
+  /* 单人作答：左边只显示名字，右边显示分数与实时统计，计时器仍在正中 */
+  .topbar.solo .pcard.red .pscore,
+  .topbar.solo .pcard.red .pmeter{display:none;}
+  /* 对错统计在右侧 .soloStats 里，分数下方不再重复显示；卡片恢复横排 */
+  .topbar.solo .pcard.blue{flex-direction:row;align-items:center;justify-content:space-between;}
+  .topbar.solo .pcard.blue .pmeter{display:none;}
   .topbar.solo .pcard.blue .pinfo{display:none;}
   .topbar.solo .pcard.blue .soloStats{display:flex;}
   .tlabel{font-size:19px;color:var(--muted);letter-spacing:1px;}

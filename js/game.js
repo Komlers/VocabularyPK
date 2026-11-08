@@ -32,6 +32,7 @@ function startBattle(revival){
   /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽保证计时器居中 */
   const topbar = document.querySelector(".topbar");
   if(topbar) topbar.classList.toggle("solo", !!S.solo);
+  syncMeter();
   syncSoloStats();
   show("battle");
   nextQuestion();
@@ -200,7 +201,17 @@ function score(k, ok){
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
     beep(220, .18);
   }
+  syncMeter();
   syncSoloStats();
+}
+/* 双方各自的实时统计：对 / 错 / 总（总 = 本人实际作答过的题数） */
+function syncMeter(){
+  [1,2].forEach(k=>{
+    const el = $("mt" + k);
+    if(!el) return;
+    const r = S.right[k-1], b = S.bad[k-1];
+    el.innerHTML = "对 <b>" + r + "</b> · 错 <b>" + b + "</b> · 总 <b>" + (r + b) + "</b>";
+  });
 }
 /* 单人作答：顶栏右侧实时统计——已答题数（有作答的）与两侧合并的正答 / 错答 */
 function syncSoloStats(){
