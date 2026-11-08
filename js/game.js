@@ -355,8 +355,6 @@ function endBattle(){
   $("finalScore").innerHTML = scoreHtml + accHtml
     + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒")
     + " · 共答 " + S.asked + " 道题</div>";
-  /* 单人作答没有“败者守擂/抽新蓝方”，按钮文案单独给 */
-  $("againBtn").textContent = S.solo ? "下一局：同一位选手再战" : "下一局：败者守擂，抽新蓝方";
   const wc = $("wrongChips");
   wc.innerHTML = "";
   const ws = [...S.wrongSet].map(w=>w.split("|"));
@@ -372,6 +370,74 @@ function endBattle(){
     wc.innerHTML = '<span style="background:#e8f8ee;color:#1d7a3f">全对！零错词 🎉</span>';
     $("wrongBox").classList.remove("hidden");
     $("reviveBtn").classList.add("hidden");
+  }
+}
+
+/* ================== 保存作答结果 ==================
+   结算页点「保存作答结果」时导出一份 txt：时间、班级、模式、词库、
+   时长与题量、双方得分与正误、本局错词清单。纯文本，任何设备都能打开。 */
+function resultText(){
+  const pad = n => String(n).padStart(2, "0");
+  const d = new Date();
+  const day = d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+  const hm  = pad(d.getHours()) + ":" + pad(d.getMinutes());
+  const dur = S.dur >= 60 ? (S.dur/60) + " 分钟" : S.dur + " 秒";
+  const mode = S.revival ? "错词加时赛" : (S.solo ? "单人作答" : "双人对战");
+  const [a, b] = S.scores;
+  const out = [];
+  out.push("词汇擂台 PK · 作答结果");
+  out.push("时间：" + day + " " + hm);
+  out.push("班级：" + (S.cls || "临时体验（未选班级）"));
+  out.push("模式：" + mode);
+  out.push("词库：" + (S.units.length ? S.units.join(" + ") + "（" + S.units.length + " 个）" : "未选择"));
+  out.push("时长：" + dur + " · 共答 " + S.asked + " 道题");
+  out.push("");
+  if(S.solo){
+    out.push("选手：" + dispName(S.p1));
+    out.push("得分：" + a + " 分");
+    out.push("正答/错答：" + (S.right[0] + S.right[1]) + " / " + (S.bad[0] + S.bad[1]));
+  }else{
+    out.push("红方：" + dispName(S.p1) + "　" + a + " 分　正答/错答 " + S.right[0] + "/" + S.bad[0]);
+    out.push("蓝方：" + dispName(S.p2) + "　" + b + " 分　正答/错答 " + S.right[1] + "/" + S.bad[1]);
+    out.push("结果：" + (a === b ? "平局" : (a > b ? dispName(S.p1) : dispName(S.p2)) + " 获胜"));
+  }
+  const wrongs = [...S.wrongSet].map(w=>{
+    const p = w.split("|");
+    return p[1] ? p[0] + "　" + p[1] : p[0];
+  });
+  out.push("");
+  if(wrongs.length){
+    out.push("错词/错块（" + wrongs.length + " 条）：");
+    wrongs.forEach((w, i) => out.push("  " + (i+1) + ". " + w));
+  }else{
+    out.push("错词/错块：无（全对）");
+  }
+  return out.join("\r\n");
+}
+function resultFileName(){
+  const pad = n => String(n).padStart(2, "0");
+  const d = new Date();
+  const stamp = "" + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate())
+    + "_" + pad(d.getHours()) + pad(d.getMinutes());
+  const cls = (S.cls || "临时体验").replace(/[\\/:*?"<>|\s]/g, "");
+  return "词汇擂台_" + cls + "_" + stamp + ".txt";
+}
+function saveResult(){
+  const name = resultFileName();
+  try{
+    /* 带 BOM，Windows 记事本打开不会乱码 */
+    const blob = new Blob(["\uFEFF" + resultText()], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 3000);
+    dlgAlert("已保存「" + esc(name) + "」<br>文件在浏览器的下载目录里。",
+      { type:"success", title:"已保存", html:true });
+  }catch(e){
+    dlgAlert("保存失败：" + e.message, { type:"error", title:"保存失败" });
   }
 }
 

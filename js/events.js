@@ -484,15 +484,9 @@ $("side1").addEventListener("click", e=>answer(1, e));
 $("side2").addEventListener("click", e=>answer(2, e));
 
 /* ================== 结算页按钮 ================== */
-$("againBtn").addEventListener("click", ()=>{
-  /* 败者/连击低者守擂：红方已定，只需重抽蓝方；全对平局则擂主已清空，红蓝都重抽。
-     临时体验没有班级可存擂主，用本会话的 S.trialChamp 承接。
-     单人作答没有对手，直接沿用同一位选手再开一局。 */
-  if(S.solo){ redName = S.p1; blueName = ""; }
-  else { redName = S.cls ? loadChamp(S.cls) : S.trialChamp; blueName = ""; }
-  champFixed = !!redName;
-  show("setup"); refreshNameBoxes(); renderHistory();
-});
+/* 「下一局」已并入「返回主页」：主页会按擂主规则回填红方，重开一局更快。
+   这里只保留保存作答结果。 */
+$("saveBtn").addEventListener("click", saveResult);
 $("reviveBtn").addEventListener("click", ()=>startBattle(true));
 $("homeBtn").addEventListener("click", ()=>{
   show("setup");
