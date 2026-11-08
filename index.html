@@ -419,24 +419,22 @@
 <div id="battle" class="screen hidden">
   <div class="topbar">
     <div class="pcard red">
-      <div class="prow">
-        <div class="pinfo"><span class="prole">🛡 擂主 · 红方</span><span class="pname" id="n1"></span></div>
-        <span class="pscore" id="s1">0</span>
+      <div class="pinfo"><span class="prole">🛡 擂主 · 红方</span><span class="pname" id="n1"></span></div>
+      <!-- 实时统计：已答题数 + 正答/错答，与名字同一行 -->
+      <div class="pstats">
+        <span>已答 <b id="qd1">0</b> 题</span>
+        <span>正 <b id="qr1">0</b> / 错 <b id="qw1">0</b></span>
       </div>
-      <span class="pmeter" id="mt1"></span>
+      <span class="pscore" id="s1">0</span>
     </div>
     <div class="timerWrap"><div class="tlabel">剩余时间</div><div class="timer" id="timer">3:00</div></div>
     <div class="pcard blue">
-      <div class="prow">
-        <span class="pscore" id="s2">0</span>
-        <div class="pinfo right"><span class="prole">⚔ 挑战 · 蓝方</span><span class="pname" id="n2"></span></div>
+      <span class="pscore" id="s2">0</span>
+      <div class="pstats">
+        <span>已答 <b id="qd2">0</b> 题</span>
+        <span>正 <b id="qr2">0</b> / 错 <b id="qw2">0</b></span>
       </div>
-      <span class="pmeter" id="mt2"></span>
-      <!-- 单人作答专用：右侧显示本人实时统计（分数 + 已答题数 + 正/错） -->
-      <div class="soloStats">
-        <span>已答 <b id="soloDone">0</b> 题</span>
-        <span>正 <b id="soloRight">0</b> / 错 <b id="soloBad">0</b></span>
-      </div>
+      <div class="pinfo right"><span class="prole">⚔ 挑战 · 蓝方</span><span class="pname" id="n2"></span></div>
     </div>
   </div>
   <div class="qzone">

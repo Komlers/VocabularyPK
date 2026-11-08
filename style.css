@@ -176,36 +176,33 @@
   /* 左右留出角按钮（安装 / 全屏）的宽度，避免名字与统计被压住 */
   .topbar{display:flex;align-items:center;justify-content:space-between;
           padding:16px max(4vw,118px) 6px;gap:2vw;}
-  .pcard{flex:1;border-radius:18px;padding:9px 22px 10px;display:flex;flex-direction:column;
-         justify-content:center;gap:1px;}
-  .prow{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .pcard{flex:1;min-width:0;border-radius:18px;padding:10px 22px;display:flex;align-items:center;gap:16px;}
   .pcard.red{background:var(--red-bg);border:2px solid #f0b4b4;}
   .pcard.blue{background:var(--blue-bg);border:2px solid #b6cbf4;}
-  .pinfo{display:flex;flex-direction:column;min-width:0;}
+  .pinfo{display:flex;flex-direction:column;min-width:0;overflow:hidden;}
   .pinfo.right{align-items:flex-end;text-align:right;}
-  .prole{font-size:19px;color:var(--muted);letter-spacing:1px;line-height:1.15;}
+  .prole{font-size:19px;color:var(--muted);letter-spacing:1px;line-height:1.15;
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
   .pname{font-size:32px;font-weight:800;max-width:8em;overflow:hidden;
          text-overflow:ellipsis;white-space:nowrap;line-height:1.12;}
   .pcard.red .pname{color:var(--red-d);} .pcard.blue .pname{color:var(--blue-d);}
   .pscore{font-size:52px;font-weight:800;line-height:1;}
   .pcard.red .pscore{color:var(--red);} .pcard.blue .pscore{color:var(--blue);}
-  /* 实时统计：对 / 错 / 总，独占卡片下方一行，随分数一侧对齐 */
-  .pmeter{font-size:18px;color:var(--muted);white-space:nowrap;letter-spacing:.5px;text-align:right;}
-  .pcard.blue .pmeter{text-align:left;}
-  .pmeter b{font-size:19px;font-weight:800;color:var(--ink2);margin:0 1px;}
+  /* 分数推到卡片另一头，统计紧挨着自己名字 */
+  .pcard.red .pscore{margin-left:auto;}
+  .pcard.blue .pscore{margin-right:auto;}
+  /* 双人对战：角色小字与两行统计、大分数同排太挤，比赛中只留名字（单人模式仍有位置） */
+  .topbar:not(.solo) .prole{display:none;}
+  /* 实时统计：已答题数 + 正答/错答，与名字同一行 */
+  .pstats{display:flex;flex-direction:column;gap:1px;
+          font-size:19px;color:var(--muted);line-height:1.25;white-space:nowrap;}
+  .pstats b{font-size:24px;font-weight:800;color:var(--ink2);margin:0 2px;}
+  .pcard.blue .pstats{align-items:flex-end;}
   .timerWrap{flex:none;text-align:center;padding:0 8px;}
-  /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽、计时器仍在正中 */
-  .soloStats{display:none;flex-direction:column;align-items:flex-end;gap:1px;
-             font-size:19px;color:var(--muted);line-height:1.25;white-space:nowrap;}
-  .soloStats b{font-size:24px;font-weight:800;color:var(--ink2);margin:0 2px;}
   /* 单人作答：左边只显示名字，右边显示分数与实时统计，计时器仍在正中 */
   .topbar.solo .pcard.red .pscore,
-  .topbar.solo .pcard.red .pmeter{display:none;}
-  /* 对错统计在右侧 .soloStats 里，分数下方不再重复显示；卡片恢复横排 */
-  .topbar.solo .pcard.blue{flex-direction:row;align-items:center;justify-content:space-between;}
-  .topbar.solo .pcard.blue .pmeter{display:none;}
+  .topbar.solo .pcard.red .pstats{display:none;}
   .topbar.solo .pcard.blue .pinfo{display:none;}
-  .topbar.solo .pcard.blue .soloStats{display:flex;}
   .tlabel{font-size:19px;color:var(--muted);letter-spacing:1px;}
   .timer{font-size:52px;font-weight:800;color:var(--ink2);min-width:2.4em;line-height:1.05;}
   .timer.warn{color:var(--red);animation:blink 1s infinite;}
@@ -274,6 +271,23 @@
   #reviveBtn{background:#fff5dc;color:#9a6a00;border:2px solid #f0d089 !important;}
 
   /* ============ 小屏适配 ============ */
+  /* 顶栏变窄时：先收起角色小字、字号降一档，保证「名字 + 统计 + 分数」三块并排 */
+  @media (max-width:1279px){
+    .pcard{gap:12px;padding:10px 16px;}
+    .pname{font-size:26px;}
+    .pscore{font-size:40px;}
+    .pstats{font-size:17px;}
+    .pstats b{font-size:21px;}
+  }
+  /* 1024 一类窄屏再降一档，避免名字被压成省略号 */
+  @media (max-width:1100px){
+    .pcard{gap:10px;padding:8px 14px;}
+    .pname{font-size:23px;}
+    .pscore{font-size:34px;}
+    .pstats{font-size:15px;}
+    .pstats b{font-size:18px;}
+  }
+
   @media (max-width:820px){
     body{font-size:22px;}
     #home,#setup1,#setup2,#setup3{padding:24px 5vw 26px;}

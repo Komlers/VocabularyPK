@@ -32,8 +32,7 @@ function startBattle(revival){
   /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽保证计时器居中 */
   const topbar = document.querySelector(".topbar");
   if(topbar) topbar.classList.toggle("solo", !!S.solo);
-  syncMeter();
-  syncSoloStats();
+  syncStats();
   show("battle");
   nextQuestion();
   clearInterval(S.timer);
@@ -201,26 +200,26 @@ function score(k, ok){
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
     beep(220, .18);
   }
-  syncMeter();
-  syncSoloStats();
+  syncStats();
 }
-/* 双方各自的实时统计：对 / 错 / 总（总 = 本人实际作答过的题数） */
-function syncMeter(){
+/* 顶栏实时统计（每判定一题刷新一次）：
+   双人 —— 各自「已答题数（= 正 + 错）」与正答 / 错答；
+   单人 —— 右侧显示本回合已答题数（S.done）与两侧合并的正误，左侧卡片收起。 */
+function syncStats(){
+  const put = (id, v) => { const el = $(id); if(el) el.textContent = v; };
+  if(S.solo){
+    put("qd2", S.done || 0);
+    put("qr2", S.right[0] + S.right[1]);
+    put("qw2", S.bad[0] + S.bad[1]);
+    return;
+  }
   [1,2].forEach(k=>{
-    const el = $("mt" + k);
-    if(!el) return;
-    const r = S.right[k-1], b = S.bad[k-1];
-    el.innerHTML = "对 <b>" + r + "</b> · 错 <b>" + b + "</b> · 总 <b>" + (r + b) + "</b>";
+    put("qd" + k, S.right[k-1] + S.bad[k-1]);
+    put("qr" + k, S.right[k-1]);
+    put("qw" + k, S.bad[k-1]);
   });
 }
-/* 单人作答：顶栏右侧实时统计——已答题数（有作答的）与两侧合并的正答 / 错答 */
-function syncSoloStats(){
-  if(!S.solo) return;
-  const put = (id, v) => { const el = $(id); if(el) el.textContent = v; };
-  put("soloDone", S.done || 0);
-  put("soloRight", S.right[0] + S.right[1]);
-  put("soloBad", S.bad[0] + S.bad[1]);
-}
+
 function answer(k, e){
   if(S.locked[k-1] || S.pendingNext) return;
   const btn = e.target;
