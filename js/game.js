@@ -175,10 +175,12 @@ function score(k, ok){
       S.scores[k-1] = after;
       $("s"+k).textContent = after;
     }
-    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧；已到满分则不飘字 */
+    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧；已到满分则提示「已满」 */
     const gain = after - before;
-    if(gain > 0)
-      fx("+" + gain, S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0"), S.solo ? 82 : (k===1 ? 18 : 82));
+    const fxColor = S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0");
+    const fxPos = S.solo ? 82 : (k===1 ? 18 : 82);
+    if(gain > 0) fx("+" + gain, fxColor, fxPos);
+    else if(limited) fx("已满", "#9aa3b2", fxPos);
     if(!S.revival && !limited && S.streak[k-1] >= 2)
       $("st"+k).textContent = "🔥 " + S.streak[k-1] + " 连击！";
     beep(880, .12);
@@ -309,11 +311,13 @@ function endBattle(){
      临时体验（无班级，手输名字试玩）同样不落库，只在本次会话里保留比分与错词 */
   if(!S.revival && !S.noRecord && S.cls){
     const h = loadHis(S.cls);
+    /* 限分模式把模式与满分一并记下，战绩列表里可回看是哪一种玩法 */
+    const modeInfo = S.scoreMode === "open" ? {} : { mode:S.scoreMode, cap:S.scoreCap };
     if(S.solo){
       /* 单人作答按「单人记录」保存：只有名字、总分与题量，不参与胜负统计与擂主 */
-      h.matches.push({t:Date.now(), solo:1, p:S.p1, s:a, unit:S.units.join("+")});
+      h.matches.push(Object.assign({t:Date.now(), solo:1, p:S.p1, s:a, unit:S.units.join("+")}, modeInfo));
     }else{
-      h.matches.push({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, unit:S.units.join("+")});
+      h.matches.push(Object.assign({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, unit:S.units.join("+")}, modeInfo));
       [S.p1, S.p2].forEach((n,i)=>{
         if(S.maxStreak[i] > (h.streaks[n]||0)) h.streaks[n] = S.maxStreak[i];
       });

@@ -224,15 +224,18 @@ function renderHistory(){
         list += '<div class="dateHead">' + dayLabel(d) + ' <i>' + dayCount[k] + ' 场</i></div>';
       }
       const hm = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+      /* 限分模式的历史记录带一枚模式标签，旧记录没有该字段则不显示 */
+      const modeTag = m.mode === "knockout" ? '<i class="tagMode">淘汰制 ' + (m.cap || 100) + '</i>'
+                    : m.mode === "accumulate" ? '<i class="tagMode">累加制 ' + (m.cap || 100) + '</i>' : "";
       if(m.solo){
         /* 单人记录：只有名字、得分与题量 */
         list += '<div class="recentItem"><span>' + esc(dispName(m.p)) + ' <i class="tagSolo">单人</i>'
-          + '</span><span class="mini">' + m.unit + " · " + m.s + " 分 · " + hm + '</span></div>';
+          + '</span><span class="mini">' + modeTag + m.unit + " · " + m.s + " 分 · " + hm + '</span></div>';
         return;
       }
       const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
       list += '<div class="recentItem"><span>' + esc(dispName(m.p1)) + ' ' + m.s1 + ' : ' + m.s2 + ' ' + esc(dispName(m.p2))
-        + '</span><span class="mini">' + m.unit + " · " + res + " · " + hm + '</span></div>';
+        + '</span><span class="mini">' + modeTag + m.unit + " · " + res + " · " + hm + '</span></div>';
     });
     html += '<div id="recentList">' + list + "</div>";
     body.innerHTML = html;
@@ -502,7 +505,7 @@ function restoreCfg(){
   /* 先按当前班级重置，避免沿用上一个班级的词库/时长 */
   S.units = [];
   S.dur = 60;
-  S.wordsOnly = false;
+  S.wordsOnly = true;      /* 新用户默认只出单词题，词块需自行开启 */
   S.rememberWrong = false;
   S.questionTimeout = true;
   S.questionTimeoutDur = 5;

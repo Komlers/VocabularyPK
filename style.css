@@ -146,6 +146,9 @@
   /* 单人作答记录的小标签 */
   .tagSolo{font-style:normal;font-size:16px;font-weight:600;color:var(--muted2);
            background:#eef2f9;border-radius:8px;padding:1px 8px;margin-left:4px;vertical-align:middle;}
+  /* 战绩里标记限分模式 */
+  .tagMode{font-style:normal;font-size:15px;font-weight:700;color:#3a6fd0;
+           background:#e8f0fe;border-radius:7px;padding:1px 7px;margin-right:6px;vertical-align:middle;}
   .clearBtn{margin-top:16px;padding:10px 26px;border-radius:12px;border:2px solid #f0b9b9;
             background:#fff5f5;color:var(--red-d);font-size:24px;cursor:pointer;transition:.15s;}
   .clearBtn:hover{background:#ffecec;border-color:var(--red);}
