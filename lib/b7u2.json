@@ -1,0 +1,405 @@
+{
+  "book": "b7",
+  "unit": "u2",
+  "label": "选必4 U2",
+  "name": "Iconic Attractions",
+  "title": "Iconic Attractions",
+  "words": [
+    [
+      "iconic",
+      "符号的；图标的"
+    ],
+    [
+      "foundation",
+      "创建；基础；地基"
+    ],
+    [
+      "political",
+      "政治的"
+    ],
+    [
+      "didgeridoo",
+      "迪吉里杜管"
+    ],
+    [
+      "located",
+      "位于"
+    ],
+    [
+      "equator",
+      "赤道"
+    ],
+    [
+      "koala",
+      "考拉；树袋熊"
+    ],
+    [
+      "barbecue",
+      "户外烧烤；烤架"
+    ],
+    [
+      "bakery",
+      "面包（糕饼）店；面包厂"
+    ],
+    [
+      "joint",
+      "公共场所（尤指价格低廉的饮食和娱乐场所）；关节（n.）；联合的；共同的（adj.）"
+    ],
+    [
+      "butcher",
+      "肉贩；屠夫；刽子手"
+    ],
+    [
+      "premier",
+      "最著名的；第一的；首要的（adj.）；总理；首相（n.）"
+    ],
+    [
+      "herb",
+      "药草；香草；草本"
+    ],
+    [
+      "dim sim",
+      "（特指澳大利亚的）点心"
+    ],
+    [
+      "hollow",
+      "中空的；空心的"
+    ],
+    [
+      "vibrate",
+      "（使）振动"
+    ],
+    [
+      "horn",
+      "（乐器）号"
+    ],
+    [
+      "pitch",
+      "音高"
+    ],
+    [
+      "straightforward",
+      "坦率的；简单的"
+    ],
+    [
+      "slogan",
+      "标语；口号"
+    ],
+    [
+      "minister",
+      "部长；大臣；外交使节"
+    ],
+    [
+      "arrow",
+      "箭；箭头"
+    ],
+    [
+      "entitle",
+      "给……命名（或题名）；使享有权利"
+    ],
+    [
+      "getaway",
+      "适合度假的地方"
+    ],
+    [
+      "dive",
+      "潜水；跳水；俯冲"
+    ],
+    [
+      "kayaking",
+      "划皮艇"
+    ],
+    [
+      "peak season",
+      "高峰季节"
+    ],
+    [
+      "freedom",
+      "自由；不受……影响的状态"
+    ],
+    [
+      "domain",
+      "领域；领土；范围"
+    ],
+    [
+      "sponsor",
+      "倡议；赞助；主办（vt.）；（法案等的）倡议者；赞助者（n.）"
+    ],
+    [
+      "liberty",
+      "自由"
+    ],
+    [
+      "golf",
+      "高尔夫球运动"
+    ],
+    [
+      "strait",
+      "海峡"
+    ],
+    [
+      "sample",
+      "样本；样品"
+    ],
+    [
+      "monument",
+      "纪念碑（或馆、堂、像等）；历史遗迹"
+    ],
+    [
+      "kiwi",
+      "几维（新西兰鸟）"
+    ],
+    [
+      "geyser",
+      "间歇泉"
+    ],
+    [
+      "sulphuric pool",
+      "硫黄池"
+    ],
+    [
+      "manuka honey",
+      "麦卢卡蜂蜜"
+    ],
+    [
+      "bungee jumping",
+      "蹦极跳"
+    ],
+    [
+      "a flock of",
+      "一群（羊或鸟）"
+    ],
+    [
+      "geothermal park",
+      "地热公园"
+    ],
+    [
+      "distribution",
+      "分布；分配；分发"
+    ],
+    [
+      "pouch",
+      "育儿袋；小袋子；荷包"
+    ],
+    [
+      "temporary",
+      "暂时的；短暂的"
+    ],
+    [
+      "phase",
+      "阶段；时期"
+    ],
+    [
+      "trunk",
+      "树干"
+    ],
+    [
+      "licensed",
+      "得到正式许可的"
+    ],
+    [
+      "license",
+      "批准；许可（vt.）；许可证；执照（n.）"
+    ],
+    [
+      "session",
+      "一场；一段时间；会议"
+    ],
+    [
+      "frequency",
+      "发生率；重复率；（声波或电磁波振动的）频率"
+    ],
+    [
+      "violent",
+      "暴力的；猛烈的"
+    ],
+    [
+      "violence",
+      "暴力；暴行"
+    ],
+    [
+      "nest",
+      "巢穴；鸟窝；秘密窝点"
+    ],
+    [
+      "mammal",
+      "哺乳动物"
+    ],
+    [
+      "biology",
+      "生理；生物学"
+    ],
+    [
+      "hatch",
+      "孵出；破壳（vi.）；使孵出；策划；（尤指）密谋（vt.）"
+    ],
+    [
+      "capacity",
+      "能力；容量"
+    ],
+    [
+      "a handful of",
+      "少数人（或物）；一把（的量）"
+    ],
+    [
+      "fence",
+      "栅栏；围栏"
+    ],
+    [
+      "prison",
+      "监狱；监禁"
+    ],
+    [
+      "grand",
+      "大；宏大的"
+    ],
+    [
+      "Aborigine",
+      "澳大利亚土著"
+    ],
+    [
+      "the Bay of Islands",
+      "岛屿湾"
+    ],
+    [
+      "the haka",
+      "哈卡舞（传统毛利伴歌战舞）"
+    ],
+    [
+      "duck-billed platypus",
+      "鸭嘴兽"
+    ]
+  ],
+  "chunks": [
+    [
+      "a flock of",
+      "一群（羊或鸟）",
+      "coll",
+      "A ____ of birds flew over the beach.",
+      "flock",
+      null
+    ],
+    [
+      "a handful of",
+      "少数人（或物）；一把",
+      "coll",
+      "Only a ____ of visitors came.",
+      "handful",
+      null
+    ],
+    [
+      "peak season",
+      "高峰季节；旺季",
+      "coll",
+      "Hotels are expensive in ____ season.",
+      "peak",
+      [
+        "peak",
+        "season"
+      ]
+    ],
+    [
+      "bungee jumping",
+      "蹦极跳",
+      "coll",
+      "He tried ____ jumping in New Zealand.",
+      "bungee",
+      [
+        "bungee",
+        "jumping"
+      ]
+    ],
+    [
+      "be located in",
+      "位于",
+      "prep",
+      "Sydney is located ____ the south-east of Australia.",
+      "in",
+      null
+    ],
+    [
+      "be famous for",
+      "以……闻名",
+      "prep",
+      "The city is famous ____ its harbour.",
+      "for",
+      null
+    ],
+    [
+      "date back to",
+      "追溯到",
+      "phr",
+      "The tradition dates ____ to ancient times.",
+      "back",
+      null
+    ],
+    [
+      "be home to",
+      "是……的家园",
+      "prep",
+      "The park is home ____ many rare birds.",
+      "to",
+      null
+    ],
+    [
+      "be made of",
+      "由……制成",
+      "prep",
+      "The sculpture is made ____ bronze.",
+      "of",
+      null
+    ],
+    [
+      "take a boat trip",
+      "乘船游览",
+      "coll",
+      "We took a boat ____ around the bay.",
+      "trip",
+      null
+    ],
+    [
+      "in the distance",
+      "在远处",
+      "coll",
+      "We could see the mountain in the ____.",
+      "distance",
+      [
+        "in",
+        "the",
+        "distance"
+      ]
+    ],
+    [
+      "be worth visiting",
+      "值得一游",
+      "coll",
+      "The museum is well ____ visiting.",
+      "worth",
+      null
+    ],
+    [
+      "get away from",
+      "远离",
+      "prep",
+      "Tourists come to get ____ from city noise.",
+      "away",
+      null
+    ],
+    [
+      "be popular with",
+      "受……欢迎",
+      "prep",
+      "The beach is popular ____ surfers.",
+      "with",
+      null
+    ],
+    [
+      "check in",
+      "办理入住；登记",
+      "phr",
+      "We checked ____ at the hotel at noon.",
+      "in",
+      null
+    ]
+  ]
+}

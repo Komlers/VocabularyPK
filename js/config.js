@@ -7,6 +7,8 @@
      b3u1~b3u5 = 必修三 Unit 1~5
      b4u1~b4u5 = 选择性必修一 Unit 1~5
      b5u1~b5u5 = 选择性必修二 Unit 1~5
+     b6u1~b6u5 = 选择性必修三 Unit 1~5
+     b7u1~b7u5 = 选择性必修四 Unit 1~5
    词库随仓库维护，部署后由浏览器 fetch 读取；
    直接双击 index.html（file://）会被浏览器拦截本地 JSON 请求，请用 http:// 访问。 */
 let LIB = [];      // [英文, 中文, 单元标签]
@@ -22,7 +24,11 @@ const WORD_BANK_FILES = [
   { file:"b4u1", tag:"U1" }, { file:"b4u2", tag:"U2" }, { file:"b4u3", tag:"U3" },
   { file:"b4u4", tag:"U4" }, { file:"b4u5", tag:"U5" },
   { file:"b5u1", tag:"X2U1" }, { file:"b5u2", tag:"X2U2" }, { file:"b5u3", tag:"X2U3" },
-  { file:"b5u4", tag:"X2U4" }, { file:"b5u5", tag:"X2U5" }
+  { file:"b5u4", tag:"X2U4" }, { file:"b5u5", tag:"X2U5" },
+  { file:"b6u1", tag:"X3U1" }, { file:"b6u2", tag:"X3U2" }, { file:"b6u3", tag:"X3U3" },
+  { file:"b6u4", tag:"X3U4" }, { file:"b6u5", tag:"X3U5" },
+  { file:"b7u1", tag:"X4U1" }, { file:"b7u2", tag:"X4U2" }, { file:"b7u3", tag:"X4U3" },
+  { file:"b7u4", tag:"X4U4" }, { file:"b7u5", tag:"X4U5" }
 ];
 const CUSTOM_LIB_KEY = "vpk_custom_libs";  /* 自定义词库持久化键 */
 
@@ -61,7 +67,7 @@ let S = {
 let redName = "", blueName = "", champFixed = false, manualMode = false, drawnPool = [];
 let pickSide = "red";       /* 选名弹窗当前选中方 */
 let tempUnits = [];          /* 词库弹窗临时选择 */
-let libOpenBooks = new Set();  /* 词库弹窗里已展开的册（b1~b5）；默认只展开有已选词库的册 */
+let libOpenBooks = new Set();  /* 词库弹窗里已展开的册（b1~b7）；默认只展开有已选词库的册 */
 let pendingClass = "";       /* 导入名单时暂存班级名 */
 let pendingImportInEditor = false;  /* 导入是否从名单编辑器发起（决定导入后刷新范围） */
 

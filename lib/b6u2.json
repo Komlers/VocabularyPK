@@ -1,0 +1,354 @@
+{
+  "book": "b6",
+  "unit": "u2",
+  "label": "选必3 U2",
+  "name": "Healthy Lifestyle",
+  "title": "Healthy Lifestyle",
+  "words": [
+    [
+      "tobacco",
+      "烟草；烟叶"
+    ],
+    [
+      "alcohol",
+      "酒；酒精"
+    ],
+    [
+      "abuse",
+      "滥用；虐待；辱骂（n.）；滥用；虐待；辱骂（vt.）"
+    ],
+    [
+      "physical",
+      "身体的；客观存在的；物理学的"
+    ],
+    [
+      "dominate",
+      "支配；控制；占有优势"
+    ],
+    [
+      "repeatedly",
+      "重复地"
+    ],
+    [
+      "psychology",
+      "心理学；心理；心理影响"
+    ],
+    [
+      "cue",
+      "提示；暗示；信号（n.）；给（某人）暗示（或提示）（vt.）"
+    ],
+    [
+      "in response to",
+      "回答；答复"
+    ],
+    [
+      "reward",
+      "回报；奖励；报酬（n.）；奖励；奖赏；给以报酬（vt.）"
+    ],
+    [
+      "rely",
+      "依赖；依靠；信赖"
+    ],
+    [
+      "rely on",
+      "依靠；依赖（后接宾语）"
+    ],
+    [
+      "facilitate",
+      "促进；促使；使便利"
+    ],
+    [
+      "examine",
+      "（仔细）检查；审查；测验"
+    ],
+    [
+      "negative",
+      "消极的；有害的；否定的"
+    ],
+    [
+      "escalator",
+      "自动扶梯；滚梯"
+    ],
+    [
+      "straight away",
+      "立即；马上"
+    ],
+    [
+      "pessimistic",
+      "悲观的；悲观主义的"
+    ],
+    [
+      "discipline",
+      "自制力；纪律；学科（n.）；自我控制；管教；处罚（vt.）"
+    ],
+    [
+      "pill",
+      "药丸；药片"
+    ],
+    [
+      "delete",
+      "删去；删除"
+    ],
+    [
+      "decide on",
+      "决定；选定"
+    ],
+    [
+      "make up one’s mind",
+      "下定决心"
+    ],
+    [
+      "compose",
+      "组成；作曲；撰写"
+    ],
+    [
+      "be composed of",
+      "由……组成（或构成）的"
+    ],
+    [
+      "surgeon",
+      "外科医生"
+    ],
+    [
+      "surgery",
+      "外科手术；外科学"
+    ],
+    [
+      "liberation",
+      "解放；摆脱"
+    ],
+    [
+      "shave",
+      "剃（须发）；刮脸"
+    ],
+    [
+      "shave off",
+      "剃掉；刮去"
+    ],
+    [
+      "beard",
+      "胡须；络腮胡子"
+    ],
+    [
+      "disturb",
+      "打扰；搅乱；使烦恼"
+    ],
+    [
+      "cigarette",
+      "香烟；卷烟"
+    ],
+    [
+      "specialist",
+      "专科医生；专家"
+    ],
+    [
+      "consultant",
+      "顾问；高级顾问医师"
+    ],
+    [
+      "drug",
+      "毒品；药物"
+    ],
+    [
+      "skip",
+      "跳过；不参加；悄悄溜走（vt.）；蹦蹦跳跳地走；跳绳（vi.）；蹦跳（n.）"
+    ],
+    [
+      "dizzy",
+      "头晕目眩的"
+    ],
+    [
+      "flu",
+      "流感"
+    ],
+    [
+      "stimulate",
+      "激发；促进；刺激"
+    ],
+    [
+      "dentist",
+      "牙科医生"
+    ],
+    [
+      "sugary",
+      "含糖的；甜的"
+    ],
+    [
+      "nut",
+      "坚果"
+    ],
+    [
+      "skateboard",
+      "滑板（n.）；滑滑板（vi.）"
+    ],
+    [
+      "dynamic",
+      "充满活力的；精力充沛的；动态的"
+    ],
+    [
+      "stressed out",
+      "焦虑不安；心力交瘁"
+    ],
+    [
+      "worn out",
+      "筋疲力尽的；疲惫的"
+    ],
+    [
+      "bowling",
+      "保龄球运动"
+    ],
+    [
+      "comedy",
+      "喜剧；喜剧片；滑稽节目"
+    ],
+    [
+      "monthly",
+      "每月；每月一次的（adv.）；月刊（n.）"
+    ],
+    [
+      "enhance",
+      "提高；增强；增进"
+    ],
+    [
+      "refresh",
+      "使恢复精力；使凉爽；刷新"
+    ],
+    [
+      "absorb",
+      "吸引全部注意力；吸收"
+    ]
+  ],
+  "chunks": [
+    [
+      "rely on",
+      "依靠；指望（某人或某物）",
+      "prep",
+      "Don't rely ____ caffeine to stay awake.",
+      "on",
+      null
+    ],
+    [
+      "in response to",
+      "作为对……的回应",
+      "prep",
+      "The body reacts in response ____ stress.",
+      "to",
+      null
+    ],
+    [
+      "be composed of",
+      "由……组成",
+      "prep",
+      "A balanced diet is composed ____ many nutrients.",
+      "of",
+      null
+    ],
+    [
+      "decide on",
+      "决定；选定",
+      "prep",
+      "She decided ____ a new exercise plan.",
+      "on",
+      null
+    ],
+    [
+      "make up one's mind",
+      "下定决心",
+      "coll",
+      "He made up his ____ to quit smoking.",
+      "mind",
+      null
+    ],
+    [
+      "shave off",
+      "剃掉；刮去",
+      "phr",
+      "He shaved ____ his beard.",
+      "off",
+      null
+    ],
+    [
+      "be stressed out",
+      "焦虑不安；心力交瘁",
+      "coll",
+      "She felt stressed ____ before the exam.",
+      "out",
+      null
+    ],
+    [
+      "be worn out",
+      "筋疲力尽的；疲惫的",
+      "coll",
+      "After the long run he was worn ____.",
+      "out",
+      null
+    ],
+    [
+      "straight away",
+      "立即；马上",
+      "coll",
+      "Take the medicine straight ____.",
+      "away",
+      [
+        "straight",
+        "away"
+      ]
+    ],
+    [
+      "give up",
+      "放弃",
+      "phr",
+      "He gave ____ smoking last year.",
+      "up",
+      null
+    ],
+    [
+      "be addicted to",
+      "对……上瘾",
+      "prep",
+      "Many teenagers are addicted ____ their phones.",
+      "to",
+      null
+    ],
+    [
+      "cut down on",
+      "减少",
+      "prep",
+      "You should cut down ____ sugar.",
+      "on",
+      null
+    ],
+    [
+      "keep fit",
+      "保持健康",
+      "coll",
+      "She runs every morning to keep ____.",
+      "fit",
+      [
+        "keep",
+        "fit"
+      ]
+    ],
+    [
+      "suffer from",
+      "受……之苦；患",
+      "prep",
+      "He suffers ____ back pain.",
+      "from",
+      null
+    ],
+    [
+      "in the long run",
+      "从长远看",
+      "coll",
+      "Exercise pays off in the long ____.",
+      "run",
+      [
+        "in",
+        "the",
+        "long",
+        "run"
+      ]
+    ]
+  ]
+}

@@ -1,0 +1,312 @@
+{
+  "book": "b7",
+  "unit": "u3",
+  "label": "选必4 U3",
+  "name": "Sea Exploration",
+  "title": "Sea Exploration",
+  "words": [
+    [
+      "tale",
+      "故事；叙述"
+    ],
+    [
+      "merchant",
+      "商人；批发商（n.）；海上货运的（adj.）"
+    ],
+    [
+      "set sail",
+      "起航；开航"
+    ],
+    [
+      "extend",
+      "扩展；使伸长；延长"
+    ],
+    [
+      "negotiate",
+      "商定；达成（协议）（vt.）；谈判；磋商；协商（vi.）"
+    ],
+    [
+      "fleet",
+      "舰队；机群；车队"
+    ],
+    [
+      "behold",
+      "看；看见"
+    ],
+    [
+      "league",
+      "等级；水平；联合会；联赛"
+    ],
+    [
+      "in a league of one’s own",
+      "独领风骚"
+    ],
+    [
+      "royal",
+      "皇家的；王室的；高贵的"
+    ],
+    [
+      "spice",
+      "（调味）香料"
+    ],
+    [
+      "withdraw",
+      "撤回；撤离；收回"
+    ],
+    [
+      "withdraw from",
+      "退出；撤回"
+    ],
+    [
+      "channel",
+      "航道；海峡；频道"
+    ],
+    [
+      "maritime",
+      "海的；海运的；海事的"
+    ],
+    [
+      "bond",
+      "纽带；关系（n.）；增强信任关系；使牢固结合（vt. & vi.）"
+    ],
+    [
+      "in hand",
+      "在手头；可供使用"
+    ],
+    [
+      "politics",
+      "政治；政治观点"
+    ],
+    [
+      "profession",
+      "职业；行业"
+    ],
+    [
+      "tournament",
+      "锦标赛；联赛"
+    ],
+    [
+      "mixture",
+      "混合；结合体；混合物"
+    ],
+    [
+      "laptop",
+      "笔记本电脑；便携式电脑"
+    ],
+    [
+      "coverage",
+      "新闻报道；覆盖范围"
+    ],
+    [
+      "press conference",
+      "记者招待会；新闻发布会"
+    ],
+    [
+      "applaud",
+      "鼓掌；称赞；赞赏"
+    ],
+    [
+      "tax",
+      "对……征税；使纳税（vt.）；税；税款（n.）"
+    ],
+    [
+      "manned",
+      "有人控制的；需人操纵的"
+    ],
+    [
+      "submersible",
+      "潜水器；可潜船"
+    ],
+    [
+      "underwater",
+      "在水下（adv.）；水下的（adj.）"
+    ],
+    [
+      "coral",
+      "珊瑚"
+    ],
+    [
+      "migration",
+      "迁移；迁徙；移居"
+    ],
+    [
+      "directory",
+      "名录；电话号码簿；（计算机文件或程序的）目录"
+    ],
+    [
+      "meanwhile",
+      "与此同时；（比较两方面）对比之下"
+    ],
+    [
+      "exploit",
+      "开发；利用；剥削"
+    ],
+    [
+      "gallon",
+      "加仑（容积单位，1 英制加仑约等于 4.5 升）"
+    ],
+    [
+      "murder",
+      "谋杀；凶杀；毁坏（vt.）；谋杀；凶杀（n.）"
+    ],
+    [
+      "mercy",
+      "仁慈；宽恕；恩惠"
+    ],
+    [
+      "possession",
+      "个人财产；拥有；控制"
+    ],
+    [
+      "opponent",
+      "反对者；对手；竞争者"
+    ],
+    [
+      "log",
+      "把……载入正式记录；记录（vt.）；正式记录；日志；原木（n.）"
+    ],
+    [
+      "marine",
+      "海的；海产的；海生的"
+    ],
+    [
+      "arrest",
+      "逮捕；拘留；中止（n.）；逮捕；拘留；阻止（vt.）"
+    ]
+  ],
+  "chunks": [
+    [
+      "set sail",
+      "起航；开航",
+      "coll",
+      "The fleet set ____ at dawn.",
+      "sail",
+      [
+        "set",
+        "sail"
+      ]
+    ],
+    [
+      "withdraw from",
+      "退出；撤回",
+      "prep",
+      "He withdrew ____ the race.",
+      "from",
+      null
+    ],
+    [
+      "in hand",
+      "在手头；可供使用",
+      "coll",
+      "We have enough supplies ____ hand.",
+      "in",
+      [
+        "in",
+        "hand"
+      ]
+    ],
+    [
+      "press conference",
+      "记者招待会；新闻发布会",
+      "coll",
+      "The captain held a ____ conference.",
+      "press",
+      [
+        "press",
+        "conference"
+      ]
+    ],
+    [
+      "in a league of one's own",
+      "独领风骚",
+      "coll",
+      "As a sailor, she is in a league of her ____.",
+      "own",
+      null
+    ],
+    [
+      "be engaged in",
+      "从事；忙于",
+      "prep",
+      "They were engaged ____ deep-sea research.",
+      "in",
+      null
+    ],
+    [
+      "set out",
+      "出发；着手",
+      "phr",
+      "The ship set ____ to cross the ocean.",
+      "out",
+      null
+    ],
+    [
+      "run into",
+      "遭遇；撞上",
+      "phr",
+      "They ran ____ a violent storm.",
+      "into",
+      null
+    ],
+    [
+      "take on",
+      "承担；从事",
+      "phr",
+      "He took ____ the role of navigator.",
+      "on",
+      null
+    ],
+    [
+      "be equipped with",
+      "配备",
+      "prep",
+      "The submersible is equipped ____ cameras.",
+      "with",
+      null
+    ],
+    [
+      "make a record",
+      "创纪录",
+      "coll",
+      "She made a ____ by sailing alone.",
+      "record",
+      null
+    ],
+    [
+      "in search of",
+      "寻找",
+      "prep",
+      "They sailed ____ search of new trade routes.",
+      "in",
+      null
+    ],
+    [
+      "break down",
+      "出故障；抛锚",
+      "phr",
+      "The engine broke ____ mid-ocean.",
+      "down",
+      null
+    ],
+    [
+      "hold on to",
+      "抓住；坚持",
+      "prep",
+      "He held ____ to the rope.",
+      "on",
+      null
+    ],
+    [
+      "by means of",
+      "通过；借助",
+      "prep",
+      "They navigated ____ means of the stars.",
+      "by",
+      [
+        "by",
+        "means",
+        "of"
+      ]
+    ]
+  ]
+}

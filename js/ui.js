@@ -375,10 +375,10 @@ function createLibChip(tag, file, displayText){
   return chip;
 }
 
-/* 词库 tag 属于哪一册（b1~b5）；自定义词库返回空串 */
+/* 词库 tag 属于哪一册（b1~b7）；自定义词库返回空串 */
 function bookOfTag(tag){
   const f = WORD_BANK_FILES.find(x => x.tag === tag);
-  const m = f && /^(b[1-5])u/.exec(f.file);
+  const m = f && /^(b[1-7])u/.exec(f.file);
   return m ? m[1] : "";
 }
 
@@ -399,9 +399,9 @@ function renderLibChips(){
   const panel = $("builtinPanel");
   const keepScroll = panel ? panel.scrollTop : 0;
   groupsBox.innerHTML = "";
-  const bookNames = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2" };
+  const bookNames = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2", b6:"选必3", b7:"选必4" };
   const builtin = WORD_BANK_FILES.filter(x => x.file !== "custom");
-  ["b1","b2","b3","b4","b5"].forEach(bk => {
+  ["b1","b2","b3","b4","b5","b6","b7"].forEach(bk => {
     const items = builtin.filter(x => x.file.startsWith(bk));
     if(!items.length) return;
     const group = document.createElement("div");

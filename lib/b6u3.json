@@ -1,0 +1,380 @@
+{
+  "book": "b6",
+  "unit": "u3",
+  "label": "选必3 U3",
+  "name": "Environmental Protection",
+  "title": "Environmental Protection",
+  "words": [
+    [
+      "graph",
+      "图；图表；曲线图"
+    ],
+    [
+      "emission",
+      "排放物；散发物；排放"
+    ],
+    [
+      "melt",
+      "（使）融化；熔化；软化"
+    ],
+    [
+      "starve",
+      "（使）挨饿；饿死"
+    ],
+    [
+      "seal",
+      "海豹"
+    ],
+    [
+      "ecology",
+      "生态；生态学"
+    ],
+    [
+      "release",
+      "排放；释放；发布"
+    ],
+    [
+      "methane",
+      "甲烷；沼气"
+    ],
+    [
+      "carbon",
+      "碳"
+    ],
+    [
+      "dioxide",
+      "二氧化物"
+    ],
+    [
+      "carbon dioxide",
+      "二氧化碳"
+    ],
+    [
+      "habitable",
+      "适合居住的"
+    ],
+    [
+      "sustain",
+      "维持；遭受；承受住"
+    ],
+    [
+      "sustainable",
+      "可持续的；合理利用的"
+    ],
+    [
+      "fossil",
+      "化石"
+    ],
+    [
+      "fuel",
+      "燃料；刺激性言行"
+    ],
+    [
+      "fossil fuel",
+      "化石燃料（如煤或石油）"
+    ],
+    [
+      "comprehensive",
+      "全部的；所有的；详尽的"
+    ],
+    [
+      "worldwide",
+      "遍及全球地（adv.）；世界各地的；影响全世界的（adj.）"
+    ],
+    [
+      "trend",
+      "趋势；趋向；动向"
+    ],
+    [
+      "frequently",
+      "频繁地；经常"
+    ],
+    [
+      "broadcast",
+      "播送；广播；传播（vt.）；广播节目；电视节目（n.）"
+    ],
+    [
+      "policy",
+      "政策；方针；原则"
+    ],
+    [
+      "footprint",
+      "足迹；（某物所占的）空间量；面积"
+    ],
+    [
+      "restrict",
+      "限制；限定；束缚"
+    ],
+    [
+      "restriction",
+      "限制规定；限制法规；约束"
+    ],
+    [
+      "seize",
+      "抓住；夺取；控制"
+    ],
+    [
+      "basin",
+      "流域；盆地；盆"
+    ],
+    [
+      "penguin",
+      "企鹅"
+    ],
+    [
+      "reform",
+      "改革；（使）改正；改造（vi.）；改革；变革；改良（n.）"
+    ],
+    [
+      "undergo",
+      "经历；经受（变化、不快等）"
+    ],
+    [
+      "implement",
+      "使生效；贯彻；执行"
+    ],
+    [
+      "harmonious",
+      "和谐的"
+    ],
+    [
+      "moderate",
+      "适度的；中等的；温和的（adj.）；缓和；使适中（vi.）"
+    ],
+    [
+      "submit",
+      "提交；呈递；屈服"
+    ],
+    [
+      "annual",
+      "每年的；一年的（adj.）；年刊；年鉴（n.）"
+    ],
+    [
+      "tropical",
+      "热带的；来自热带的"
+    ],
+    [
+      "chaos",
+      "混乱；杂乱；紊乱"
+    ],
+    [
+      "on behalf of",
+      "代表（代替）某人"
+    ],
+    [
+      "nuclear",
+      "原子能的；核能的；原子核的"
+    ],
+    [
+      "sensitive",
+      "敏感的；善解人意的；灵敏的"
+    ],
+    [
+      "jungle",
+      "（热带）丛林；密林"
+    ],
+    [
+      "smog",
+      "烟雾（烟与雾混合的空气污染物）"
+    ],
+    [
+      "originate",
+      "起源；发源；创立"
+    ],
+    [
+      "volume",
+      "量；体积；（成套书籍中的）一卷"
+    ],
+    [
+      "garbage",
+      "垃圾；废物"
+    ],
+    [
+      "enterprise",
+      "公司；企业；事业"
+    ],
+    [
+      "restore",
+      "恢复；使复原；修复"
+    ],
+    [
+      "conservation",
+      "对（环境、文物等）保护；保持"
+    ],
+    [
+      "dozen",
+      "（一）打；十二个"
+    ],
+    [
+      "dozens of",
+      "许多；很多"
+    ],
+    [
+      "regulation",
+      "章程；规章制度"
+    ],
+    [
+      "disposal",
+      "去掉；清除；处理"
+    ],
+    [
+      "inspection",
+      "检查；查看；视察"
+    ],
+    [
+      "fine",
+      "对……处以罚款"
+    ],
+    [
+      "campaign",
+      "运动；战役（n.）；参加运动；领导运动（vi.）"
+    ],
+    [
+      "waterway",
+      "水道；航道"
+    ],
+    [
+      "tolerate",
+      "忍受；包容；容许"
+    ],
+    [
+      "agenda",
+      "议程表；议事日程"
+    ]
+  ],
+  "chunks": [
+    [
+      "carbon dioxide",
+      "二氧化碳",
+      "coll",
+      "Burning coal releases carbon ____.",
+      "dioxide",
+      [
+        "carbon",
+        "dioxide"
+      ]
+    ],
+    [
+      "fossil fuel",
+      "化石燃料",
+      "coll",
+      "Coal and oil are ____ fuels.",
+      "fossil",
+      [
+        "fossil",
+        "fuel"
+      ]
+    ],
+    [
+      "on behalf of",
+      "代表（代替）某人",
+      "prep",
+      "She spoke on behalf ____ the whole class.",
+      "of",
+      null
+    ],
+    [
+      "dozens of",
+      "许多；很多",
+      "coll",
+      "Scientists warn that dozens ____ species may vanish.",
+      "of",
+      null
+    ],
+    [
+      "result in",
+      "导致；造成",
+      "prep",
+      "Global warming results ____ rising sea levels.",
+      "in",
+      null
+    ],
+    [
+      "lead to",
+      "导致",
+      "prep",
+      "Deforestation leads ____ soil erosion.",
+      "to",
+      null
+    ],
+    [
+      "be aware of",
+      "意识到",
+      "prep",
+      "We must be aware ____ the damage we cause.",
+      "of",
+      null
+    ],
+    [
+      "take action",
+      "采取行动",
+      "coll",
+      "Governments must take ____ now.",
+      "action",
+      [
+        "take",
+        "action"
+      ]
+    ],
+    [
+      "in danger of",
+      "处于……的危险中",
+      "prep",
+      "Many species are ____ danger of extinction.",
+      "in",
+      null
+    ],
+    [
+      "cut down",
+      "砍倒；削减",
+      "phr",
+      "Farmers cut ____ the rainforest.",
+      "down",
+      null
+    ],
+    [
+      "run out of",
+      "用完；耗尽",
+      "prep",
+      "We are running ____ of clean water.",
+      "out",
+      null
+    ],
+    [
+      "be harmful to",
+      "对……有害",
+      "prep",
+      "Plastic waste is harmful ____ marine life.",
+      "to",
+      null
+    ],
+    [
+      "make a difference",
+      "有影响；起作用",
+      "coll",
+      "Small changes can make a ____.",
+      "difference",
+      [
+        "make",
+        "a",
+        "difference"
+      ]
+    ],
+    [
+      "be responsible for",
+      "对……负责",
+      "prep",
+      "Humans are responsible ____ most of the warming.",
+      "for",
+      null
+    ],
+    [
+      "call on",
+      "呼吁；要求",
+      "phr",
+      "The report calls ____ governments to act.",
+      "on",
+      null
+    ]
+  ]
+}

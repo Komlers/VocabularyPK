@@ -1,0 +1,394 @@
+{
+  "book": "b7",
+  "unit": "u5",
+  "label": "选必4 U5",
+  "name": "Launching Your Career",
+  "title": "Launching Your Career",
+  "words": [
+    [
+      "bounce",
+      "（使）弹起；上下晃动（vi.）；弹性；弹跳；活力（n.）"
+    ],
+    [
+      "bounce around",
+      "蹦来蹦去；弹来弹去"
+    ],
+    [
+      "aptitude",
+      "天资；天赋"
+    ],
+    [
+      "head start",
+      "起步前的优势"
+    ],
+    [
+      "scenario",
+      "设想；方案；预测"
+    ],
+    [
+      "lawyer",
+      "律师"
+    ],
+    [
+      "assemble",
+      "组装；装配（vt.）；收集；聚集；集合（vi.）"
+    ],
+    [
+      "drawer",
+      "抽屉"
+    ],
+    [
+      "a chest of drawers",
+      "抽屉柜"
+    ],
+    [
+      "breast",
+      "乳房；胸部"
+    ],
+    [
+      "hydrogen",
+      "氢；氢气"
+    ],
+    [
+      "radium",
+      "镭"
+    ],
+    [
+      "wrist",
+      "手腕；腕关节"
+    ],
+    [
+      "bridegroom",
+      "新郎"
+    ],
+    [
+      "geometry",
+      "几何学；几何图形"
+    ],
+    [
+      "debt",
+      "债务；欠款"
+    ],
+    [
+      "categorise",
+      "把……分类（加以归类）"
+    ],
+    [
+      "profile",
+      "简介；概述；侧面轮廓（n.）；扼要介绍；概述；写简介（vt.）"
+    ],
+    [
+      "participant",
+      "参与者；参加者"
+    ],
+    [
+      "code",
+      "代码；密码（n.）；编码；把……译成密码（vt.）"
+    ],
+    [
+      "orient",
+      "使适应；使面对；确定方向"
+    ],
+    [
+      "detective",
+      "侦探；警探"
+    ],
+    [
+      "graphic",
+      "图表；图形；图画（n.）；绘画的；图案的（adj.）"
+    ],
+    [
+      "estate",
+      "庄园；住宅区；工业区"
+    ],
+    [
+      "(real) estate agent",
+      "房地产经纪人"
+    ],
+    [
+      "accountant",
+      "会计；会计师"
+    ],
+    [
+      "spy",
+      "密探；间谍（n.）；从事间谍活动（vi.）；突然看见；发现（vt.）"
+    ],
+    [
+      "justice",
+      "公平；公正；合理"
+    ],
+    [
+      "accuse",
+      "控告；控诉；谴责"
+    ],
+    [
+      "come to a conclusion",
+      "得出结论"
+    ],
+    [
+      "greedy",
+      "贪婪的；贪心的"
+    ],
+    [
+      "entrepreneur",
+      "创业者；企业家"
+    ],
+    [
+      "receptionist",
+      "接待员"
+    ],
+    [
+      "socialist",
+      "社会主义的（adj.）；社会主义者（n.）"
+    ],
+    [
+      "communist",
+      "共产主义的（adj.）；共产主义者（n.）"
+    ],
+    [
+      "dedicate",
+      "把……奉献给"
+    ],
+    [
+      "fox",
+      "狐狸；狡猾的人"
+    ],
+    [
+      "council",
+      "委员会；市政服务机构"
+    ],
+    [
+      "canal",
+      "运河；灌溉渠"
+    ],
+    [
+      "attend to",
+      "关怀；照料；处理"
+    ],
+    [
+      "supervise",
+      "主管；指导；监督"
+    ],
+    [
+      "handwriting",
+      "书法；书写；笔迹"
+    ],
+    [
+      "disk",
+      "磁盘；盘"
+    ],
+    [
+      "parking",
+      "停车位；停车"
+    ],
+    [
+      "camel",
+      "骆驼"
+    ],
+    [
+      "fry",
+      "油煎的食物（n.）；油炸；油炒；油煎（vt.）"
+    ],
+    [
+      "purse",
+      "钱包；皮夹子（尤指女用）"
+    ],
+    [
+      "sew",
+      "缝制；缝；做针线活"
+    ],
+    [
+      "knit",
+      "编织；针织；（使）紧密结合（vt.）；编织的衣服；针织衫（n.）"
+    ],
+    [
+      "wool",
+      "毛；毛线；毛料"
+    ],
+    [
+      "intermediate",
+      "中级的；中等的；中间的"
+    ],
+    [
+      "priority",
+      "优先事项；首要的事；优先"
+    ],
+    [
+      "proficiency",
+      "熟练；娴熟；精通"
+    ],
+    [
+      "cage",
+      "笼子（n.）；关在笼子里（vt.）"
+    ],
+    [
+      "collar",
+      "（动物）颈圈；衣领"
+    ],
+    [
+      "flea collar",
+      "灭蚤颈圈"
+    ],
+    [
+      "finance",
+      "资金；财政；金融（n.）；提供资金（vt.）"
+    ],
+    [
+      "receipt",
+      "收据；接收"
+    ],
+    [
+      "certificate",
+      "合格证书；证明"
+    ],
+    [
+      "employer",
+      "雇主；老板"
+    ],
+    [
+      "desert",
+      "沙漠；荒漠"
+    ],
+    [
+      "acquire",
+      "获得；购得"
+    ]
+  ],
+  "chunks": [
+    [
+      "come to a conclusion",
+      "得出结论",
+      "coll",
+      "They came to a ____ after the discussion.",
+      "conclusion",
+      [
+        "come",
+        "to",
+        "a",
+        "conclusion"
+      ]
+    ],
+    [
+      "head start",
+      "起步前的优势",
+      "coll",
+      "Internships give you a ____ start.",
+      "head",
+      [
+        "head",
+        "start"
+      ]
+    ],
+    [
+      "attend to",
+      "关怀；照料；处理",
+      "prep",
+      "The assistant attended ____ the customers.",
+      "to",
+      null
+    ],
+    [
+      "bounce around",
+      "蹦来蹦去；弹来弹去",
+      "phr",
+      "Ideas bounced ____ in his mind.",
+      "around",
+      [
+        "bounce",
+        "around"
+      ]
+    ],
+    [
+      "apply for",
+      "申请",
+      "prep",
+      "He applied ____ a job at the bank.",
+      "for",
+      null
+    ],
+    [
+      "be qualified for",
+      "胜任；有资格",
+      "prep",
+      "She is well qualified ____ the post.",
+      "for",
+      null
+    ],
+    [
+      "specialize in",
+      "专攻；专门从事",
+      "prep",
+      "He specializes ____ computer science.",
+      "in",
+      null
+    ],
+    [
+      "take on",
+      "承担；接受",
+      "phr",
+      "She took ____ extra work to gain experience.",
+      "on",
+      null
+    ],
+    [
+      "run out of",
+      "用完；耗尽",
+      "prep",
+      "We ran ____ of time.",
+      "out",
+      null
+    ],
+    [
+      "be faced with",
+      "面对",
+      "prep",
+      "Graduates are faced ____ many choices.",
+      "with",
+      null
+    ],
+    [
+      "make a decision",
+      "做决定",
+      "coll",
+      "You need to make a ____ about your major.",
+      "decision",
+      null
+    ],
+    [
+      "in charge of",
+      "负责；掌管",
+      "prep",
+      "He is ____ charge of the project.",
+      "in",
+      null
+    ],
+    [
+      "hand in",
+      "上交；提交",
+      "phr",
+      "Please hand ____ your application form.",
+      "in",
+      null
+    ],
+    [
+      "be aware of",
+      "意识到；知道",
+      "prep",
+      "Students should be aware ____ the job market.",
+      "of",
+      null
+    ],
+    [
+      "take advantage of",
+      "利用",
+      "prep",
+      "Take advantage ____ every chance to learn.",
+      "of",
+      [
+        "take",
+        "advantage",
+        "of"
+      ]
+    ]
+  ]
+}
