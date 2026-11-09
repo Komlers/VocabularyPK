@@ -101,6 +101,13 @@
     <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;">
       <button class="drawBtn" id="openLibModal" style="font-size:26px;padding:14px 26px">📚 选择词库</button>
       <button class="drawBtn" id="openDurModal" style="font-size:26px;padding:14px 26px">⏱ 限时 1:00</button>
+    </div>
+    <div class="mini" id="planInfo" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="stepNo">4</span>擂台设置与本次规则<span class="hint">计分模式 / 错词记忆 / 单题超时 / 临时赛</span></h3>
+    <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;">
       <button class="drawBtn" id="settingBtn" style="font-size:26px;padding:14px 26px">⚙️ 擂台设置</button>
     </div>
     <label class="wordsOnlyLabel">
@@ -111,9 +118,8 @@
       <input type="checkbox" id="soloChk">
       本次PK为单人作答（单人检测）
     </label>
-    <!-- 当前擂台设置状态（错词记忆 / 纯单词 / 单题超时），由 renderSettingStatus 更新 -->
+    <!-- 当前擂台设置状态（计分模式 / 连击 / 错词记忆 / 单题超时），由 renderSettingStatus 更新 -->
     <div class="setStatusLine" id="setStatusLine"></div>
-    <div class="mini" id="planInfo" style="margin-top:14px"></div>
   </div>
 
   <button class="startBtn" id="startBtn">开 始 PK</button>
