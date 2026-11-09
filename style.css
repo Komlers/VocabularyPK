@@ -187,6 +187,8 @@
          text-overflow:ellipsis;white-space:nowrap;line-height:1.12;}
   .pcard.red .pname{color:var(--red-d);} .pcard.blue .pname{color:var(--blue-d);}
   .pscore{font-size:52px;font-weight:800;line-height:1;}
+  /* 淘汰制 / 累加制的分数是三位数，基础档先收一档 */
+  .topbar.cap3 .pscore{font-size:44px;}
   .pcard.red .pscore{color:var(--red);} .pcard.blue .pscore{color:var(--blue);}
   /* 分数推到卡片另一头，统计紧挨着自己名字 */
   .pcard.red .pscore{margin-left:auto;}
@@ -276,6 +278,7 @@
     .pcard{gap:12px;padding:10px 16px;}
     .pname{font-size:26px;}
     .pscore{font-size:40px;}
+    .topbar.cap3 .pscore{font-size:34px;}
     .pstats{font-size:17px;}
     .pstats b{font-size:21px;}
   }
@@ -284,6 +287,7 @@
     .pcard{gap:10px;padding:8px 14px;}
     .pname{font-size:23px;}
     .pscore{font-size:34px;}
+    .topbar.cap3 .pscore{font-size:28px;}
     .pstats{font-size:15px;}
     .pstats b{font-size:18px;}
   }
@@ -550,6 +554,9 @@
   .setItem{margin-top:16px;}
   .setItem:first-of-type{margin-top:10px;}
   .setHint{font-size:16px;color:var(--muted);line-height:1.55;margin:5px 0 0 34px;}
+  /* 计分模式锁定时，连击加分 / 答错扣分不可改 */
+  .setItem.disabled .wordsOnlyLabel{cursor:default;opacity:.45;}
+  .setItem.disabled .setHint{opacity:.55;}
 
   /* 复选框标题 */
   .wordsOnlyLabel{display:flex;align-items:center;gap:12px;margin-top:16px;
@@ -570,6 +577,22 @@
   .qTimeoutOpt:hover{border-color:#c3d2ee;}
   .qTimeoutOpt.active{border-color:var(--blue);background:var(--blue-bg);color:#2456bd;}
   .qTimeoutRow.disabled{opacity:.45;pointer-events:none;}
+
+  /* ============ 计分模式三选一 ============ */
+  .setStaticLabel{cursor:default;}
+  .segRow{display:flex;align-items:center;gap:10px;margin:12px 0 0 34px;flex-wrap:wrap;}
+  .segLabel{font-size:20px;color:var(--ink2);font-weight:600;margin-right:2px;}
+  .segOpt{flex:1;min-width:118px;max-width:190px;padding:12px 18px;font-size:21px;font-weight:700;
+          border-radius:14px;border:2px solid var(--line);background:#fafbfe;color:var(--ink2);
+          cursor:pointer;transition:all .16s;font-family:inherit;}
+  .segOpt:hover{border-color:#c3d2ee;background:#f4f7fe;}
+  .segOpt.active{border-color:transparent;color:#fff;
+                 background:linear-gradient(135deg,#5b8ae8,#3a6fd0);
+                 box-shadow:0 8px 18px rgba(74,127,224,.3);}
+  .segOpt:active{transform:scale(.97);}
+  .segOpt:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+  .capRow{margin-top:14px;}
+  .capRow .segOpt{flex:none;min-width:86px;max-width:none;padding:9px 20px;font-size:20px;}
 
   /* ============ 底部导航按钮 ============ */
   .btnRow .drawBtn{background:#fff;color:var(--ink2);}

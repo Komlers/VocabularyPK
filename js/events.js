@@ -299,6 +299,26 @@ $("wordsOnlyChk").addEventListener("change", e=>{
   planInfo();
   renderSettingStatus();
 });
+/* 计分模式（无限制 / 淘汰制 / 累加制）与满分档位：
+   两种限分模式的加减分固定，切换时把连击加分 / 答错扣分置灰 */
+$("scoreModeRow").addEventListener("click", e=>{
+  const btn = e.target.closest(".scoreModeOpt");
+  if(!btn || btn.dataset.mode === S.scoreMode) return;
+  S.scoreMode = btn.dataset.mode;
+  renderScoreModeUI();
+  renderSettingStatus();
+  planInfo();
+  saveCfg();
+});
+$("capRow").addEventListener("click", e=>{
+  const btn = e.target.closest(".capOpt");
+  if(!btn) return;
+  S.scoreCap = parseInt(btn.dataset.cap);
+  renderScoreModeUI();
+  renderSettingStatus();
+  planInfo();
+  saveCfg();
+});
 /* 连击加分 / 答错扣分：只影响计分，不改变题型与题池 */
 $("comboBonusChk").addEventListener("change", e=>{
   S.comboBonus = e.target.checked;

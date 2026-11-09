@@ -187,11 +187,27 @@
     <div class="modalScroll">
 
     <div class="setItem">
+      <span class="wordsOnlyLabel setStaticLabel">擂台计分模式</span>
+      <div class="segRow" id="scoreModeRow">
+        <button type="button" class="segOpt scoreModeOpt active" data-mode="open">无限制</button>
+        <button type="button" class="segOpt scoreModeOpt" data-mode="knockout">淘汰制</button>
+        <button type="button" class="segOpt scoreModeOpt" data-mode="accumulate">累加制</button>
+      </div>
+      <div class="setHint" id="scoreModeHint">答对 10 分起，连击递增到 30 分；答错是否扣分由下面两个开关决定。</div>
+      <div class="segRow capRow hidden" id="capRow">
+        <span class="segLabel">满分</span>
+        <button type="button" class="segOpt capOpt" data-cap="50">50</button>
+        <button type="button" class="segOpt capOpt active" data-cap="100">100</button>
+        <button type="button" class="segOpt capOpt" data-cap="150">150</button>
+      </div>
+    </div>
+
+    <div class="setItem">
       <label class="wordsOnlyLabel">
         <input type="checkbox" id="comboBonusChk">
         连击加分
       </label>
-      <div class="setHint">勾选：连续答对时单题得分递增 10 → 15 → 20 → 25 → 30。<br>不勾选：每答对一题固定 +10 分。</div>
+      <div class="setHint">勾选：连续答对时单题得分递增 10 → 15 → 20 → 25 → 30。<br>不勾选：每答对一题固定 +10 分。<br>仅「无限制」模式可调。</div>
     </div>
 
     <div class="setItem">
@@ -199,7 +215,7 @@
         <input type="checkbox" id="wrongPenaltyChk">
         答错扣分
       </label>
-      <div class="setHint">勾选：答错扣分。连击加分开时按连续答错扣 5 / 10 / 15 / 20，关闭时每次扣 5 分。<br>不勾选：答错不扣分（默认）。</div>
+      <div class="setHint">勾选：答错扣分。连击加分开时按连续答错扣 5 / 10 / 15 / 20，关闭时每次扣 5 分。<br>不勾选：答错不扣分（默认）。<br>仅「无限制」模式可调。</div>
     </div>
 
     <div class="setItem">
@@ -343,7 +359,7 @@
         面向高中英语课堂的<b>双人单词对战网页应用</b>：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，适合教室大屏互动教学。</p></div>
 
       <div class="ruleItem"><b>对战方式</b><p>
-        一局 30 秒～5 分钟，屏幕左右各一套选项，双方同时作答、互不干扰；答对得分，连击越高单次得分越多，答错不扣分。</p></div>
+        一局 30 秒～5 分钟，屏幕左右各一套选项，双方同时作答、互不干扰。计分有<b>无限制</b>（答对得分、连击递增，可开启答错扣分）、<b>淘汰制</b>（满分开局，答错扣血，先归零者输）、<b>累加制</b>（0 分起步，先到满分者赢）三种模式可选。</p></div>
 
       <div class="ruleItem"><b>题型</b><p>
         单词题：<b>单词选义</b>。词块题：<b>词块选义</b>、<b>词块配对</b>、<b>词块重组</b>，覆盖介词搭配、动词短语、固定搭配，按时长自动配比混合出题。</p></div>

@@ -22,16 +22,22 @@ function startBattle(revival){
     S.wrongSet = new Set();
     buildPool();
   }
-  S.qi = 0; S.round = 1; S.scores = [0,0]; S.streak = [0,0]; S.maxStreak = [0,0];
+  /* 淘汰制开局即满分（相当于血量），累加制与无限制都从 0 起 */
+  const initScore = (!revival && S.scoreMode === "knockout") ? S.scoreCap : 0;
+  S.qi = 0; S.round = 1; S.scores = [initScore, initScore]; S.streak = [0,0]; S.maxStreak = [0,0];
   S.right = [0,0]; S.bad = [0,0]; S.badStreak = [0,0];
-  S.asked = 0; S.done = 0;
+  S.asked = 0; S.done = 0; S.endReason = "time"; S.ending = false; S.ended = false;
   S.left = S.dur; S.pendingNext = false;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
-  $("s1").textContent = "0"; $("s2").textContent = "0";
+  $("s1").textContent = initScore; $("s2").textContent = initScore;
   $("st1").textContent = ""; $("st2").textContent = "";
   /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽保证计时器居中 */
   const topbar = document.querySelector(".topbar");
-  if(topbar) topbar.classList.toggle("solo", !!S.solo);
+  if(topbar){
+    topbar.classList.toggle("solo", !!S.solo);
+    /* 限分模式的分数可能是三位数，顶栏比分降一档字号 */
+    topbar.classList.toggle("cap3", !revival && S.scoreMode !== "open" && S.scoreCap >= 100);
+  }
   syncStats();
   show("battle");
   nextQuestion();
@@ -49,6 +55,7 @@ function updateTimer(){
   $("timer").classList.toggle("warn", S.left<=30);
 }
 function nextQuestion(){
+  if(S.ending) return;          /* 限分模式已判定胜负，等结算，不再出题 */
   S.pendingNext = false;
   if(S.qi >= S.pool.length){
     /* 只有把题池里每一个词条都出过一遍之后才会重新洗牌开第二轮 */
@@ -139,44 +146,51 @@ function scheduleNext(delay){
   setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, delay);
 }
 /* 计分：
-   · 答对：「连击加分」开启时 +10，且每层连击再 +5（连击加成封顶 +20，即单题 10~30 分）；
-           关闭时固定 +10。
-   · 答错：「答错扣分」开启时扣分——连击加分开启时按连续答错 5 / 10 / 15 / 20 递增，
-           未开启时固定 -5；扣到 0 为止不会出现负分。关闭则不扣分。
-   · 加时赛（revival）是错词复盘，既不加连击奖励也不扣分。
+   · 无限制（open）——答对：「连击加分」开启时 +10，且每层连击再 +5（加成封顶 +20，单题 10~30）；
+           答错：「答错扣分」开启时按连续答错 5 / 10 / 15 / 20 递增，未开启时固定 -5，扣到 0 为止。
+   · 淘汰制 / 累加制（knockout / accumulate）——加减分固定：答对 +5、答错 -10，
+           结果夹在 0 ~ 满分之间，与连击、扣分开关无关。
+   · 加时赛（revival）是错词复盘，一律按无限制规则走，既不触发限分模式的胜负判定。
    同时统计双方答对 / 答错题数，供结算页展示（超时未答不计入任一方）。 */
 function score(k, ok){
   /* 一题只要有一次作答并判定（对或错）就计为「已答」，超时跳过的不算 */
   if(S.curQ && !S.curQ.scored){ S.curQ.scored = true; S.done++; }
+  const limited = !S.revival && S.scoreMode !== "open";
   if(ok){
     S.right[k-1]++;
     S.streak[k-1]++;
     S.maxStreak[k-1] = Math.max(S.maxStreak[k-1], S.streak[k-1]);
     let pts = S.basePoints;
-    if(S.comboBonus && !S.revival) pts += Math.min((S.streak[k-1]-1)*5, 20);
+    if(limited) pts = 5;
+    else if(S.comboBonus && !S.revival) pts += Math.min((S.streak[k-1]-1)*5, 20);
+    const before = S.solo ? S.scores[0] : S.scores[k-1];
+    const after = limited ? Math.min(S.scoreCap, before + pts) : before + pts;
     if(S.solo){
       /* 单人作答：两侧共用一个总分，显示同步；连击仍各侧独立，故奖励只按答题的那一侧算 */
       S.badStreak = [0,0];
-      const v = S.scores[0] + pts;
-      S.scores = [v, v];
-      $("s1").textContent = v; $("s2").textContent = v;
+      S.scores = [after, after];
+      $("s1").textContent = after; $("s2").textContent = after;
     }else{
       S.badStreak[k-1] = 0;               /* 答对即打断连续答错 */
-      S.scores[k-1] += pts;
-      $("s"+k).textContent = S.scores[k-1];
+      S.scores[k-1] = after;
+      $("s"+k).textContent = after;
     }
-    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧 */
-    fx("+" + pts, S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0"), S.solo ? 82 : (k===1 ? 18 : 82));
-    if(!S.revival && S.streak[k-1] >= 2)
+    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧；已到满分则不飘字 */
+    const gain = after - before;
+    if(gain > 0)
+      fx("+" + gain, S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0"), S.solo ? 82 : (k===1 ? 18 : 82));
+    if(!S.revival && !limited && S.streak[k-1] >= 2)
       $("st"+k).textContent = "🔥 " + S.streak[k-1] + " 连击！";
     beep(880, .12);
   }else{
     S.bad[k-1]++;
     S.streak[k-1] = 0;
     $("st"+k).textContent = "";
-    if(S.wrongPenalty && !S.revival){
+    if(limited || (S.wrongPenalty && !S.revival)){
       let pen;
-      if(S.solo){
+      if(limited){
+        pen = 10;
+      }else if(S.solo){
         /* 连续扣分在两侧之间同步：换边再错仍算同一次连错 */
         const n = Math.max(S.badStreak[0], S.badStreak[1]) + 1;
         S.badStreak = [n, n];
@@ -201,6 +215,26 @@ function score(k, ok){
     beep(220, .18);
   }
   syncStats();
+  if(limited) checkScoreEnd();
+}
+/* 限分模式的即时胜负：淘汰制有人扣到 0 判负，累加制有人到达满分判胜。
+   判定后锁住双方、停掉计时，稍等一拍（让分数飘字播完）再进结算。 */
+function checkScoreEnd(){
+  if(S.pendingNext) return;
+  const cap = S.scoreCap;
+  const hit = S.scoreMode === "knockout"
+    ? (S.solo ? S.scores[0] <= 0 : S.scores.some(v => v <= 0))
+    : (S.solo ? S.scores[0] >= cap : S.scores.some(v => v >= cap));
+  if(!hit) return;
+  S.endReason = S.scoreMode;
+  S.ending = true;
+  S.pendingNext = true;
+  clearQuestionTimer();
+  [1,2].forEach(k=>{
+    S.locked[k-1] = true;
+    $("side"+k).classList.add("locked");
+  });
+  setTimeout(()=>{ if(S.pendingNext) endBattle(); }, 900);
 }
 /* 顶栏实时统计（每判定一题刷新一次）：
    双人 —— 各自「已答题数（= 正 + 错）」与正答 / 错答；
@@ -266,6 +300,8 @@ function answer(k, e){
 
 /* ================== 结算 ================== */
 function endBattle(){
+  if(S.ended) return;
+  S.ended = true;
   clearInterval(S.timer);
   clearQuestionTimer();
   const [a,b] = S.scores;
@@ -324,7 +360,17 @@ function endBattle(){
   }
   let title;
   if(S.solo){
-    title = dispName(S.p1) + " 完成作答";
+    /* 单人：限分模式到点即结束，文案说明是「见底」还是「达标」 */
+    if(S.endReason === "knockout") title = dispName(S.p1) + " 分数见底，作答结束";
+    else if(S.endReason === "accumulate") title = dispName(S.p1) + " 达成 " + S.scoreCap + " 分！";
+    else title = dispName(S.p1) + " 完成作答";
+  }else if(S.endReason === "knockout"){
+    const dead = a <= 0 ? S.p1 : S.p2;
+    const win  = a <= 0 ? S.p2 : S.p1;
+    title = dispName(dead) + " 被淘汰，" + dispName(win) + " 获胜！";
+  }else if(S.endReason === "accumulate"){
+    const win = a >= S.scoreCap ? S.p1 : S.p2;
+    title = dispName(win) + " 率先拿到 " + S.scoreCap + " 分！";
   }else if(a===b){
     title = S.wrongSet.size===0
       ? "双方全对平局！下期重新选擂主 🎉"
@@ -339,10 +385,13 @@ function endBattle(){
   S.resultColor = (S.solo || a===b) ? "#3a4150" : (a>b ? "#e05555" : "#4a7fe0");
   $("winName").style.color = S.resultColor;
   /* 临时体验（无班级）不写战绩，结算页明确告知；单人作答同样不区分胜负 */
-  const scopeTxt = S.revival ? "错词加时赛"
+  const modeTag = S.revival ? ""
+    : (S.scoreMode === "knockout" ? "淘汰制 " + S.scoreCap + " 分 · "
+      : S.scoreMode === "accumulate" ? "累加制 " + S.scoreCap + " 分 · " : "");
+  const scopeTxt = modeTag + (S.revival ? "错词加时赛"
     : (S.solo
         ? ("单人作答" + (S.cls ? "" : " · 不记录战绩"))
-        : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩"));
+        : (S.cls ? S.units.length + " 个词库" : "临时体验 · 不记录战绩")));
   S.resultScope = scopeTxt;
   /* 正答 / 错答：单人作答把两侧合并成一个人的成绩 */
   const accHtml = S.solo

@@ -508,6 +508,8 @@ function restoreCfg(){
   S.questionTimeoutDur = 5;
   S.comboBonus = true;
   S.wrongPenalty = false;
+  S.scoreMode = "open";
+  S.scoreCap = 100;
   try{
     const c = JSON.parse(localStorage.getItem("vpk_cfg_" + S.cls));
     if(c){
@@ -519,6 +521,9 @@ function restoreCfg(){
       if(c.questionTimeoutDur) S.questionTimeoutDur = c.questionTimeoutDur;
       if(c.comboBonus !== undefined) S.comboBonus = !!c.comboBonus;
       if(c.wrongPenalty !== undefined) S.wrongPenalty = !!c.wrongPenalty;
+      /* 计分模式与满分只接受白名单值，避免旧数据或手改配置把界面带崩 */
+      if(["open","knockout","accumulate"].includes(c.scoreMode)) S.scoreMode = c.scoreMode;
+      if([50,100,150].includes(c.scoreCap)) S.scoreCap = c.scoreCap;
     }
   }catch(e){}
   /* 首次使用不默认勾选任何词库，由用户手动选择；
@@ -530,6 +535,7 @@ function restoreCfg(){
   $("comboBonusChk").checked = S.comboBonus;
   $("wrongPenaltyChk").checked = S.wrongPenalty;
   renderQuestionTimeoutUI();
+  renderScoreModeUI();
   renderSettingStatus();
   /* 临时赛 / 单人作答：沿用上次退出前的勾选，改动即落盘（不分班级） */
   const ui = loadUI();
@@ -548,17 +554,57 @@ function renderQuestionTimeoutUI(){
     b.classList.toggle("active", parseInt(b.dataset.sec) === S.questionTimeoutDur);
   });
 }
+/* 计分模式说明：无限制沿用连击算法，另两种的加减分是定死的 */
+function scoreModeHintText(){
+  if(S.scoreMode === "knockout")
+    return "开局就是满分，答错扣 10 分、答对回 5 分（均不越过 0～满分）；谁先扣到 0 分谁输，时间到分少者输。";
+  if(S.scoreMode === "accumulate")
+    return "从 0 分起，答对加 5 分、答错扣 10 分（不低于 0）；谁先到满分谁赢，时间到分多者赢。";
+  return "答对 10 分起，连击递增到 30 分；答错是否扣分由下面两个开关决定。";
+}
+/* 计分模式 UI：三选一按钮、满分档位、连击 / 扣分开关的可用性 */
+function renderScoreModeUI(){
+  const row = $("scoreModeRow");
+  if(!row) return;
+  row.querySelectorAll(".scoreModeOpt").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === S.scoreMode);
+  });
+  const limited = S.scoreMode !== "open";
+  const capRow = $("capRow");
+  if(capRow){
+    capRow.classList.toggle("hidden", !limited);
+    capRow.querySelectorAll(".capOpt").forEach(b=>{
+      b.classList.toggle("active", parseInt(b.dataset.cap) === S.scoreCap);
+    });
+  }
+  const hint = $("scoreModeHint");
+  if(hint) hint.textContent = scoreModeHintText();
+  /* 限分模式的加减分固定，连击加分 / 答错扣分置灰不可改 */
+  ["comboBonusChk", "wrongPenaltyChk"].forEach(id=>{
+    const el = $(id);
+    if(!el) return;
+    el.disabled = limited;
+    const box = el.closest(".setItem");
+    if(box) box.classList.toggle("disabled", limited);
+  });
+}
 /* 主页「当前擂台设置」状态行：错词记忆 / 是否只加载纯单词 / 单题超时 */
 function renderSettingStatus(){
   const box = $("setStatusLine");
   if(!box) return;
-  const parts = [
-    S.comboBonus ? "连击加分" : "连击不加分",
-    S.wrongPenalty ? "答错扣分" : "答错不扣分",
+  const parts = [];
+  if(S.scoreMode === "open"){
+    parts.push(S.comboBonus ? "连击加分" : "连击不加分",
+               S.wrongPenalty ? "答错扣分" : "答错不扣分");
+  }else{
+    parts.push(S.scoreMode === "knockout" ? "淘汰制 " + S.scoreCap + " 分" : "累加制 " + S.scoreCap + " 分",
+               "答对 +5 / 答错 -10");
+  }
+  parts.push(
     S.rememberWrong ? "错词将记忆" : "错词不记忆",
     S.wordsOnly ? "只加载纯单词" : "加载完整词库",
     S.questionTimeout ? "单题超时：" + S.questionTimeoutDur + "s" : "单题不限时"
-  ];
+  );
   box.innerHTML = parts.map(t => '<span>' + esc(t) + '</span>')
                        .join('<span class="setSep">|</span>');
 }
@@ -567,6 +613,7 @@ function renderSettingStatus(){
 function planInfo(){
   const mins = (S.dur/60).toFixed(1).replace(/\.0$/, "");
   const rg = poolRange();
+  /* 计分模式已在绿色状态行显示，这里只讲时长与词库，避免重复 */
   let s = mins + "分钟 | " + (S.units.length ? S.units.length + "个词库" : "未选择词库");
   if(rg.words) s += " | " + rg.words + "个单词";
   if(rg.chunks) s += " & " + rg.chunks + "个词块";
