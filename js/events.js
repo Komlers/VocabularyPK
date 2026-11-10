@@ -567,3 +567,15 @@ if(!S.cls) enterManualMode();
    触屏大屏上学生长按容易触发 Windows 右键，弹出浏览器菜单影响答题。
    全局拦截 contextmenu，包括鼠标右键和触屏长按。 */
 document.addEventListener("contextmenu", e => e.preventDefault());
+
+/* ================== 对局中的离开保护 ==================
+   比赛进行中（含错词加时赛）刷新、关闭标签页、返回上一页时，浏览器会弹
+   「更改可能不会保存」的确认框，避免误触直接丢掉这一局的比分与作答记录。
+   结算页 / 主页不再拦截；确认框文案由浏览器决定，returnValue 只用于触发它。 */
+window.addEventListener("beforeunload", e=>{
+  const b = $("battle");
+  if(!b || b.classList.contains("hidden") || S.ended) return;
+  e.preventDefault();
+  e.returnValue = "本局 PK 尚未结束，离开会丢失当前比分与作答记录。";
+  return e.returnValue;
+});
