@@ -382,8 +382,8 @@ $("updateGotIt").addEventListener("click", ()=>{
 $("updateLater").addEventListener("click", ()=>{
   $("updateModal").classList.add("hidden");
 });
-/* 主页「更新说明」按钮：手动打开更新弹窗再次阅读 */
-$("updateBtn").addEventListener("click", ()=>showUpdateModal());
+/* 「关于项目 → 数据只存本机 · 更新说明」：手动打开更新弹窗再次阅读 */
+$("aboutUpdateBtn").addEventListener("click", ()=>showUpdateModal());
 
 /* ================== 关于项目弹窗 ==================
    简介为静态内容；版本号取自 config.js 的 APP_VERSION，避免两处写死不一致 */
@@ -412,6 +412,37 @@ $("aboutTipsBtn").addEventListener("click", async ()=>{
 $("tipsClose").addEventListener("click", ()=>$("tipsModal").classList.add("hidden"));
 $("tipsModal").addEventListener("click", e=>{
   if(e.target.classList.contains("modalMask")) $("tipsModal").classList.add("hidden");
+});
+
+/* ================== 错词记录弹窗 ==================
+   全库累计的错词台账：按册 / 单元展示，支持单单元、单册、全部导出 HTML。
+   数据由结算时的 recordWrongBook() 写入，与班级无关。 */
+$("wrongbookBtn").addEventListener("click", ()=>{
+  wbCollapsed = new Set();
+  renderWrongBook();
+  $("wrongbookModal").classList.remove("hidden");
+});
+$("wbClose").addEventListener("click", ()=>$("wrongbookModal").classList.add("hidden"));
+$("wrongbookModal").addEventListener("click", e=>{
+  if(e.target.classList.contains("modalMask")) $("wrongbookModal").classList.add("hidden");
+});
+$("wbExportAll").addEventListener("click", ()=>wbExport({type:"all"}));
+$("wbClear").addEventListener("click", ()=>wbClearAll());
+/* 册的折叠与「导出本册 / 本单元」按钮都是动态生成的，统一在容器上委托 */
+$("wbBody").addEventListener("click", e=>{
+  const exp = e.target.closest("[data-wb-export]");
+  if(exp){
+    if(exp.dataset.wbExport === "book") wbExport({type:"book", book:exp.dataset.book});
+    else wbExport({type:"unit", tag:exp.dataset.tag});
+    return;
+  }
+  const toggle = e.target.closest("[data-wb-book]");
+  if(toggle){
+    const book = toggle.closest(".wbBook");
+    const key = toggle.dataset.wbBook;
+    const collapsed = book.classList.toggle("collapsed");
+    if(collapsed) wbCollapsed.add(key); else wbCollapsed.delete(key);
+  }
 });
 
 /* ================== 历史战绩弹窗 ================== */

@@ -69,21 +69,21 @@ function nextQuestion(){
     const dir = S.mode==="mix" ? (Math.random()<0.5?"e2c":"c2e") : S.mode;
     const others = wordDistract(spec, dir);
     const opts = dir==="e2c" ? shuffle([cn].concat(others)) : shuffle([en].concat(others));
-    q = {kind:"w", en:en, cn:cn, ans: dir==="e2c"?cn:en,
+    q = {kind:"w", tag:spec.w[2], en:en, cn:cn, ans: dir==="e2c"?cn:en,
          opts1:shuffle(opts), opts2:shuffle(opts),
          big: dir==="e2c"?en:cn, cls: dir==="e2c"?"":"cn", say: dir==="e2c"?en:"",
          tip: dir==="e2c" ? "🔊 单词 · 点击正确的中文意思（答对直接过）" : "🔊 单词 · 点击对应的英文单词（答对直接过）"};
   }else if(spec.t === "c1"){
     const c = CHUNKS[spec.i];
     const opts = shuffle([c[1]].concat(chunkDistractCn(spec.i)));
-    q = {kind:"c1", en:c[0], cn:c[1], ans:c[1],
+    q = {kind:"c1", tag:c[6], en:c[0], cn:c[1], ans:c[1],
          opts1:shuffle(opts), opts2:shuffle(opts),
          big:c[0], cls:"chunk", say:c[0],
          tip:"🧩 词块选义 · 点击正确的中文意思"};
   }else if(spec.t === "c2"){
     const c = CHUNKS[spec.i];
     const opts = shuffle([c[4]].concat(pairDistract(spec.i)));
-    q = {kind:"c2", en:c[0], cn:c[1], ans:c[4],
+    q = {kind:"c2", tag:c[6], en:c[0], cn:c[1], ans:c[4],
          opts1:shuffle(opts), opts2:shuffle(opts),
          big:c[3], cls:"sent", say:"",
          tip:"🧩 词块配对 · "+c[1]};
@@ -91,7 +91,7 @@ function nextQuestion(){
     const c = CHUNKS[spec.i];
     const pieces = c[5].slice();
     const opts = shuffle(pieces.concat(orderDecoys(spec.i, 4 - pieces.length)));
-    q = {kind:"c3", en:c[0], cn:c[1], ans:"", pieces:pieces, need:pieces.length,
+    q = {kind:"c3", tag:c[6], en:c[0], cn:c[1], ans:"", pieces:pieces, need:pieces.length,
          progress:[[],[]], opts1:opts, opts2:shuffle(opts),
          big:c[1], cls:"cn", say:"",
          tip:"🧩 词块重组 · 按正确顺序点击 "+pieces.length+" 个片段还原（含 1 个干扰片段）"};
@@ -213,7 +213,7 @@ function score(k, ok){
       const lost = before - after;
       if(lost > 0) fx("-" + lost, "#79808f", S.solo ? 82 : (k===1 ? 18 : 82));
     }
-    S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind);
+    S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind + "|" + (S.curQ.tag || ""));
     beep(220, .18);
   }
   syncStats();
@@ -323,6 +323,8 @@ function endBattle(){
       });
     }
     saveHis(S.cls, h);
+    /* 错词记录本：独立于「错词记忆」开关，累计收录每场正常对局的错词 */
+    recordWrongBook();
   }
   if(!S.noRecord && S.rememberWrong && S.cls){
     /* 错词账本更新（加时赛同样生效，仅在启用错词记忆时）：

@@ -31,6 +31,9 @@ const WORD_BANK_FILES = [
   { file:"b7u4", tag:"X4U4" }, { file:"b7u5", tag:"X4U5" }
 ];
 const CUSTOM_LIB_KEY = "vpk_custom_libs";  /* 自定义词库持久化键 */
+/* 册号 -> 显示名：词库弹窗分组与错词本分组共用，避免两处各写一份 */
+const BOOK_NAMES = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2", b6:"选必3", b7:"选必4" };
+const BOOK_ORDER = ["b1","b2","b3","b4","b5","b6","b7"];
 
 /* ================== 版本与更新提示 ==================
    每次发布更新时修改 APP_VERSION，并在 res/update.md 写明更新内容。

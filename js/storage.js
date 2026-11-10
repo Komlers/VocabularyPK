@@ -71,6 +71,55 @@ function loadHis(c){
   }catch(e){ return def; }
 }
 function saveHis(c, h){ if(!c) return; try{ localStorage.setItem(hisKey(c), JSON.stringify(h)); }catch(e){} }
+
+/* ================== 错词记录本（全库累计，不分班级） ==================
+   结构：{ 单元tag: { "英文|w": {en,cn,kind,n,last,c:{班级:次数}} } }
+     · n     该词累计答错次数，答对不清零，便于看整学期的顽固错词
+     · c     按班级拆分的次数，导出时老师能看出是哪个班错得多
+     · kind  w=单词，c=词块（同一个词与词块同名时分两条）
+   与「待复现错词」（h.wrongs，答对即出本）是两套数据，互不影响。 */
+const WRONGBOOK_KEY = "vpk_wrongbook";
+function loadWrongBook(){
+  try{
+    const d = JSON.parse(localStorage.getItem(WRONGBOOK_KEY));
+    if(!d || typeof d !== "object" || Array.isArray(d)) return {};
+    const out = {};
+    for(const tag in d){
+      const bucket = d[tag];
+      if(!bucket || typeof bucket !== "object" || Array.isArray(bucket)) continue;
+      const clean = {};
+      for(const key in bucket){
+        const e = bucket[key];
+        if(!e || typeof e !== "object") continue;
+        const en = String(e.en || "").trim();
+        if(!en) continue;
+        const c = {};
+        if(e.c && typeof e.c === "object" && !Array.isArray(e.c)){
+          for(const k in e.c){
+            const v = parseInt(e.c[k], 10);
+            if(v > 0) c[k] = v;
+          }
+        }
+        clean[key] = {
+          en,
+          cn: String(e.cn || ""),
+          kind: e.kind === "w" ? "w" : "c",
+          n: Math.max(1, Math.min(99999, parseInt(e.n, 10) || 1)),
+          last: Math.max(0, parseInt(e.last, 10) || 0),
+          c
+        };
+      }
+      if(Object.keys(clean).length) out[tag] = clean;
+    }
+    return out;
+  }catch(e){ return {}; }
+}
+function saveWrongBook(d){
+  try{ localStorage.setItem(WRONGBOOK_KEY, JSON.stringify(d)); }catch(e){}
+}
+function clearWrongBook(){
+  try{ localStorage.removeItem(WRONGBOOK_KEY); }catch(e){}
+}
 /* 待复现错词：按历史错误次数取前 8 */
 function reviewWords(c){
   const h = loadHis(c);

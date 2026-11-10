@@ -58,7 +58,7 @@
     <div class="heroBtns">
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>
       <button class="heroBtn" id="hisBtn">📊 历史战绩</button>
-      <button class="heroBtn" id="updateBtn">🔄 更新说明</button>
+      <button class="heroBtn" id="wrongbookBtn">📕 错词记录</button>
     </div>
   </div>
 
@@ -357,7 +357,7 @@
 
     <div class="aboutHead">
       <div class="aboutLogo"><span class="r">词</span>汇<span class="b">擂</span>台</div>
-      <div class="aboutMeta">版本 <b id="aboutVer">2.2</b> · 纯前端 · 数据只存本机</div>
+      <div class="aboutMeta">版本 <b id="aboutVer">2.2</b> · 纯前端 · 数据只存本机 · <a href="javascript:;" class="aboutLink" id="aboutUpdateBtn">更新说明</a></div>
     </div>
 
     <div class="ruleBody modalScroll">
@@ -374,7 +374,7 @@
         内置 <b>35 个词库</b>，对齐人教版高中英语必修 1～3、选择性必修 1～4 共 35 个单元；支持多选混合出题，也可导入本地 JSON 自定义词库。</p></div>
 
       <div class="ruleItem"><b>名单与战绩</b><p>
-        班级名单支持 TXT 导入与内置编辑器（批量添加、搜索、改名、删除）；战绩、最高连击、错词本、擂主按班级分别保存。</p></div>
+        班级名单支持 TXT 导入与内置编辑器（批量添加、搜索、改名、删除）；战绩、最高连击、错词本、擂主按班级分别保存；主页「错词记录」另建一份全库台账，按册 / 单元累计次数，可导出 HTML。</p></div>
 
       <div class="ruleItem"><b>数据与隐私</b><p>
         所有数据（名单、战绩、配置、自定义词库）只保存在本机浏览器，不上传服务器；无账号、无追踪、无广告。</p></div>
@@ -405,6 +405,24 @@
     <div class="updateContent" id="tipsContent"></div>
     <div class="btnRow" style="margin-top:20px">
       <button class="startBtn small" id="tipsClose">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 错词记录弹窗 ================= -->
+<div id="wrongbookModal" class="modal hidden">
+  <div class="modalMask"></div>
+  <div class="modalBox fixedFoot wbBox">
+    <h3>📕 错词记录</h3>
+    <div class="wbSummary" id="wbSummary"></div>
+    <div class="wbBulkRow">
+      <span class="wbBulkInfo">按册 / 单元分类，×N 为累计出错次数</span>
+      <button class="wbBulkBtn" id="wbExportAll">⬇ 全部导出</button>
+      <button class="wbBulkBtn danger" id="wbClear">清空</button>
+    </div>
+    <div id="wbBody" class="wbBody modalScroll"></div>
+    <div class="btnRow" style="margin-top:18px">
+      <button class="drawBtn" id="wbClose">关 闭</button>
     </div>
   </div>
 </div>
@@ -524,6 +542,7 @@
 <script src="js/dialog.js?v=22"></script>
 <script src="js/editor.js?v=22"></script>
 <script src="js/game.js?v=22"></script>
+<script src="js/wrongbook.js?v=22"></script>
 <script src="js/events.js?v=22"></script>
 <script src="js/pwa.js?v=22"></script>
 

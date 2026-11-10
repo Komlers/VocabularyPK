@@ -402,9 +402,8 @@ function renderLibChips(){
   const panel = $("builtinPanel");
   const keepScroll = panel ? panel.scrollTop : 0;
   groupsBox.innerHTML = "";
-  const bookNames = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2", b6:"选必3", b7:"选必4" };
   const builtin = WORD_BANK_FILES.filter(x => x.file !== "custom");
-  ["b1","b2","b3","b4","b5","b6","b7"].forEach(bk => {
+  BOOK_ORDER.forEach(bk => {
     const items = builtin.filter(x => x.file.startsWith(bk));
     if(!items.length) return;
     const group = document.createElement("div");
@@ -421,7 +420,7 @@ function renderLibChips(){
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "libGroupTitle";
-    toggle.innerHTML = '<span class="libGTName">' + bookNames[bk] + '</span>'
+    toggle.innerHTML = '<span class="libGTName">' + BOOK_NAMES[bk] + '</span>'
       + '<span class="libGTMeta">' + (picked ? "已选 " + picked + " 个" : "共 " + items.length + " 个单元") + '</span>'
       + '<span class="libGTArrow" aria-hidden="true"></span>';
     toggle.addEventListener("click", ()=>{

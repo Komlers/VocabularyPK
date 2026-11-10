@@ -601,6 +601,55 @@
   .btnRow .drawBtn{background:#fff;color:var(--ink2);}
   .btnRow .startBtn.small{flex:1;max-width:360px;}
 
+  /* ============ 错词记录弹窗 ============ */
+  .wbBox{max-width:840px;}
+  .wbSummary{font-size:20px;color:var(--ink2);padding:2px 0 12px;}
+  .wbSummary b{color:var(--blue-d);font-size:23px;font-weight:800;margin:0 2px;}
+  .wbBulkRow{display:flex;align-items:center;gap:10px;padding:0 0 10px;
+             box-shadow:0 9px 12px -9px rgba(30,50,90,.22);}
+  .wbBulkInfo{font-size:16px;color:var(--muted);margin-right:auto;}
+  .wbBulkBtn{font:inherit;font-size:17px;font-weight:700;color:var(--blue-d);background:#fff;
+             border:2px solid #c9d8f2;border-radius:11px;padding:6px 16px;cursor:pointer;
+             transition:all .15s;white-space:nowrap;}
+  .wbBulkBtn:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .wbBulkBtn:disabled{opacity:.45;cursor:not-allowed;}
+  .wbBulkBtn:disabled:hover{background:#fff;border-color:#c9d8f2;color:var(--blue-d);}
+  .wbBulkBtn.danger{color:#c0392b;border-color:#f0c2bc;}
+  .wbBulkBtn.danger:hover{background:var(--red);border-color:var(--red);color:#fff;}
+  .wbBody{flex:1;min-height:0;overflow-y:auto;padding-right:8px;}
+  .wbEmpty{font-size:20px;color:var(--muted);line-height:1.85;text-align:center;padding:44px 10px;}
+  .wbBook{margin-bottom:10px;}
+  .wbBookHead{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 16px;
+              border-left:5px solid var(--blue);border-radius:0 8px 8px 0;
+              background:linear-gradient(90deg,var(--blue-bg),transparent);}
+  .wbBookToggle{display:flex;align-items:center;gap:12px;flex:1;min-width:0;
+                font:inherit;font-size:21px;font-weight:800;color:var(--ink);
+                text-align:left;padding:2px 0;border:none;background:transparent;cursor:pointer;}
+  .wbBookToggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px;}
+  .wbBookName{flex:none;}
+  .wbBookMeta{font-size:16px;font-weight:600;color:var(--muted);margin-left:auto;}
+  .wbBook.collapsed .wbUnits{display:none;}
+  .wbBook:not(.collapsed) .libGTArrow::before{transform:rotate(45deg);}
+  .wbUnit{padding:10px 4px 2px;}
+  .wbUnitHead{display:flex;align-items:center;gap:10px;padding:0 6px 8px;flex-wrap:wrap;}
+  .wbUnitName{font-size:19px;font-weight:700;color:var(--ink2);}
+  .wbUnitMeta{font-size:15px;color:var(--muted);}
+  .wbAct{font:inherit;font-size:15px;font-weight:700;color:var(--blue-d);background:#fff;
+         border:2px solid #c9d8f2;border-radius:9px;padding:2px 10px;cursor:pointer;
+         transition:all .15s;margin-left:auto;flex:none;}
+  .wbAct:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .wbAct:active{transform:scale(.96);}
+  .wbWords{display:flex;flex-wrap:wrap;gap:8px;}
+  .wbWord{display:inline-flex;align-items:baseline;gap:8px;background:#fafbfe;
+          border:1px solid var(--line);border-radius:11px;padding:5px 12px;font-size:18px;}
+  .wbWord b{font-weight:800;color:var(--ink);}
+  .wbWord i{font-style:normal;color:var(--muted);font-size:16px;}
+  .wbWord em{font-style:normal;font-weight:800;color:var(--red-d);font-variant-numeric:tabular-nums;}
+  .wbWordChunk{border-color:#cddcf7;background:#f4f8ff;}
+  .wbWordChunk b{color:var(--blue-d);}
+  .aboutLink{color:var(--blue-d);text-decoration:none;font-weight:700;}
+  .aboutLink:hover{text-decoration:underline;}
+
   /* ============ 高DPI大屏适配 ============
      4K/300%系统缩放环境下，CSS像素被放大渲染导致元素过大。
      通过 zoom 整体缩小，效果等同浏览器手动 Ctrl+-，覆盖字体/间距/边框/阴影。
