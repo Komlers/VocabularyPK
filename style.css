@@ -557,9 +557,6 @@
   .setItem{margin-top:16px;}
   .setItem:first-of-type{margin-top:10px;}
   .setHint{font-size:16px;color:var(--muted);line-height:1.55;margin:5px 0 0 34px;}
-  /* 计分模式锁定时，连击加分 / 答错扣分不可改 */
-  .setItem.disabled .wordsOnlyLabel{cursor:default;opacity:.45;}
-  .setItem.disabled .setHint{opacity:.55;}
 
   /* 复选框标题 */
   .wordsOnlyLabel{display:flex;align-items:center;gap:12px;margin-top:16px;

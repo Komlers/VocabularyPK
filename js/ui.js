@@ -562,7 +562,7 @@ function scoreModeHintText(){
     return "开局就是满分，答错扣 10 分、答对回 5 分（均不越过 0～满分）；谁先扣到 0 分谁输，时间到分少者输。";
   if(S.scoreMode === "accumulate")
     return "从 0 分起，答对加 5 分、答错扣 10 分（不低于 0）；谁先到满分谁赢，时间到分多者赢。";
-  return "答对 10 分起，连击递增到 30 分；答错是否扣分由下面两个开关决定。";
+  return "答对 10 分起，连击递增到 30 分；答错是否扣分由下方开关决定。";
 }
 /* 计分模式 UI：三选一按钮、满分档位、连击 / 扣分开关的可用性 */
 function renderScoreModeUI(){
@@ -581,13 +581,12 @@ function renderScoreModeUI(){
   }
   const hint = $("scoreModeHint");
   if(hint) hint.textContent = scoreModeHintText();
-  /* 限分模式的加减分固定，连击加分 / 答错扣分置灰不可改 */
+  /* 限分模式的加减分是定死的：连击加分 / 答错扣分整项隐藏，避免误以为可调 */
   ["comboBonusChk", "wrongPenaltyChk"].forEach(id=>{
     const el = $(id);
     if(!el) return;
-    el.disabled = limited;
     const box = el.closest(".setItem");
-    if(box) box.classList.toggle("disabled", limited);
+    if(box) box.classList.toggle("hidden", limited);
   });
 }
 /* 主页「当前擂台设置」状态行：错词记忆 / 是否只加载纯单词 / 单题超时 */

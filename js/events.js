@@ -300,7 +300,7 @@ $("wordsOnlyChk").addEventListener("change", e=>{
   renderSettingStatus();
 });
 /* 计分模式（无限制 / 淘汰制 / 累加制）与满分档位：
-   两种限分模式的加减分固定，切换时把连击加分 / 答错扣分置灰 */
+   两种限分模式的加减分固定，切换时把连击加分 / 答错扣分隐藏 */
 $("scoreModeRow").addEventListener("click", e=>{
   const btn = e.target.closest(".scoreModeOpt");
   if(!btn || btn.dataset.mode === S.scoreMode) return;
