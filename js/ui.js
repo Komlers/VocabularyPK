@@ -643,10 +643,10 @@ function renderQuestionTimeoutUI(){
 /* 计分模式说明：无限制沿用连击算法，另两种的加减分是定死的 */
 function scoreModeHintText(){
   if(S.scoreMode === "knockout")
-    return "开局就是满分，答错扣 10 分、答对回 5 分（均不越过 0～满分）；谁先扣到 0 分谁输，时间到分少者输。";
+    return "开局满分，答对 +5、答错 -10；先归零者输，时间到分少者输。";
   if(S.scoreMode === "accumulate")
-    return "从 0 分起，答对加 5 分、答错扣 10 分（不低于 0）；谁先到满分谁赢，时间到分多者赢。";
-  return "答对 10 分起，连击递增到 30 分；答错是否扣分由下方开关决定。";
+    return "0 分起，答对 +5、答错 -10；先到满分者赢，时间到分多者赢。";
+  return "答对 +10，连击最高 +30；答错是否扣分见下方开关。";
 }
 /* 计分模式 UI：三选一按钮、满分档位、连击 / 扣分开关的可用性 */
 function renderScoreModeUI(){

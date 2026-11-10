@@ -580,7 +580,6 @@
   .setItem{margin-top:16px;}
   .setItem:first-of-type{margin-top:10px;}
   .setHint{font-size:16px;color:var(--muted);line-height:1.55;margin:5px 0 0 34px;}
-  .setHint .mini{font-size:15px;}
 
   /* 复选框标题 */
   .wordsOnlyLabel{display:flex;align-items:center;gap:12px;margin-top:16px;

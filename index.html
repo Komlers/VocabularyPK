@@ -114,7 +114,6 @@
       <input type="checkbox" id="noRecordChk">
       本次PK不计入战绩（临时赛）
     </label>
-    <div class="setHint">勾选后本局的战绩、错词记录、擂主都不收录，适合纯演示或不想留痕的练习。</div>
     <label class="wordsOnlyLabel">
       <input type="checkbox" id="soloChk">
       本次PK为单人作答（单人检测）
@@ -200,7 +199,7 @@
         <button type="button" class="segOpt scoreModeOpt" data-mode="knockout">淘汰制</button>
         <button type="button" class="segOpt scoreModeOpt" data-mode="accumulate">累加制</button>
       </div>
-      <div class="setHint" id="scoreModeHint">答对 10 分起，连击递增到 30 分；答错是否扣分由下方开关决定。</div>
+      <div class="setHint" id="scoreModeHint">答对 +10，连击最高 +30；答错是否扣分见下方开关。</div>
       <div class="segRow capRow hidden" id="capRow">
         <span class="segLabel">满分</span>
         <button type="button" class="segOpt capOpt" data-cap="50">50</button>
@@ -214,7 +213,7 @@
         <input type="checkbox" id="comboBonusChk">
         连击加分
       </label>
-      <div class="setHint">勾选：连续答对时单题得分递增 10 → 15 → 20 → 25 → 30。<br>不勾选：每答对一题固定 +10 分。</div>
+      <div class="setHint">连续答对时单题得分递增：10 → 15 → 20 → 25 → 30；关闭则每题固定 +10。</div>
     </div>
 
     <div class="setItem">
@@ -222,7 +221,7 @@
         <input type="checkbox" id="wrongPenaltyChk">
         答错扣分
       </label>
-      <div class="setHint">勾选：答错扣分。连击加分开时按连续答错扣 5 / 10 / 15 / 20，关闭时每次扣 5 分。<br>不勾选：答错不扣分（默认）。</div>
+      <div class="setHint">答错扣分：连错依次扣 5 / 10 / 15 / 20；关闭「连击加分」时固定 -5。</div>
     </div>
 
     <div class="setItem">
@@ -230,7 +229,7 @@
         <input type="checkbox" id="questionTimeoutChk">
         擂台超时检测
       </label>
-      <div class="setHint">开启后，每道题须在限定时间内作答，超时直接进入下一题，双方均不计分（防止故意拖延）。</div>
+      <div class="setHint">超时直接跳下一题，双方均不计分。</div>
       <div class="qTimeoutRow" id="qTimeoutRow">
         <span class="qTimeoutLabel">每题限时：</span>
         <button class="qTimeoutOpt" data-sec="3">3s</button>
@@ -244,7 +243,7 @@
         <input type="checkbox" id="wordsOnlyChk">
         只加载纯单词
       </label>
-      <div class="setHint">勾选后不出现词块选义 / 配对 / 重组题，只出单词题。<br>新用户默认勾选；勾选状态随班级保存，想练词块取消勾选即可。</div>
+      <div class="setHint">只出单词题，不出词块选义 / 配对 / 重组；新班级默认开启。</div>
     </div>
 
     <div class="setItem">
@@ -252,11 +251,7 @@
         <input type="checkbox" id="rememberWrongChk">
         错词优先复现
       </label>
-      <div class="setHint">
-        勾选：下一局开头优先出现本班累计的错词（按出错次数最多取 8 个），复现时答对即移出名单。<br>
-        不勾选：完全按当前所选词库出题，不插入错词（默认）。<br>
-        <span class="mini">无论勾选与否，每局答错的单词与词块都会记入主页「📕 错词记录」；不想记录请勾选主页的「本次PK不计入战绩」。</span>
-      </div>
+      <div class="setHint">下一局优先出本班错词（最多 8 个），答对即移出；错词记录照常收录。</div>
     </div>
 
     <div class="setItem">
@@ -264,11 +259,7 @@
         <input type="checkbox" id="animChk">
         渲染动画效果
       </label>
-      <div class="setHint">
-        勾选：页面切换、弹窗开关、开局入场等使用淡入淡出与滑动过渡（默认）。<br>
-        不勾选：动画与过渡一律不加载，操作立即生效，适合旧电脑 / 投屏一体机。<br>
-        <span class="mini">此项只影响本机显示，不随班级保存，也不影响计分与作答。</span>
-      </div>
+      <div class="setHint">关闭后不加载动画与过渡，操作立即生效，适合低性能设备。</div>
     </div>
 
     </div>
