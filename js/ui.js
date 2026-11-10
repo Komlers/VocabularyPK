@@ -49,9 +49,69 @@ function fx(txt, color, xPct){
   setTimeout(()=>d.remove(), 1000);
 }
 
+/* ================== 渲染动画开关 ==================
+   「擂台设置 → 渲染动画效果」默认开启。关闭后给 <html> 加 .no-anim，
+   由 style.css 末尾统一取消动画与过渡，页面切换也不再等出场动画，
+   老旧笔记本 / 投屏一体机这类低性能设备能明显跟手。
+   开关属于设备偏好，存 vpk_ui（跟设备走），不随班级变化。
+   系统开了「减少动态效果」时同样按关闭处理，只影响效果、不改用户的勾选。 */
+let reduceMotion = false;
+try{
+  reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}catch(e){}
+
+/* 是否播放动画：用户没关，且系统没要求减少动态 */
+function animOn(){
+  return S.anim !== false && !reduceMotion;
+}
+/* 把当前设置落到 DOM 与设置面板上；改开关时调用即可立即生效 */
+function applyAnimUI(){
+  try{ document.documentElement.classList.toggle("no-anim", !animOn()); }catch(e){}
+  const chk = $("animChk");
+  if(chk) chk.checked = S.anim !== false;   /* 复选框只反映用户设置，不反映系统偏好 */
+}
+/* 启动即应用：脚本在 body 末尾，早于首帧渲染，避免先播一次入场动画再被关掉 */
+(function initAnim(){
+  try{ if(loadUI().anim === false) S.anim = false; }catch(e){}
+  applyAnimUI();
+})();
+
 /* ================== 页面切换 ================== */
+/* 入场：新页面靠 .screen:not(.hidden) 的 screenIn 淡入。
+   出场：旧页面加 .leaving 变成 fixed 并淡出，动画结束后才真正 hidden；
+        关闭渲染动画时直接切换，不留任何延时。 */
+const SCREENS = ["setup","battle","result"];
+const SCREEN_LEAVE_MS = 160;
+const screenLeaveTimers = {};
 function show(id){
-  ["setup","battle","result"].forEach(x=>$(x).classList.toggle("hidden", x!==id));
+  SCREENS.forEach(x=>{
+    const el = $(x);
+    if(!el) return;
+    if(x === id){
+      if(screenLeaveTimers[x]){ clearTimeout(screenLeaveTimers[x]); screenLeaveTimers[x] = null; }
+      el.classList.remove("leaving");
+      el.style.top = "";
+      el.style.bottom = "";
+      el.classList.remove("hidden");
+      return;
+    }
+    if(el.classList.contains("hidden")) return;
+    if(!animOn()){ el.classList.add("hidden"); return; }
+    /* 先读滚动位置：加了 .leaving 之后页面高度骤减，滚动会被立刻夹到 0 */
+    const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    el.classList.add("leaving");
+    /* 页面切出后变成 fixed，若用户已经向下滚动过，用负 top 把旧页面钉在原来的
+       位置，淡出过程中就不会突然跳到页首 */
+    if(y){ el.style.top = (-y) + "px"; el.style.bottom = "auto"; }
+    if(screenLeaveTimers[x]) clearTimeout(screenLeaveTimers[x]);
+    screenLeaveTimers[x] = setTimeout(()=>{
+      el.classList.remove("leaving");
+      el.style.top = "";
+      el.style.bottom = "";
+      el.classList.add("hidden");
+      screenLeaveTimers[x] = null;
+    }, SCREEN_LEAVE_MS);
+  });
 }
 
 /* ================== 轻量 Markdown 转 HTML ==================
@@ -561,12 +621,14 @@ function restoreCfg(){
   renderQuestionTimeoutUI();
   renderScoreModeUI();
   renderSettingStatus();
-  /* 临时赛 / 单人作答：沿用上次退出前的勾选，改动即落盘（不分班级） */
+  /* 临时赛 / 单人作答 / 渲染动画：沿用上次退出前的勾选，改动即落盘（不分班级） */
   const ui = loadUI();
   S.noRecord = !!ui.noRecord;
   $("noRecordChk").checked = S.noRecord;
   S.solo = !!ui.solo;
   $("soloChk").checked = S.solo;
+  S.anim = ui.anim !== false;
+  applyAnimUI();
   updateDurBtn();
   updateLibBtn();
 }

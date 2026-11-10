@@ -7,6 +7,7 @@ function playBattleEntrance(){
   const bt = $("battle");
   if(!bt) return;
   bt.classList.remove("starting");
+  if(!animOn()) return;             /* 关闭渲染动画：不做入场，也不留收尾定时器 */
   void bt.offsetWidth;              /* 强制重排，连开两局也能重播 */
   bt.classList.add("starting");
   if(entranceTimer) clearTimeout(entranceTimer);
@@ -132,13 +133,14 @@ function nextQuestion(){
     });
   });
   /* 换题动效：题干与两侧选项轻微上浮，选项依次出现（重复换题也能重播）。
-     动画结束即摘掉 qIn，否则它的优先级会盖住答对 / 答错的小动画。 */
+     动画结束即摘掉 qIn，否则它的优先级会盖住答对 / 答错的小动画。
+     关闭渲染动画时整段跳过，连收尾定时器都不建。 */
   const fresh = ["qWord","side1","side2"].map(id=>$(id)).filter(Boolean);
   fresh.forEach(el=>el.classList.remove("qIn"));
-  if(fresh.length){
+  if(qAnimTimer){ clearTimeout(qAnimTimer); qAnimTimer = null; }
+  if(animOn() && fresh.length){
     void fresh[0].offsetWidth;
     fresh.forEach(el=>el.classList.add("qIn"));
-    if(qAnimTimer) clearTimeout(qAnimTimer);
     qAnimTimer = setTimeout(()=>{
       fresh.forEach(el=>el.classList.remove("qIn"));
       qAnimTimer = null;

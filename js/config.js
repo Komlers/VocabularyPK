@@ -56,6 +56,7 @@ let S = {
   cls:"", p1:"红方选手", p2:"蓝方选手",
   units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false, rememberWrong:false,
   solo:false,   /* 本次PK为单人作答：两侧共用一个总分，另一侧只作补救通道 */
+  anim:true,    /* 渲染动画效果：关闭后全部动画与过渡不加载，低性能设备更流畅（跟设备走，不分班级） */
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
   comboBonus:true, wrongPenalty:false,   /* 连击加分 / 答错扣分（擂台设置） */
   scoreMode:"open",        /* 计分模式：open 无限制 / knockout 淘汰制 / accumulate 累加制 */

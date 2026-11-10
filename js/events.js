@@ -355,6 +355,12 @@ $("rememberWrongChk").addEventListener("change", e=>{
   planInfo();
   renderSettingStatus();
 });
+/* 渲染动画效果：设备级开关，切换后立即生效（存 vpk_ui，不分班级） */
+$("animChk").addEventListener("change", e=>{
+  S.anim = e.target.checked;
+  saveUI({anim:S.anim});
+  applyAnimUI();
+});
 /* 擂台超时检测开关 */
 $("questionTimeoutChk").addEventListener("change", e=>{
   S.questionTimeout = e.target.checked;
