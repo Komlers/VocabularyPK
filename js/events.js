@@ -507,8 +507,8 @@ $("startBtn").addEventListener("click", async ()=>{
   saveCfg();
   if(S.solo){ S.p1 = soloPlayer; S.p2 = ""; }
   else { S.p1 = redName; S.p2 = blueName; }
-  /* 未全屏则自动进入全屏，保证对战体验 */
-  if(!fsElement()){ toggleFullscreen(); }
+  /* 未全屏则自动进入全屏，保证对战体验（这一下算自动，本局结束会退出） */
+  autoFullscreenForBattle();
   startBattle(false);
 });
 /* ================== 时长选择弹窗 ================== */
@@ -551,17 +551,20 @@ $("homeBtn").addEventListener("click", ()=>{
   else { redName = S.cls ? loadChamp(S.cls) : S.trialChamp; blueName = ""; }
   champFixed = !!redName;
   refreshNameBoxes(); renderHistory();
+  dropAutoFullscreen();   /* 开局时自动补的全屏，回主页顺手退出 */
 });
 
 /* ================== 比赛中终止 ==================
    左上角的「终止」只在比赛进行中显示（显隐见 ui.js 的 syncCornerBtns）。
-   确认后按临时赛处理：不计战绩、不收录错词、擂主不变，直接回主页。 */
+   弹窗期间暂停计时（否则光看确认框就可能被判超时），确认后按临时赛处理：
+   不计战绩、不收录错词、擂主不变，直接回主页。 */
 $("abortBtn").addEventListener("click", async ()=>{
   if($("battle").classList.contains("hidden") || S.ended) return;
+  const snap = pauseBattleClock();
   const ok = await dlgConfirm(
     "本局会立即结束：不计入战绩、不收录错词记录，擂主也不变更。确定终止吗？",
     { type: "warning", danger: true, title: "终止本场比赛", okText: "终止比赛", cancelText: "继续比赛" });
-  if(!ok) return;
+  if(!ok){ resumeBattleClock(snap); return; }   /* 继续比赛：计时原样续上 */
   abortBattle();
 });
 
@@ -582,7 +585,12 @@ function syncFsBtn(){
   [$("installBtn"), $("abortBtn")].forEach(b=>{ if(b) b.classList.toggle("on", on); });
   $("fsLabel").textContent = on ? "退出" : "全屏";
 }
+/* 自动全屏标记：点「开始 PK」时若本来不是全屏，由代码补一次，保证投屏观感；
+   这种「不是用户自己点的」全屏记在 fsAuto 上，本局结束（终止或返回主页）时
+   自动退出。用户中途自己按全屏 / 退出 / F 键即视为本意，fsAuto 立刻清掉。 */
+let fsAuto = false;
 function toggleFullscreen(){
+  fsAuto = false;          /* 用户自己按的（按钮 / F 键），之后不再自动退出全屏 */
   try{
     if(fsElement()){
       (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
@@ -591,6 +599,23 @@ function toggleFullscreen(){
       (e.requestFullscreen || e.webkitRequestFullscreen || e.msRequestFullscreen).call(e);
     }
   }catch(err){ /* 浏览器拒绝时静默忽略，不影响使用 */ }
+}
+function autoFullscreenForBattle(){
+  if(fsElement()){ fsAuto = false; return; }   /* 本来就全屏：用户本意，结束时不处理 */
+  fsAuto = true;
+  try{
+    const e = document.documentElement;
+    (e.requestFullscreen || e.webkitRequestFullscreen || e.msRequestFullscreen).call(e);
+  }catch(err){ fsAuto = false; }
+}
+/* 本局结束（终止 / 结算后返回主页）时调用：只退出「自动进入」的全屏 */
+function dropAutoFullscreen(){
+  if(!fsAuto) return;
+  fsAuto = false;
+  if(!fsElement()) return;
+  try{
+    (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
+  }catch(err){ /* 浏览器拒绝时静默忽略 */ }
 }
 $("fsBtn").addEventListener("click", toggleFullscreen);
 ["fullscreenchange","webkitfullscreenchange","MSFullscreenChange"].forEach(ev=>{

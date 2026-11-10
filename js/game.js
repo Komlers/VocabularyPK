@@ -46,6 +46,9 @@ function startBattle(revival){
   S.right = [0,0]; S.bad = [0,0]; S.badStreak = [0,0];
   S.asked = 0; S.done = 0; S.endReason = "time"; S.ending = false; S.ended = false;
   S.left = S.dur; S.pendingNext = false;
+  /* 上一局可能留下的延时 / 暂停状态一并清掉 */
+  if(S.nextTimer){ clearTimeout(S.nextTimer); }
+  S.nextTimer = null; S.nextDeadline = 0; S.qDeadline = 0;
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = initScore; $("s2").textContent = initScore;
   $("st1").textContent = ""; $("st2").textContent = "";
@@ -68,11 +71,14 @@ function startBattle(revival){
   nextQuestion();
   clearInterval(S.timer);
   updateTimer();
-  S.timer = setInterval(()=>{
-    S.left--;
-    updateTimer();
-    if(S.left <= 0) endBattle();
-  }, 1000);
+  S.timer = setInterval(tickBattle, 1000);
+}
+/* 主时钟：每跳一次减 1 秒，到 0 结算 */
+function tickBattle(){
+  if(S.ended) return;
+  S.left--;
+  updateTimer();
+  if(S.left <= 0) endBattle();
 }
 function updateTimer(){
   const m = Math.floor(S.left/60), s = S.left%60;
@@ -157,16 +163,19 @@ function nextQuestion(){
 /* ================== 单题超时检测（防拖延） ================== */
 function clearQuestionTimer(){
   if(S.qTimer){ clearTimeout(S.qTimer); S.qTimer = null; }
+  S.qDeadline = 0;
 }
 function startQuestionTimer(){
   clearQuestionTimer();
   if(!S.questionTimeout) return;
+  S.qDeadline = Date.now() + S.questionTimeoutDur * 1000;
   S.qTimer = setTimeout(questionTimeout, S.questionTimeoutDur * 1000);
 }
 /* 题目超时：双方均不计分，锁定作答区并短暂提示后进入下一题 */
 function questionTimeout(){
   if(S.pendingNext) return;
   S.qTimer = null;
+  S.qDeadline = 0;
   S.pendingNext = true;
   /* 锁定作答区，禁止继续点击（单人只有一列，锁定对侧也无副作用） */
   [1,2].forEach(k=>{
@@ -182,7 +191,45 @@ function scheduleNext(delay){
   if(S.pendingNext) return;
   S.pendingNext = true;
   clearQuestionTimer();
-  setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, delay);
+  S.nextDeadline = Date.now() + delay;
+  S.nextTimer = setTimeout(()=>{
+    S.nextTimer = null; S.nextDeadline = 0;
+    if(S.left > 0) nextQuestion();
+  }, delay);
+}
+
+/* ================== 计时暂停 / 恢复 ==================
+   确认弹窗（终止比赛）会挡住屏幕，这时不该继续计时，否则光看弹窗就可能被
+   判超时。暂停时把三处计时（主时钟、单题限时、换题延时）都停掉并记下剩余，
+   取消后按剩余时间续上，而不是重新计时。 */
+function pauseBattleClock(){
+  const now = Date.now();
+  const snap = {
+    left: S.left,
+    timer: !!S.timer,
+    qRest: S.qTimer && S.qDeadline ? Math.max(0, S.qDeadline - now) : 0,
+    nextRest: S.nextTimer && S.nextDeadline ? Math.max(0, S.nextDeadline - now) : 0
+  };
+  clearInterval(S.timer);
+  S.timer = null;
+  clearQuestionTimer();
+  if(S.nextTimer){ clearTimeout(S.nextTimer); S.nextTimer = null; S.nextDeadline = 0; }
+  return snap;
+}
+function resumeBattleClock(snap){
+  if(!snap || S.ended) return;
+  if(snap.timer && !S.timer) S.timer = setInterval(tickBattle, 1000);
+  if(snap.qRest > 0){
+    S.qDeadline = Date.now() + snap.qRest;
+    S.qTimer = setTimeout(questionTimeout, snap.qRest);
+  }
+  if(snap.nextRest > 0){
+    S.nextDeadline = Date.now() + snap.nextRest;
+    S.nextTimer = setTimeout(()=>{
+      S.nextTimer = null; S.nextDeadline = 0;
+      if(S.left > 0) nextQuestion();
+    }, snap.nextRest);
+  }
 }
 /* 计分：
    · 无限制（open）——答对：「连击加分」开启时 +10，且每层连击再 +5（加成封顶 +20，单题 10~30）；
@@ -489,12 +536,15 @@ function abortBattle(){
   clearInterval(S.timer);
   S.timer = null;
   clearQuestionTimer();
+  if(S.nextTimer){ clearTimeout(S.nextTimer); S.nextTimer = null; S.nextDeadline = 0; }
   const bt = $("battle");
   if(bt) bt.classList.remove("starting");
   S.wrongSet = new Set();    /* 本局错词作废，避免日后被别的流程带进账 */
   show("setup");
-  blueName = "";             /* 挑战者重新抽，红方（擂主）保持不动 */
+  /* 选手保持不变：多数情况是发现设置不对想重开，没必要重新抽人 */
   refreshNameBoxes();
+  /* 开局时自动补的全屏（用户本来没想全屏）在这里一并退出 */
+  if(typeof dropAutoFullscreen === "function") dropAutoFullscreen();
 }
 
 /* ================== 保存作答结果（导出独立 HTML） ==================
