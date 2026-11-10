@@ -133,7 +133,8 @@ vcpk/
 │   ├── update.md         # 版本更新说明
 │   ├── tips.md           # 使用说明（「关于项目」弹窗内打开）
 │   ├── import.md         # 名单添加帮助
-│   └── custom.md         # 自定义词库制作帮助
+│   ├── custom.md         # 自定义词库制作帮助
+│   └── require.md        # 浏览器与系统需求（含老内核回退说明）
 ├── old/                  # 历史版本更新说明
 │   ├── update_v2.0.md
 │   └── update_v2.1.md

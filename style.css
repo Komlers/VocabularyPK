@@ -33,7 +33,8 @@
   .card h3{font-size:27px;color:var(--ink2);font-weight:700;margin-bottom:18px;
            display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .card h3 .hint{font-size:21px;font-weight:400;color:var(--muted2);margin-left:auto;}
-  .stepNo{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  .stepNo{flex:none;width:44px;height:44px;border-radius:50%;display:flex;
+          align-items:center;justify-content:center;
           font-size:23px;font-weight:800;color:#fff;
           background:linear-gradient(135deg,var(--red),var(--blue));
           box-shadow:0 4px 12px rgba(74,127,224,.28);}
@@ -69,7 +70,8 @@
   .drawBox.drawing{border-style:dashed;animation:pulse .45s infinite alternate;}
   @keyframes pulse{from{opacity:.6;}to{opacity:1;}}
   .vsBadge{flex:none;align-self:center;width:64px;height:64px;border-radius:50%;
-           display:grid;place-items:center;font-size:26px;font-weight:800;color:var(--muted2);
+           display:flex;align-items:center;justify-content:center;
+           font-size:26px;font-weight:800;color:var(--muted2);
            background:#fff;border:2px solid var(--line);box-shadow:var(--shadow-sm);}
   .dlabel{font-size:22px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;}
   .dname{font-size:46px;font-weight:800;min-height:58px;line-height:58px;letter-spacing:2px;}
@@ -100,7 +102,8 @@
            cursor:pointer;background:#eef1f8;color:var(--muted);transition:.15s;}
   .pickTab.on.red-on{background:var(--red-bg);color:var(--red-d);}
   .pickTab.on.blue-on{background:var(--blue-bg);color:var(--blue-d);}
-  .pickGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:50vh;overflow-y:auto;}
+  .pickGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+            grid-gap:10px;gap:10px;max-height:50vh;overflow-y:auto;}
   .pickName{padding:12px 8px;border-radius:10px;background:#f5f7fc;text-align:center;
             font-size:21px;font-weight:600;color:var(--ink2);cursor:pointer;transition:.12s;
             border:2px solid transparent;}
@@ -178,7 +181,7 @@
   #battle{padding:0;}
   /* 左右留出角按钮（安装 / 全屏）的宽度，避免名字与统计被压住 */
   .topbar{display:flex;align-items:center;justify-content:space-between;
-          padding:16px max(4vw,118px) 6px;gap:2vw;}
+          padding:16px 4vw 6px;padding:16px max(4vw,118px) 6px;gap:2vw;}
   .pcard{flex:1;min-width:0;border-radius:18px;padding:10px 22px;display:flex;align-items:center;gap:16px;}
   .pcard.red{background:var(--red-bg);border:2px solid #f0b4b4;}
   .pcard.blue{background:var(--blue-bg);border:2px solid #b6cbf4;}
@@ -326,8 +329,9 @@
   .startBtn.small{font-size:26px;padding:16px 30px;letter-spacing:4px;width:auto;}
 
   /* ============ 词库弹窗 ============ */
-  .modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;}
-  .modalMask{position:absolute;inset:0;background:rgba(20,26,40,.45);backdrop-filter:blur(2px);}
+  .modal{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;}
+  .modalMask{position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(20,26,40,.45);
+             -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
   .modalBox{position:relative;background:#fff;border-radius:22px;padding:28px 30px;
             max-width:720px;width:92%;max-height:82vh;overflow-y:auto;
             box-shadow:0 20px 60px rgba(28,39,72,.25);}
@@ -485,12 +489,13 @@
                 padding:2px 10px;font-size:19px;font-family:inherit;color:var(--ink2);}
 
   /* ============ 词库多选按钮 ============ */
-  .libChips{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+  .libChips{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));grid-gap:14px;gap:14px;}
   .libChip{padding:18px 22px;border-radius:16px;border:2px solid var(--line);background:#fafbfe;
            font-size:24px;font-weight:700;color:var(--ink2);cursor:pointer;user-select:none;
            transition:all .15s;display:flex;align-items:center;gap:10px;}
   .libChip::before{content:"";width:22px;height:22px;border-radius:6px;border:2px solid #c9d1de;
-                   flex:none;display:grid;place-items:center;font-size:15px;color:#fff;}
+                   flex:none;display:flex;align-items:center;justify-content:center;
+                   font-size:15px;color:#fff;}
   .libChip:hover{border-color:#c3d2ee;background:#fff;}
   .libChip.on{border-color:var(--blue);background:var(--blue-bg);color:#2456bd;
               box-shadow:0 4px 14px rgba(74,127,224,.18);}
@@ -708,6 +713,68 @@
   @media (min-resolution: 2.5dppx) {
     html { zoom: 0.85; }
   }
+
+/* ============ 老旧内核回退（无 flex gap / 无 :focus-visible） ============
+   Chromium < 84、Safari < 14.1 不支持 flex 的 gap；ui.js 实测后给 <html> 加
+   .no-flex-gap，这里用相邻兄弟 margin 还原主要间距。现代浏览器不会命中这些规则。
+   只覆盖影响可读性与点击的主要容器，个别装饰性间距在老内核上仍会偏紧。 */
+html.no-flex-gap .topbar > * + *{margin-left:2vw;}
+html.no-flex-gap .pcard > * + *{margin-left:16px;}
+html.no-flex-gap .arena > * + *{margin-left:2.2vw;}
+html.no-flex-gap .side > * + *{margin-top:12px;}
+html.no-flex-gap .pstats > * + *{margin-top:1px;}
+html.no-flex-gap .accRow > * + *{margin-left:64px;}
+html.no-flex-gap .heroBtns > * + *{margin-left:16px;}
+html.no-flex-gap .chips > * + *{margin-left:14px;}
+html.no-flex-gap .classRow > * + *{margin-left:14px;}
+html.no-flex-gap .nameRow > * + *{margin-left:20px;}
+html.no-flex-gap .drawRow > * + *{margin-left:16px;}
+html.no-flex-gap .drawFoot > * + *{margin-left:12px;}
+html.no-flex-gap .footLinks > * + *{margin-left:18px;}
+html.no-flex-gap .pickTabs > * + *{margin-left:10px;}
+html.no-flex-gap .btnRow > * + *{margin-left:20px;}
+html.no-flex-gap #wrongChips > * + *{margin-left:12px;}
+html.no-flex-gap #recentList > * + *{margin-top:8px;}
+html.no-flex-gap .dateHead > * + *{margin-left:10px;}
+html.no-flex-gap #hisModal .row > * + *{margin-left:18px;}
+html.no-flex-gap .recentItem > * + *{margin-left:14px;}
+html.no-flex-gap #fsBtn > * + *, html.no-flex-gap #installBtn > * + *{margin-left:8px;}
+html.no-flex-gap .card h3 .stepNo{margin-right:14px;}
+html.no-flex-gap .chip .cnt{margin-left:12px;}
+html.no-flex-gap .chip .clsDel{margin-left:18px;}
+html.no-flex-gap .wordsOnlyLabel input{margin-right:12px;}
+html.no-flex-gap .libChip::before{margin-right:10px;}
+html.no-flex-gap .edClassBar > * + *{margin-left:10px;}
+html.no-flex-gap .edToolBar > * + *{margin-left:10px;}
+html.no-flex-gap .edBatchBtns > * + *{margin-left:10px;}
+html.no-flex-gap .edNameRow > * + *{margin-left:10px;}
+html.no-flex-gap .edNameBtns > * + *{margin-left:8px;}
+html.no-flex-gap .edAddBar > * + *{margin-left:10px;}
+html.no-flex-gap .dlgHead > * + *{margin-left:14px;}
+html.no-flex-gap .dlgBtns > * + *{margin-left:12px;}
+html.no-flex-gap .durPicker > * + *{margin-left:30px;}
+html.no-flex-gap .libTabs > * + *{margin-left:8px;}
+html.no-flex-gap .libGroupHead > * + *{margin-left:10px;}
+html.no-flex-gap .libGTActs > * + *{margin-left:8px;}
+html.no-flex-gap .libBulkRow > .libAct + .libAct{margin-left:8px;}
+html.no-flex-gap .setStatusLine > * + *{margin-left:10px;}
+html.no-flex-gap .qTimeoutRow > * + *{margin-left:10px;}
+html.no-flex-gap .segRow > * + *{margin-left:10px;}
+html.no-flex-gap .wbBulkRow > .wbBulkBtn + .wbBulkBtn{margin-left:10px;}
+html.no-flex-gap .wbBookHead > * + *{margin-left:10px;}
+html.no-flex-gap .wbUnitHead > .wbUnitName + .wbUnitMeta{margin-left:10px;}
+html.no-flex-gap .wbWords > * + *{margin-left:8px;}
+html.no-flex-gap .wbWord > * + *{margin-left:8px;}
+html.no-flex-gap .ruleBody > * + *{margin-top:16px;}
+html.no-flex-gap .importLibRow > * + *{margin-left:16px;}
+@media (max-width:1279px){ html.no-flex-gap .pcard > * + *{margin-left:12px;} }
+@media (max-width:1100px){ html.no-flex-gap .pcard > * + *{margin-left:10px;} }
+@media (max-width:820px){ html.no-flex-gap .accRow > * + *{margin-left:40px;} }
+
+/* :focus-visible 缺失时（Chromium < 86）用 :focus 显示键盘焦点框 */
+html.no-focus-visible .libGroupTitle:focus,
+html.no-focus-visible .wbBookToggle:focus,
+html.no-focus-visible .segOpt:focus{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px;}
 
 /* ============ 减少动态效果 ============
    系统开启「减少动态效果」时，关闭全部动画与过渡，避免眩晕与干扰。 */

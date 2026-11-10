@@ -464,7 +464,7 @@ function endBattle(){
 /* ================== 保存作答结果（导出独立 HTML） ==================
    把结算页原样存成一份可离线打开的网页：奖杯、标题、比分、正误、题量、错词本都在；
    去掉「返回主页 / 加时赛 / 保存」这些在线交互按钮，只留信息。 */
-function pad2(n){ return String(n).padStart(2, "0"); }
+function pad2(n){ n = String(n); return n.length < 2 ? "0" + n : n; }
 function resultStamp(){
   const d = new Date();
   return {

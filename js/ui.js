@@ -1,3 +1,25 @@
+/* ================== 老内核兼容检测 ==================
+   ① flex gap：Chromium < 84、Safari < 14.1 不支持，用 margin 兜底（见 style.css 末尾）；
+   ② :focus-visible：Chromium < 86 不支持，用 :focus 兜底。
+   不用 @supports 判断 gap —— 该属性在 grid 上早已支持，老内核会误判为「支持」。 */
+(function detectLegacyCSS(){
+  try{
+    const box = document.createElement("div");
+    box.style.cssText = "position:absolute;left:-9999px;top:0;display:flex;gap:5px;visibility:hidden";
+    const a = document.createElement("i"), b = document.createElement("i");
+    a.style.cssText = b.style.cssText = "width:1px;height:1px;flex:none";
+    box.appendChild(a); box.appendChild(b);
+    document.body.appendChild(box);
+    const gapOk = Math.round(b.getBoundingClientRect().left - a.getBoundingClientRect().left) === 6;
+    document.body.removeChild(box);
+    if(!gapOk) document.documentElement.classList.add("no-flex-gap");
+  }catch(e){}
+  try{
+    if(!(window.CSS && CSS.supports && CSS.supports("selector(:focus-visible)")))
+      document.documentElement.classList.add("no-focus-visible");
+  }catch(e){ document.documentElement.classList.add("no-focus-visible"); }
+})();
+
 /* ================== 音效与特效 ================== */
 function speak(txt){
   try{
@@ -223,7 +245,7 @@ function renderHistory(){
         lastDay = k;
         list += '<div class="dateHead">' + dayLabel(d) + ' <i>' + dayCount[k] + ' 场</i></div>';
       }
-      const hm = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+      const hm = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
       /* 限分模式的历史记录带一枚模式标签，旧记录没有该字段则不显示 */
       const modeTag = m.mode === "knockout" ? '<i class="tagMode">淘汰制 ' + (m.cap || 100) + '</i>'
                     : m.mode === "accumulate" ? '<i class="tagMode">累加制 ' + (m.cap || 100) + '</i>' : "";
@@ -269,7 +291,7 @@ function takeName(exclude){
   if(!rosters()[S.cls] || !rosters()[S.cls].length) return "";
   if(!drawnPool.length) resetDrawn();
   /* 以 @ 开头的名字不计入随机抽取（仅手动输入/选择可用） */
-  const isGhost = n => n.trimStart().startsWith("@");
+  const isGhost = n => n.replace(/^\s+/, "").startsWith("@");
   let idx = drawnPool.findIndex(n => n !== exclude && !isGhost(n));
   if(idx < 0){ resetDrawn(); idx = drawnPool.findIndex(n => n !== exclude && !isGhost(n)); }
   if(idx < 0) return "";
@@ -279,7 +301,7 @@ function takeName(exclude){
    否则返回用户输入本身。显示层统一用 dispName 去掉@，内部存储与抽人逻辑保留@标记。 */
 function resolveGhostName(input){
   if(!input) return "";
-  if(input.trimStart().startsWith("@")) return input;
+  if(input.replace(/^\s+/, "").startsWith("@")) return input;
   const roster = rosters()[S.cls] || [];
   const match = roster.find(n => n.replace(/^@\s*/, "") === input);
   return match || input;
@@ -366,7 +388,7 @@ function createLibChip(tag, file, displayText){
     del.addEventListener("click", async e=>{
       e.stopPropagation();
       const ok = await dlgConfirm(
-        "确定删除自定义词库「" + (LIB_INFO[tag]?.name || tag) + "」吗？此操作不可恢复。",
+        "确定删除自定义词库「" + ((LIB_INFO[tag] && LIB_INFO[tag].name) || tag) + "」吗？此操作不可恢复。",
         { type: "error", title: "删除词库", okText: "确认删除", cancelText: "保留" });
       if(!ok) return;
       deleteCustomLib(tag);
