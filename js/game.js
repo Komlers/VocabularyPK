@@ -566,6 +566,8 @@ function saveResult(){
    ② 异步并行加载词库 JSON，完成后补建索引、题池提示和词库按钮状态
    避免慢网络下词库 fetch 阻塞名单/擂主显示。 */
 (async function init(){
+  /* ⓪ 早期版本的全局错词本按班级拆开（只搬一次，无旧数据时直接跳过） */
+  migrateWrongBook();
   /* ① 先渲染本地数据（名单、擂主、战绩、配置） */
   autoSelectClass();
   restoreCfg();

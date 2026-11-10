@@ -605,6 +605,9 @@
   .wbBox{max-width:840px;}
   .wbSummary{font-size:20px;color:var(--ink2);padding:2px 0 12px;}
   .wbSummary b{color:var(--blue-d);font-size:23px;font-weight:800;margin:0 2px;}
+  .wbCls{display:inline-block;font-size:19px;font-weight:800;color:var(--blue-d);
+         background:var(--blue-bg);border-radius:9px;padding:1px 12px;margin-right:12px;
+         vertical-align:1px;}
   .wbBulkRow{display:flex;align-items:center;gap:10px;padding:0 0 10px;
              box-shadow:0 9px 12px -9px rgba(30,50,90,.22);}
   .wbBulkInfo{font-size:16px;color:var(--muted);margin-right:auto;}

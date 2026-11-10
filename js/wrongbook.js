@@ -1,6 +1,7 @@
 /* ================== 错词记录本 ==================
-   全库累计的错词台账：每场正常对局（单人 / 双人，不含临时赛与加时赛）结束后，
-   把本局答错的单词与词块累加进来。与按班级存、答对即出本的「待复现错词」是两套数据。
+   按班级分开累计的错词台账：每场正常对局（单人 / 双人，不含临时赛与加时赛）结束后，
+   把本局答错的单词与词块累加进当前班级（vpk_wrongbook_<班级>）。
+   与「待复现错词」（h.wrongs，按班级存、答对即出本）是两套数据。
    入口：主页「📕 错词记录」；支持按单元 / 按册 / 全部导出 HTML，供老师分析。 */
 
 /* 转义：导出页面与 DOM 里都可能出现用户自定义词库的内容，引号一并处理 */
@@ -8,9 +9,10 @@ const wbEsc = s => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-/* 把本局错词并入台账：同单元同词条累计次数，并记下班级分布 */
+/* 把本局错词并入当前班级的台账：同单元同词条累计次数 */
 function recordWrongBook(){
-  const d = loadWrongBook();
+  if(!S.cls) return;                 /* 错词记录按班级分开，没有班级不落库 */
+  const d = loadWrongBook(S.cls);
   const now = Date.now();
   let changed = false;
   S.wrongSet.forEach(raw=>{
@@ -32,13 +34,12 @@ function recordWrongBook(){
       cur.n++;
       if(cn) cur.cn = cn;
       cur.last = now;
-      if(S.cls) cur.c[S.cls] = (cur.c[S.cls] || 0) + 1;
     }else{
-      bucket[key] = { en, cn, kind, n:1, last:now, c: S.cls ? {[S.cls]:1} : {} };
+      bucket[key] = { en, cn, kind, n:1, last:now };
     }
     changed = true;
   });
-  if(changed) saveWrongBook(d);
+  if(changed) saveWrongBook(S.cls, d);
 }
 
 /* 单元显示名：优先「必修1 U1 · Teenage Life」，自定义词库直接用品名，
@@ -51,8 +52,8 @@ function wbUnitName(tag){
 }
 
 /* 汇总：按册 → 单元分组，组内按错误次数降序（次数相同按字母序） */
-function wrongBookGroups(){
-  const d = loadWrongBook();
+function wrongBookGroups(cls){
+  const d = loadWrongBook(cls);
   const orderOf = tag => {
     const i = WORD_BANK_FILES.findIndex(x => x.tag === tag);
     return i < 0 ? 9999 : i;
@@ -107,15 +108,22 @@ function renderWrongBook(){
   $("wbExportAll").disabled = !hasData;
   $("wbClear").disabled = !hasData;
 
+  if(!S.cls){
+    sum.textContent = "";
+    body.innerHTML = '<div class="wbEmpty">错词记录按班级分开保存，现在还没有选中班级。<br>'
+      + '<span class="mini">先在上方选择或新建一个班级，再开始比赛即可自动收录。</span></div>';
+    return;
+  }
+
   if(!hasData){
     sum.textContent = "";
-    body.innerHTML = '<div class="wbEmpty">还没有错词记录。<br>'
+    body.innerHTML = '<div class="wbEmpty">「' + wbEsc(S.cls) + '」还没有错词记录。<br>'
       + '打完一局单人 / 双人 PK 后，本局答错的单词与词块会自动收录到这里。<br>'
       + '<span class="mini">「不计入战绩」的临时赛与错词加时赛不计入。</span></div>';
     return;
   }
 
-  sum.innerHTML = '共 <b>' + t.count + '</b> 个错词 · 累计出错 <b>' + t.sum
+  sum.innerHTML = '<span class="wbCls">' + wbEsc(S.cls) + '</span>共 <b>' + t.count + '</b> 个错词 · 累计出错 <b>' + t.sum
     + '</b> 次 · 覆盖 <b>' + t.units + '</b> 个单元';
 
   body.innerHTML = books.map(book=>{
@@ -217,18 +225,16 @@ function wbBuildHtml(scope){
   const t = wbTotals(books);
   const st = resultStamp();
   const title = wbScopeTitle(scope, books);
+  const cls = S.cls || "未选班级";
   const sections = books.map(book=>{
     return book.units.map(u=>{
       const rows = u.items.map((x,i)=>{
-        const cls = Object.keys(x.c || {}).sort((a,b)=>x.c[b]-x.c[a])
-          .map(k => wbEsc(k) + " ×" + x.c[k]).join("、");
         return "<tr>"
           + '<td class="n">' + (i+1) + "</td>"
           + '<td class="en">' + wbEsc(x.en) + "</td>"
           + "<td>" + wbEsc(x.cn || "—") + "</td>"
           + '<td class="kind">' + (x.kind === "w" ? "单词" : '<span class="chip">词块</span>') + "</td>"
           + '<td class="times">×' + x.n + "</td>"
-          + "<td>" + (cls || "—") + "</td>"
           + "<td>" + wbDay(x.last) + "</td>"
           + "</tr>";
       }).join("");
@@ -236,7 +242,7 @@ function wbBuildHtml(scope){
         + "<h2>" + wbEsc(u.name)
         + "<small>本单元 " + u.count + " 个错词 · 共 " + u.sum + " 次</small></h2>"
         + "<table><thead><tr><th>#</th><th>词条</th><th>释义</th><th>类型</th>"
-        + "<th>错误次数</th><th>班级分布</th><th>最近出错</th></tr></thead>"
+        + "<th>错误次数</th><th>最近出错</th></tr></thead>"
         + "<tbody>" + rows + "</tbody></table>"
         + "</section>";
     }).join("");
@@ -256,14 +262,15 @@ function wbBuildHtml(scope){
     "<body>",
     '<div class="sheet">',
     "<h1>📕 错词记录</h1>",
-    '<div class="meta">范围：<b>' + wbEsc(title) + "</b>　·　导出时间：" + st.day + " " + st.hm + "</div>",
+    '<div class="meta">班级：<b>' + wbEsc(cls) + "</b>　·　范围：<b>" + wbEsc(title)
+      + "</b>　·　导出时间：" + st.day + " " + st.hm + "</div>",
     '<div class="sum">',
     "<div><span>错词数</span><b>" + t.count + "</b></div>",
     "<div><span>累计出错</span><b>" + t.sum + "</b></div>",
     "<div><span>涉及单元</span><b>" + t.units + "</b></div>",
     "</div>",
     sections || '<div class="empty">该范围内还没有错词记录。</div>',
-    '<div class="foot">词汇擂台 PK · 错词记录　·　' + st.day + "</div>",
+    '<div class="foot">词汇擂台 PK · 错词记录　·　' + wbEsc(cls) + "　·　" + st.day + "</div>",
     "</div>",
     "</body>",
     "</html>"
@@ -272,7 +279,8 @@ function wbBuildHtml(scope){
 
 function wbFileName(scope, books){
   const st = resultStamp();
-  let name = "错词记录_";
+  const cls = (S.cls || "未选班级").replace(/[\\/:*?"<>|\s　]/g, "");
+  let name = "错词记录_" + cls + "_";
   if(scope.type === "book") name += (books[0] ? books[0].name : "本册");
   else if(scope.type === "unit"){
     const u = books[0] && books[0].units[0];
@@ -318,7 +326,8 @@ async function wbClearAll(){
   const t = wbTotals(books);
   if(!t.count) return;
   const ok = await dlgConfirm(
-    "确定清空全部错词记录吗？<br>将删除 <b>" + t.count + "</b> 个错词、共 " + t.sum + " 次出错记录，且无法恢复。"
+    "确定清空「<b>" + wbEsc(S.cls) + "</b>」的全部错词记录吗？<br>将删除 <b>" + t.count
+    + "</b> 个错词、共 " + t.sum + " 次出错记录，其他班级不受影响，且无法恢复。"
     + "<br><span class='mini'>建议先导出 HTML 留存。</span>",
     { type:"warning", title:"清空错词记录", okText:"清空", cancelText:"取消", html:true }
   );

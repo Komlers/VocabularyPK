@@ -117,7 +117,7 @@
     const oldName = edCls;
     const val = await dlgPrompt({
       title: "重命名班级",
-      message: "将班级「" + oldName + "」重命名，名单、战绩、擂主会一并迁移。",
+      message: "将班级「" + oldName + "」重命名，名单、战绩、错词记录、擂主会一并迁移。",
       value: oldName,
       validate: v => {
         const to = v.trim();
@@ -138,12 +138,15 @@
       const oldHis = localStorage.getItem(hisKey(oldName));
       const oldChamp = localStorage.getItem(champKey(oldName));
       const oldCfg = localStorage.getItem("vpk_cfg_" + oldName);
+      const oldWB = localStorage.getItem(wrongbookKey(oldName));
       localStorage.removeItem(hisKey(oldName));
       localStorage.removeItem(champKey(oldName));
       localStorage.removeItem("vpk_cfg_" + oldName);
+      localStorage.removeItem(wrongbookKey(oldName));
       if (oldHis !== null) localStorage.setItem(hisKey(to), oldHis);
       if (oldChamp !== null) localStorage.setItem(champKey(to), oldChamp);
       if (oldCfg !== null) localStorage.setItem("vpk_cfg_" + to, oldCfg);
+      if (oldWB !== null) localStorage.setItem(wrongbookKey(to), oldWB);
     } catch (e) {}
     if (S.cls === oldName) { S.cls = to; saveUI({cls:to}); }
     saveRosters(rs);
@@ -156,7 +159,7 @@
   async function deleteClass() {
     if (!edCls) return;
     const ok = await dlgConfirm(
-      "确定删除班级「" + edCls + "」？其名单、对战历史、擂主和配置都会一并清除，且不可恢复。",
+      "确定删除班级「" + edCls + "」？其名单、对战历史、错词记录、擂主和配置都会一并清除，且不可恢复。",
       { title: "删除班级", type: "error", okText: "确认删除", cancelText: "保留" });
     if (!ok) return;
     const rs = rosters();
@@ -166,6 +169,7 @@
       localStorage.removeItem(hisKey(edCls));
       localStorage.removeItem(champKey(edCls));
       localStorage.removeItem("vpk_cfg_" + edCls);
+      localStorage.removeItem(wrongbookKey(edCls));
     } catch (e) {}
     if (S.cls === edCls) {
       S.cls = "";

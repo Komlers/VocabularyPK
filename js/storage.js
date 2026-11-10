@@ -72,16 +72,20 @@ function loadHis(c){
 }
 function saveHis(c, h){ if(!c) return; try{ localStorage.setItem(hisKey(c), JSON.stringify(h)); }catch(e){} }
 
-/* ================== 错词记录本（全库累计，不分班级） ==================
-   结构：{ 单元tag: { "英文|w": {en,cn,kind,n,last,c:{班级:次数}} } }
-     · n     该词累计答错次数，答对不清零，便于看整学期的顽固错词
-     · c     按班级拆分的次数，导出时老师能看出是哪个班错得多
+/* ================== 错词记录本（按班级分开累计） ==================
+   键：vpk_wrongbook_<班级>，和战绩 / 擂主 / 配置一样按班分开存。
+   结构：{ 单元tag: { "英文|w": {en,cn,kind,n,last} } }
+     · n     该词在这个班累计答错次数，答对不清零，便于看整学期的顽固错词
      · kind  w=单词，c=词块（同一个词与词块同名时分两条）
    与「待复现错词」（h.wrongs，答对即出本）是两套数据，互不影响。 */
-const WRONGBOOK_KEY = "vpk_wrongbook";
-function loadWrongBook(){
+const wrongbookKey = c => "vpk_wrongbook_" + c;
+const WRONGBOOK_LEGACY_KEY = "vpk_wrongbook";   /* 早期版本用的全局键，启动时迁移一次 */
+
+function loadWrongBook(cls){
+  const c = cls === undefined ? S.cls : cls;
+  if(!c) return {};
   try{
-    const d = JSON.parse(localStorage.getItem(WRONGBOOK_KEY));
+    const d = JSON.parse(localStorage.getItem(wrongbookKey(c)));
     if(!d || typeof d !== "object" || Array.isArray(d)) return {};
     const out = {};
     for(const tag in d){
@@ -93,20 +97,12 @@ function loadWrongBook(){
         if(!e || typeof e !== "object") continue;
         const en = String(e.en || "").trim();
         if(!en) continue;
-        const c = {};
-        if(e.c && typeof e.c === "object" && !Array.isArray(e.c)){
-          for(const k in e.c){
-            const v = parseInt(e.c[k], 10);
-            if(v > 0) c[k] = v;
-          }
-        }
         clean[key] = {
           en,
           cn: String(e.cn || ""),
           kind: e.kind === "w" ? "w" : "c",
           n: Math.max(1, Math.min(99999, parseInt(e.n, 10) || 1)),
-          last: Math.max(0, parseInt(e.last, 10) || 0),
-          c
+          last: Math.max(0, parseInt(e.last, 10) || 0)
         };
       }
       if(Object.keys(clean).length) out[tag] = clean;
@@ -114,16 +110,60 @@ function loadWrongBook(){
     return out;
   }catch(e){ return {}; }
 }
-function saveWrongBook(d){
-  try{ localStorage.setItem(WRONGBOOK_KEY, JSON.stringify(d)); }catch(e){}
+function saveWrongBook(cls, d){
+  const c = cls === undefined ? S.cls : cls;
+  if(!c) return;
+  try{ localStorage.setItem(wrongbookKey(c), JSON.stringify(d)); }catch(e){}
 }
-function clearWrongBook(){
-  try{ localStorage.removeItem(WRONGBOOK_KEY); }catch(e){}
+function clearWrongBook(cls){
+  const c = cls === undefined ? S.cls : cls;
+  if(!c) return;
+  try{ localStorage.removeItem(wrongbookKey(c)); }catch(e){}
 }
-/* 待复现错词：按历史错误次数取前 8 */
-function reviewWords(c){
-  const h = loadHis(c);
-  return Object.entries(h.wrongs||{}).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+
+/* 早期版本把错词记在全局键里，并用 c:{班级:次数} 记录分布。
+   改成按班存放后，启动时按分布拆到各班的键里，搬完删掉旧键（只搬一次）。 */
+function migrateWrongBook(){
+  let raw = null;
+  try{ raw = localStorage.getItem(WRONGBOOK_LEGACY_KEY); }catch(e){ return; }
+  if(!raw) return;
+  let d = null;
+  try{ d = JSON.parse(raw); }catch(e){ d = null; }
+  if(d && typeof d === "object" && !Array.isArray(d)){
+    const touched = {};
+    for(const tag in d){
+      const bucket = d[tag];
+      if(!bucket || typeof bucket !== "object" || Array.isArray(bucket)) continue;
+      for(const key in bucket){
+        const e = bucket[key];
+        if(!e || typeof e !== "object" || !e.en) continue;
+        const dist = (e.c && typeof e.c === "object" && !Array.isArray(e.c)) ? e.c : {};
+        const last = Math.max(0, parseInt(e.last, 10) || 0);
+        for(const cls in dist){
+          const n = parseInt(dist[cls], 10);
+          if(!cls || !(n > 0)) continue;
+          if(!touched[cls]) touched[cls] = loadWrongBook(cls);
+          const book = touched[cls];
+          const b = book[tag] || (book[tag] = {});
+          const cur = b[key];
+          if(cur){
+            cur.n += n;
+            cur.last = Math.max(cur.last, last);
+          }else{
+            b[key] = {
+              en: String(e.en),
+              cn: String(e.cn || ""),
+              kind: e.kind === "w" ? "w" : "c",
+              n,
+              last
+            };
+          }
+        }
+      }
+    }
+    for(const cls in touched) saveWrongBook(cls, touched[cls]);
+  }
+  try{ localStorage.removeItem(WRONGBOOK_LEGACY_KEY); }catch(e){}
 }
 
 /* ================== 界面记忆（上次选的班级 + 两个临时开关） ==================
