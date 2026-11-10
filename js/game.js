@@ -1,4 +1,21 @@
 /* ================== 对战逻辑 ================== */
+/* 开局入场动效：红蓝卡片从两侧滑入，计时器 / 题目 / 选项依次浮起。
+   只加一次性类并在动画结束后移除，不阻塞答题与倒计时。 */
+let entranceTimer = null;
+let qAnimTimer = null;
+function playBattleEntrance(){
+  const bt = $("battle");
+  if(!bt) return;
+  bt.classList.remove("starting");
+  void bt.offsetWidth;              /* 强制重排，连开两局也能重播 */
+  bt.classList.add("starting");
+  if(entranceTimer) clearTimeout(entranceTimer);
+  entranceTimer = setTimeout(()=>{
+    bt.classList.remove("starting");
+    entranceTimer = null;
+  }, 900);
+}
+
 function startBattle(revival){
   S.revival = revival;
   S.basePoints = revival ? 5 : 10;
@@ -40,6 +57,7 @@ function startBattle(revival){
   }
   syncStats();
   show("battle");
+  playBattleEntrance();
   nextQuestion();
   clearInterval(S.timer);
   updateTimer();
@@ -113,6 +131,19 @@ function nextQuestion(){
       b.disabled = false;
     });
   });
+  /* 换题动效：题干与两侧选项轻微上浮，选项依次出现（重复换题也能重播）。
+     动画结束即摘掉 qIn，否则它的优先级会盖住答对 / 答错的小动画。 */
+  const fresh = ["qWord","side1","side2"].map(id=>$(id)).filter(Boolean);
+  fresh.forEach(el=>el.classList.remove("qIn"));
+  if(fresh.length){
+    void fresh[0].offsetWidth;
+    fresh.forEach(el=>el.classList.add("qIn"));
+    if(qAnimTimer) clearTimeout(qAnimTimer);
+    qAnimTimer = setTimeout(()=>{
+      fresh.forEach(el=>el.classList.remove("qIn"));
+      qAnimTimer = null;
+    }, 420);
+  }
   startQuestionTimer();
 }
 /* ================== 单题超时检测（防拖延） ================== */

@@ -653,6 +653,54 @@
   .aboutLink{color:var(--blue-d);text-decoration:none;font-weight:700;}
   .aboutLink:hover{text-decoration:underline;}
 
+  /* ============ 过渡与动效 ============
+     页面切换、弹窗、开局与结算的入场动画；都是纯视觉，不阻塞答题与计时，
+     系统开启「减少动态效果」时在文件末尾统一关闭。 */
+  @keyframes screenIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  @keyframes cardL{from{opacity:0;transform:translateX(-34px);}to{opacity:1;transform:none;}}
+  @keyframes cardR{from{opacity:0;transform:translateX(34px);}to{opacity:1;transform:none;}}
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  @keyframes qIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  @keyframes optIn{from{opacity:0;transform:translateY(7px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes optGood{0%{transform:scale(1);}45%{transform:scale(1.05);}100%{transform:scale(1);}}
+  @keyframes optBad{0%,100%{transform:translateX(0);}22%{transform:translateX(-6px);}72%{transform:translateX(6px);}}
+  @keyframes maskIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes boxIn{from{opacity:0;transform:translateY(14px) scale(.985);}to{opacity:1;transform:none;}}
+
+  /* 页面切换：主页 / 结算整体淡入上浮；对战页改由卡片滑入，避免两层淡入叠在一起 */
+  .screen:not(.hidden){animation:screenIn .26s ease-out both;}
+  #battle:not(.hidden){animation:none;}
+
+  /* 弹窗：遮罩淡入 + 面板轻微上浮 */
+  .modal:not(.hidden){animation:maskIn .18s ease-out both;}
+  .modal:not(.hidden) .modalBox{animation:boxIn .22s cubic-bezier(.2,.85,.35,1.08) both;}
+
+  /* 开局：红蓝卡片从两侧滑入，计时器、题目、两侧选项依次浮起 */
+  #battle.starting .pcard.red{animation:cardL .5s cubic-bezier(.2,.8,.3,1) both;}
+  #battle.starting .pcard.blue{animation:cardR .5s cubic-bezier(.2,.8,.3,1) both;}
+  #battle.starting .timerWrap{animation:riseIn .42s .1s ease-out both;}
+  #battle.starting .qzone{animation:riseIn .42s .16s ease-out both;}
+  #battle.starting .arena .side.red{animation:riseIn .42s .22s ease-out both;}
+  #battle.starting .arena .side.blue{animation:riseIn .42s .26s ease-out both;}
+
+  /* 换题：题干与选项轻微上浮，四个选项错开 35ms 依次出现 */
+  #qWord.qIn{animation:qIn .2s ease-out both;}
+  .side.qIn .opt{animation:optIn .18s ease-out both;}
+  .side.qIn .opt:nth-of-type(2){animation-delay:.035s;}
+  .side.qIn .opt:nth-of-type(3){animation-delay:.07s;}
+  .side.qIn .opt:nth-of-type(4){animation-delay:.105s;}
+
+  /* 作答反馈：答对小弹一下，答错轻轻摇一下，比纯变色更容易被余光捕捉 */
+  .opt.good{animation:optGood .26s ease;}
+  .opt.bad{animation:optBad .26s ease;}
+
+  /* 结算：奖杯弹出后，标题、比分、正误、错词、按钮依次浮现 */
+  #result #winName{animation:riseIn .34s .06s ease-out both;}
+  #result #finalScore{animation:riseIn .34s .1s ease-out both;}
+  #result .accRow{animation:riseIn .34s .14s ease-out both;}
+  #result #wrongBox{animation:riseIn .34s .2s ease-out both;}
+  #result .btnRow{animation:riseIn .34s .26s ease-out both;}
+
   /* ============ 高DPI大屏适配 ============
      4K/300%系统缩放环境下，CSS像素被放大渲染导致元素过大。
      通过 zoom 整体缩小，效果等同浏览器手动 Ctrl+-，覆盖字体/间距/边框/阴影。
@@ -663,3 +711,15 @@
   @media (min-resolution: 2.5dppx) {
     html { zoom: 0.85; }
   }
+
+/* ============ 减少动态效果 ============
+   系统开启「减少动态效果」时，关闭全部动画与过渡，避免眩晕与干扰。 */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.001ms !important;
+    animation-delay:0ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
