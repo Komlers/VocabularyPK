@@ -323,7 +323,7 @@ function renderHistory(){
     body.innerHTML = html;
     clearBtn.classList.remove("hidden");
   }
-  /* 错词记忆关闭时不显示待复现错词（即使历史上有 wrongs 数据） */
+  /* 未开启「错词优先复现」时不显示待复现错词（即使历史上有 wrongs 数据） */
   const rw = S.rememberWrong ? reviewWords(S.cls).length : 0;
   let info = "";
   /* 临时体验（无班级）的擂主只在本会话内有效，不标注「本地记忆」 */
@@ -673,7 +673,7 @@ function renderScoreModeUI(){
     if(box) box.classList.toggle("hidden", limited);
   });
 }
-/* 主页「当前擂台设置」状态行：错词记忆 / 是否只加载纯单词 / 单题超时 */
+/* 主页「当前擂台设置」状态行：错词复现 / 是否只加载纯单词 / 单题超时 */
 function renderSettingStatus(){
   const box = $("setStatusLine");
   if(!box) return;
@@ -686,7 +686,7 @@ function renderSettingStatus(){
                "答对 +5 / 答错 -10");
   }
   parts.push(
-    S.rememberWrong ? "错词将记忆" : "错词不记忆",
+    S.rememberWrong ? "错词优先复现" : "错词不复现",
     S.wordsOnly ? "只加载纯单词" : "加载完整词库",
     S.questionTimeout ? "单题超时：" + S.questionTimeoutDur + "s" : "单题不限时"
   );

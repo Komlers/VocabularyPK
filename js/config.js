@@ -54,7 +54,8 @@ let wordByEn = {};        // 单词英文 -> LIB 词条
 const $ = id => document.getElementById(id);
 let S = {
   cls:"", p1:"红方选手", p2:"蓝方选手",
-  units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false, rememberWrong:false,
+  units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false,
+  rememberWrong:false,      /* 「错词优先复现」开关：只决定下一局是否插错词，不影响错词记录（键名沿用旧称，旧配置才能直接生效） */
   solo:false,   /* 本次PK为单人作答：两侧共用一个总分，另一侧只作补救通道 */
   anim:true,    /* 渲染动画效果：关闭后全部动画与过渡不加载，低性能设备更流畅（跟设备走，不分班级） */
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",

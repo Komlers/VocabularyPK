@@ -136,7 +136,8 @@ function specFromWrong(en, cn, kind){
   return null;
 }
 /* 上节课错的词与词块：按错误次数取前 8 优先复现；
-   未启用「错词记忆」时返回空，每次完全用当前词库出题 */
+   未开启「错词优先复现」时返回空，每次完全用当前词库出题。
+   注意：这只影响出题，错词本（vpk_wrongbook_*）始终照常收录。 */
 function reviewSpecs(cls){
   if(!S.rememberWrong) return [];
   const h = loadHis(cls);

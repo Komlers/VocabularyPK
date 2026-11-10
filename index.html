@@ -106,7 +106,7 @@
   </div>
 
   <div class="card">
-    <h3><span class="stepNo">4</span>擂台设置与本次规则<span class="hint">计分模式 / 错词记忆 / 单题超时 / 临时赛</span></h3>
+    <h3><span class="stepNo">4</span>擂台设置与本次规则<span class="hint">计分模式 / 错词复现 / 单题超时 / 临时赛</span></h3>
     <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;">
       <button class="drawBtn" id="settingBtn" style="font-size:26px;padding:14px 26px">⚙️ 擂台设置</button>
     </div>
@@ -114,11 +114,12 @@
       <input type="checkbox" id="noRecordChk">
       本次PK不计入战绩（临时赛）
     </label>
+    <div class="setHint">勾选后本局的战绩、错词记录、擂主都不收录，适合纯演示或不想留痕的练习。</div>
     <label class="wordsOnlyLabel">
       <input type="checkbox" id="soloChk">
       本次PK为单人作答（单人检测）
     </label>
-    <!-- 当前擂台设置状态（计分模式 / 连击 / 错词记忆 / 单题超时），由 renderSettingStatus 更新 -->
+    <!-- 当前擂台设置状态（计分模式 / 连击 / 错词复现 / 单题超时），由 renderSettingStatus 更新 -->
     <div class="setStatusLine" id="setStatusLine"></div>
   </div>
 
@@ -249,11 +250,12 @@
     <div class="setItem">
       <label class="wordsOnlyLabel">
         <input type="checkbox" id="rememberWrongChk">
-        启用错词记忆
+        错词优先复现
       </label>
       <div class="setHint">
-        勾选：每轮比赛结束统计错词，下次比赛优先重考错词。<br>
-        不勾选：不统计错词，每次完全使用当前所选词库出题（默认）。
+        勾选：下一局开头优先出现本班累计的错词（按出错次数最多取 8 个），复现时答对即移出名单。<br>
+        不勾选：完全按当前所选词库出题，不插入错词（默认）。<br>
+        <span class="mini">无论勾选与否，每局答错的单词与词块都会记入主页「📕 错词记录」；不想记录请勾选主页的「本次PK不计入战绩」。</span>
       </div>
     </div>
 

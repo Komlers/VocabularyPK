@@ -340,9 +340,13 @@ function endBattle(){
   clearInterval(S.timer);
   clearQuestionTimer();
   const [a,b] = S.scores;
-  /* 临时赛（noRecord）不记录战绩、不统计错题、不更新擂主；
+  /* 临时赛（noRecord）不记录战绩、不收录错词、不更新擂主；
      临时体验（无班级，手输名字试玩）同样不落库，只在本次会话里保留比分与错词 */
   if(!S.revival && !S.noRecord && S.cls){
+    /* ① 错词记录本：每场正常对局（单人 / 双人）的错词都收录，与「错词优先复现」
+         开关无关 —— 那个开关只决定下一局要不要插错词。加时赛不重复收录。 */
+    recordWrongBook();
+    /* ② 战绩与最高连击 */
     const h = loadHis(S.cls);
     /* 限分模式把模式与满分一并记下，战绩列表里可回看是哪一种玩法 */
     const modeInfo = S.scoreMode === "open" ? {} : { mode:S.scoreMode, cap:S.scoreCap };
@@ -356,11 +360,9 @@ function endBattle(){
       });
     }
     saveHis(S.cls, h);
-    /* 错词记录本：独立于「错词记忆」开关，累计收录每场正常对局的错词 */
-    recordWrongBook();
   }
   if(!S.noRecord && S.rememberWrong && S.cls){
-    /* 错词账本更新（加时赛同样生效，仅在启用错词记忆时）：
+    /* 待复现名单更新（加时赛同样生效，仅当开启「错词优先复现」时维护）：
        复现词答对即出本，再错次数+1；新错词计入 */
     const h = loadHis(S.cls);
     (S.reviewList||[]).forEach(word=>{
