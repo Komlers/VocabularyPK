@@ -49,13 +49,19 @@ function startBattle(revival){
   $("n1").textContent = dispName(S.p1); $("n2").textContent = dispName(S.p2);
   $("s1").textContent = initScore; $("s2").textContent = initScore;
   $("st1").textContent = ""; $("st2").textContent = "";
-  /* 单人作答：左边只显示名字，右边显示分数与实时统计，两卡等宽保证计时器居中 */
+  /* 单人作答：只出一列选项（淡紫色单列），左边只显示名字，右边显示分数与实时统计，
+     两卡等宽保证计时器居中 */
   const topbar = document.querySelector(".topbar");
   if(topbar){
     topbar.classList.toggle("solo", !!S.solo);
     /* 限分模式的分数可能是三位数，顶栏比分降一档字号 */
     topbar.classList.toggle("cap3", !revival && S.scoreMode !== "open" && S.scoreCap >= 100);
   }
+  /* 单列布局由 #battle.solo 控制：隐藏对侧那一列，并把剩下的列改成淡紫色 */
+  $("battle").classList.toggle("solo", !!S.solo);
+  /* 单人没有对手，角色小字不再写「擂主 · 红方」 */
+  const roleEl = topbar && topbar.querySelector(".pcard.red .prole");
+  if(roleEl) roleEl.textContent = S.solo ? "🎯 单人作答" : "🛡 擂主 · 红方";
   syncStats();
   show("battle");
   playBattleEntrance();
@@ -157,18 +163,18 @@ function startQuestionTimer(){
   if(!S.questionTimeout) return;
   S.qTimer = setTimeout(questionTimeout, S.questionTimeoutDur * 1000);
 }
-/* 题目超时：双方均不计分，锁定双方并短暂提示后进入下一题 */
+/* 题目超时：双方均不计分，锁定作答区并短暂提示后进入下一题 */
 function questionTimeout(){
   if(S.pendingNext) return;
   S.qTimer = null;
   S.pendingNext = true;
-  /* 锁定双方，禁止继续点击 */
+  /* 锁定作答区，禁止继续点击（单人只有一列，锁定对侧也无副作用） */
   [1,2].forEach(k=>{
     S.locked[k-1] = true;
     $("side"+k).classList.add("locked");
   });
-  fx("⏰ 超时", "#9a8c5b", 18);
-  fx("⏰ 超时", "#9a8c5b", 82);
+  fx("⏰ 超时", "#9a8c5b", S.solo ? 50 : 18);
+  if(!S.solo) fx("⏰ 超时", "#9a8c5b", 82);
   beep(160, .25);
   setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, 700);
 }
@@ -199,7 +205,7 @@ function score(k, ok){
     const before = S.solo ? S.scores[0] : S.scores[k-1];
     const after = limited ? Math.min(S.scoreCap, before + pts) : before + pts;
     if(S.solo){
-      /* 单人作答：两侧共用一个总分，显示同步；连击仍各侧独立，故奖励只按答题的那一侧算 */
+      /* 单人作答只有一个总分：写回两处让顶栏左右卡保持一致 */
       S.badStreak = [0,0];
       S.scores = [after, after];
       $("s1").textContent = after; $("s2").textContent = after;
@@ -208,10 +214,10 @@ function score(k, ok){
       S.scores[k-1] = after;
       $("s"+k).textContent = after;
     }
-    /* 单人模式分数只显示在右侧，飘字幅度也跟着走右侧；已到满分则提示「已满」 */
+    /* 单人模式只有一列，分数飘字也跟着换成淡紫主色、落在单列正中 */
     const gain = after - before;
-    const fxColor = S.solo ? "#4a7fe0" : (k===1 ? "#e05555" : "#4a7fe0");
-    const fxPos = S.solo ? 82 : (k===1 ? 18 : 82);
+    const fxColor = S.solo ? "#7a5cc4" : (k===1 ? "#e05555" : "#4a7fe0");
+    const fxPos = S.solo ? 50 : (k===1 ? 18 : 82);
     if(gain > 0) fx("+" + gain, fxColor, fxPos);
     else if(limited) fx("已满", "#9aa3b2", fxPos);
     if(!S.revival && !limited && S.streak[k-1] >= 2)
@@ -226,8 +232,9 @@ function score(k, ok){
       if(limited){
         pen = 10;
       }else if(S.solo){
-        /* 连续扣分在两侧之间同步：换边再错仍算同一次连错 */
-        const n = Math.max(S.badStreak[0], S.badStreak[1]) + 1;
+        /* 单人只有一条作答线，连续答错直接累加（两侧数组仍保持同值） */
+        S.badStreak[1]++;
+        const n = S.badStreak[1];
         S.badStreak = [n, n];
         pen = S.comboBonus ? Math.min(5 * n, 20) : 5;
       }else{
@@ -244,7 +251,7 @@ function score(k, ok){
         $("s"+k).textContent = after;
       }
       const lost = before - after;
-      if(lost > 0) fx("-" + lost, "#79808f", S.solo ? 82 : (k===1 ? 18 : 82));
+      if(lost > 0) fx("-" + lost, "#79808f", S.solo ? 50 : (k===1 ? 18 : 82));
     }
     S.wrongSet.add(S.curQ.en + "|" + S.curQ.cn + "|" + S.curQ.kind + "|" + (S.curQ.tag || ""));
     beep(220, .18);
@@ -273,7 +280,7 @@ function checkScoreEnd(){
 }
 /* 顶栏实时统计（每判定一题刷新一次）：
    双人 —— 各自「已答题数（= 正 + 错）」与正答 / 错答；
-   单人 —— 右侧显示本回合已答题数（S.done）与两侧合并的正误，左侧卡片收起。 */
+   单人 —— 右侧显示本回合已答题数（S.done）与合并后的正误，左侧卡片只留名字。 */
 function syncStats(){
   const put = (id, v) => { const el = $(id); if(el) el.textContent = v; };
   if(S.solo){
@@ -316,7 +323,8 @@ function answer(k, e){
     btn.classList.add("bad");
     $("pg"+k).textContent = "✔ " + q.en;
     score(k, false);
-    if(S.locked[0] && S.locked[1]) scheduleNext(700);
+    /* 双人：等两侧都答完再换题；单人只有一列、一题一次机会，答完即换 */
+    if(S.solo || (S.locked[0] && S.locked[1])) scheduleNext(700);
     return;
   }
   /* 单选类：单词 / 词块选义 / 词块配对 */
@@ -329,7 +337,8 @@ function answer(k, e){
   }else{
     btn.classList.add("bad");
     score(k, false);
-    if(S.locked[0] && S.locked[1]) scheduleNext(600);
+    /* 单人一列：没有「换到另一侧再答一次」的补救，答错当场换题 */
+    if(S.solo || (S.locked[0] && S.locked[1])) scheduleNext(600);
   }
 }
 

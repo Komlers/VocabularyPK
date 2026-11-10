@@ -337,7 +337,7 @@ $("noRecordChk").addEventListener("change", e=>{
   S.noRecord = e.target.checked;
   saveUI({noRecord:S.noRecord});
 });
-/* 单人作答：一位选手即可开局，另一侧作为答错后的补救通道 */
+/* 单人作答：一位选手即可开局，比赛改为单列选项（淡紫），一题只答一次 */
 $("soloChk").addEventListener("change", e=>{
   S.solo = e.target.checked;
   saveUI({solo:S.solo});
@@ -463,7 +463,7 @@ $("hisModal").addEventListener("click", e=>{
 
 /* ================== 开始 PK / 限时 ================== */
 $("startBtn").addEventListener("click", async ()=>{
-  /* 单人作答只要一位选手：两边都填则取红方；另一侧在比赛中作为补救通道 */
+  /* 单人作答只要一位选手：两边都填则取红方；比赛只出单列，没有对侧补救 */
   const soloPlayer = redName || blueName;
   if(S.solo){
     if(!soloPlayer){

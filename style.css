@@ -1,6 +1,7 @@
   :root{
     --red:#e05555; --red-d:#c0392b; --red-bg:#fdecea; --red-soft:#fff6f5;
     --blue:#4a7fe0; --blue-d:#2c5cb8; --blue-bg:#ecf2fe; --blue-soft:#f6f9ff;
+    --purple:#7a5cc4; --purple-d:#5a41a0; --purple-soft:#f7f4ff; --purple-line:#e2d8f7;
     --ink:#1f242e; --ink2:#3a4150; --muted:#79808f; --muted2:#9aa1ad;
     --line:#e3e8f1; --card:#fff; --radius:20px;
     --shadow:0 8px 26px rgba(28,39,72,.09);
@@ -246,6 +247,23 @@
   #pg1,#pg2{font-size:24px;min-height:34px;text-align:center;color:var(--ink2);font-weight:700;
             overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .opt.picked{background:#eef3fb;border-color:#9db6e8;color:#9aa3b2;}
+
+  /* ============ 单人作答：单列选项 ============
+     原来单人沿用双列、靠「换到另一侧再答一次」补错，判分和对侧锁定都绕；
+     现在只留一列（右列），淡紫色、限宽居中，一题只答一次。
+     对侧那一列整块隐藏，不再参与作答与判分。 */
+  #battle.solo .arena{justify-content:center;align-items:flex-start;padding:4px 5vw 22px;}
+  #battle.solo .arena .side.red{display:none;}
+  #battle.solo .arena .side.blue{flex:none;width:100%;max-width:780px;
+                                 background:var(--purple-soft);border-color:var(--purple-line);}
+  #battle.solo .side.blue .opt:hover{border-color:var(--purple);}
+  #battle.solo .streakTag.blue{color:var(--purple-d);}
+  #battle.solo #pg2{color:var(--purple-d);}
+  /* 顶栏两卡也跟着换成淡紫，避免「粉名卡 + 蓝分卡」压在紫色单列上显得花 */
+  .topbar.solo .pcard.red,
+  .topbar.solo .pcard.blue{background:var(--purple-soft);border-color:var(--purple-line);}
+  .topbar.solo .pcard.red .pname{color:var(--purple-d);}
+  .topbar.solo .pcard.blue .pscore{color:var(--purple);}
 
   /* ============ 结果页 ============ */
   #result{align-items:center;justify-content:center;padding:30px 6vw;text-align:center;}
@@ -735,6 +753,8 @@
 html.no-flex-gap .topbar > * + *{margin-left:2vw;}
 html.no-flex-gap .pcard > * + *{margin-left:16px;}
 html.no-flex-gap .arena > * + *{margin-left:2.2vw;}
+/* 单人单列：对侧整列隐藏，不能再给它留左边距，否则单列会偏离正中 */
+html.no-flex-gap #battle.solo .arena > * + *{margin-left:0;}
 html.no-flex-gap .side > * + *{margin-top:12px;}
 html.no-flex-gap .pstats > * + *{margin-top:1px;}
 html.no-flex-gap .accRow > * + *{margin-left:64px;}
