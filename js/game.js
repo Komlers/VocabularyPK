@@ -80,7 +80,7 @@ function updateTimer(){
   $("timer").classList.toggle("warn", S.left<=30);
 }
 function nextQuestion(){
-  if(S.ending) return;          /* 限分模式已判定胜负，等结算，不再出题 */
+  if(S.ending || S.ended) return;   /* 已判定胜负 / 已结算或已终止，不再出题 */
   S.pendingNext = false;
   if(S.qi >= S.pool.length){
     /* 只有把题池里每一个词条都出过一遍之后才会重新洗牌开第二轮 */
@@ -472,6 +472,29 @@ function endBattle(){
     $("wrongBox").classList.remove("hidden");
     $("reviveBtn").classList.add("hidden");
   }
+}
+
+/* ================== 手动终止比赛 ==================
+   比赛中点左上角「终止」并确认后走这里。整局按临时赛处理：不写战绩、
+   不收录错词本、擂主不变，也不进结算页，直接回主页。
+   实现上不走 endBattle —— 那个函数就是负责入账的，所以这里直接把
+   S.ended 置真（排队的 endBattle / nextQuestion / 超时回调都会因此失效），
+   再把时钟与题池停掉。 */
+function abortBattle(){
+  if(S.ended) return;
+  S.ended = true;
+  S.ending = false;
+  S.pendingNext = true;      /* 拦住 scheduleNext 排好的换题 */
+  S.left = 0;                /* 换题 / 超时回调都带 S.left > 0 判断，置 0 即失效 */
+  clearInterval(S.timer);
+  S.timer = null;
+  clearQuestionTimer();
+  const bt = $("battle");
+  if(bt) bt.classList.remove("starting");
+  S.wrongSet = new Set();    /* 本局错词作废，避免日后被别的流程带进账 */
+  show("setup");
+  blueName = "";             /* 挑战者重新抽，红方（擂主）保持不动 */
+  refreshNameBoxes();
 }
 
 /* ================== 保存作答结果（导出独立 HTML） ==================

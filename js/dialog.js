@@ -51,9 +51,9 @@
       errBox.textContent = "";
       errBox.classList.add("hidden");
 
-      /* 按钮 */
+      /* 按钮：error 类型或显式 danger 时用红色确定键（破坏性操作） */
       okBtn.textContent = cfg.okText || "确 定";
-      okBtn.className = "dlgBtn " + (type === "error" ? "danger" : "primary");
+      okBtn.className = "dlgBtn " + ((type === "error" || cfg.danger) ? "danger" : "primary");
       if (cfg.cancel === false) {
         cancelBtn.classList.add("hidden");
       } else {

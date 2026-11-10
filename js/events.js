@@ -553,6 +553,18 @@ $("homeBtn").addEventListener("click", ()=>{
   refreshNameBoxes(); renderHistory();
 });
 
+/* ================== 比赛中终止 ==================
+   左上角的「终止」只在比赛进行中显示（显隐见 ui.js 的 syncCornerBtns）。
+   确认后按临时赛处理：不计战绩、不收录错词、擂主不变，直接回主页。 */
+$("abortBtn").addEventListener("click", async ()=>{
+  if($("battle").classList.contains("hidden") || S.ended) return;
+  const ok = await dlgConfirm(
+    "本局会立即结束：不计入战绩、不收录错词记录，擂主也不变更。确定终止吗？",
+    { type: "warning", danger: true, title: "终止本场比赛", okText: "终止比赛", cancelText: "继续比赛" });
+  if(!ok) return;
+  abortBattle();
+});
+
 /* ================== 全屏 ==================
    按钮固定在右上角，三个界面都可点；F 键切换，Esc 由浏览器直接退出。
    兼容各种叫法（标准 / webkit / 旧版 ms）。 */
@@ -566,9 +578,8 @@ function fsSupported(){
 function syncFsBtn(){
   const on = !!fsElement();
   $("fsBtn").classList.toggle("on", on);
-  /* 安装按钮与全屏按钮同步：全屏（对战）时一起变淡，主页时都是实心 */
-  const ib = $("installBtn");
-  if(ib) ib.classList.toggle("on", on);
+  /* 安装 / 终止按钮与全屏按钮同步：全屏时一起变淡，窗口模式时都是实心 */
+  [$("installBtn"), $("abortBtn")].forEach(b=>{ if(b) b.classList.toggle("on", on); });
   $("fsLabel").textContent = on ? "退出" : "全屏";
 }
 function toggleFullscreen(){

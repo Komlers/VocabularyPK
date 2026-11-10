@@ -31,11 +31,12 @@
     }
   }
 
-  function hide() { btn.classList.add("hidden"); }
-  function show() {
-    if (isStandalone()) return;
-    btn.classList.remove("hidden");
-    /* 若此刻已在全屏（对战）状态，立即与「全屏/退出」按钮同步不透明度 */
+  /* 只记住「浏览器允许安装」这件事；真正的显隐交给 ui.js 的 syncCornerBtns：
+     比赛中左上角要让位给「终止」，回到主界面才显示「安装」。 */
+  function setReady(on) {
+    btn.dataset.ready = on ? "1" : "";
+    if (typeof syncCornerBtns === "function") syncCornerBtns();
+    /* 若此刻已在全屏状态，补上与「全屏/退出」按钮一致的变淡 */
     if (typeof syncFsBtn === "function") syncFsBtn();
   }
 
@@ -43,13 +44,13 @@
   window.addEventListener("beforeinstallprompt", e => {
     e.preventDefault();        /* 阻止旧版浏览器自动弹横幅，改由按钮触发 */
     deferred = e;
-    show();
+    if (!isStandalone()) setReady(true);
   });
 
   /* 安装成功后收起按钮，本次会话不再出现 */
   window.addEventListener("appinstalled", () => {
     deferred = null;
-    hide();
+    setReady(false);
   });
 
   btn.addEventListener("click", async () => {
@@ -60,16 +61,16 @@
       const choice = await deferred.userChoice;
       deferred = null;
       /* 用户取消后浏览器会冷却一段时间不再派发事件，按钮先收起 */
-      if (!choice || choice.outcome !== "accepted") hide();
+      if (!choice || choice.outcome !== "accepted") setReady(false);
     } catch (e) {
-      hide();
+      setReady(false);
     } finally {
       btn.disabled = false;
     }
   });
 
   /* 已在独立窗口中运行（例如从开始菜单打开已安装的应用）→ 直接不显示 */
-  if (isStandalone()) hide();
+  if (isStandalone()) setReady(false);
 
   /* 注册 Service Worker（安装条件之一，同时提供离线外壳） */
   if ("serviceWorker" in navigator) {
