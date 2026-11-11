@@ -351,6 +351,12 @@
 
   /* ============ 词库弹窗 ============ */
   .modal{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;}
+  /* 弹窗会叠着开（「关于项目」里点「更新说明」、弹窗里再弹确认框），同层时
+     谁写在 HTML 后面谁在上面，容易出错，这里把两类「叠在上面」的层级写死：
+       · 从关于窗口打开的说明类弹窗 → 1010
+       · 通用确认 / 提示框 → 1100，永远压在最上层 */
+  #updateModal,#tipsModal{z-index:1010;}
+  #dlgModal{z-index:1100;}
   .modalMask{position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(20,26,40,.45);
              -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
   .modalBox{position:relative;background:#fff;border-radius:22px;padding:28px 30px;
