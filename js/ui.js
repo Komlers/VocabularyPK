@@ -129,90 +129,256 @@ function show(id){
 }
 
 /* ================== 轻量 Markdown 转 HTML ==================
-   支持：标题(#~######)、无序/有序列表、粗体、行内代码、水平分隔线、段落 */
+   够渲染 res/ 里的说明文档，覆盖 CommonMark / GFM 的常用语法，零依赖：
+     · 块级：ATX / Setext 标题、围栏代码（``` 与 ~~~）、水平线、引用（可嵌套）、
+             有序 / 无序列表（可嵌套、支持任务清单）、GFM 表格（可对齐、可省首尾竖线）、段落
+     · 行内：反斜杠转义、行内代码（多反引号）、图片、链接、自动链接、
+             粗体 / 斜体 / 粗斜体 / 删除线
+   安全：正文先整体 HTML 转义再拼标签，源码里的尖括号不会变成真标签；代码只转义不解析。
+   兼容：段落内的单个换行按 <br> 处理（CommonMark 默认是空格），沿用旧文档的排版习惯。 */
 function mdToHtml(md){
-  const escHtml = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  const codes = [];
-  const inline = s => {
-    s = s.replace(/`([^`]+)`/g, (_, c) => { codes.push(c); return "C"+(codes.length-1)+""; });
-    s = escHtml(s);
-    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    /* 超链接 [文字](URL)：仅允许常见安全协议与相对路径，新窗口打开 */
-    s = s.replace(/\[([^\]]*)\]\(([^()\s]+)\)/g, (_, text, url) => {
-      const safe = /^(https?:|mailto:|tel:|\/|#|\.\/|\.\.\/|res\/|template\/|lib\/|js\/)/i.test(url);
-      return '<a href="'+(safe?url:"#")+'" target="_blank" rel="noopener noreferrer">'+text+'</a>';
-    });
-    s = s.replace(/C(\d+)/g, (_, i) => "<code>"+escHtml(codes[i])+"</code>");
-    return s;
+  const escHtml = s => String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  /* 行内代码、转义字符、链接地址先换成占位符，避免被后面的强调 / 链接规则
+     二次解析（比如地址里的 _ 被当成斜体）。占位符用不可见的 \x7f 包裹。 */
+  const stash = [];
+  const keep = html => "\x7f" + (stash.push(html) - 1) + "\x7f";
+
+  /* 链接与图片：带协议的只放行 http(s) / mailto / tel，其余（相对路径、锚点、
+     根路径）一律放行；javascript:、data: 这类危险协议落到 # */
+  const safeUrl = u => {
+    const t = String(u).trim();
+    if(/^[a-z][a-z0-9+.\-]*:/i.test(t)) return /^(https?|mailto|tel):/i.test(t) ? t : "#";
+    return t.charAt(0) === "\\" ? "#" : t;
   };
-  const lines = String(md).replace(/\r\n/g,"\n").split("\n");
-  let html = "", i = 0;
-  const isHeading = l => /^#{1,6}\s/.test(l);
-  const isHr = l => /^---+\s*$/.test(l);
-  const isUl = l => /^\s*[-*]\s+/.test(l);
-  const isOl = l => /^\s*\d+\.\s+/.test(l);
-  /* 表格：当前行是 |...| 且下一行是分隔行（只含 空格/冒号/竖线/连字符 且含连字符） */
-  const isTableRow = l => /^\s*\|.*\|\s*$/.test(l);
-  const isTableSep  = l => /^\s*\|?[\s:|-]+\|?\s*$/.test(l) && /-/.test(l);
-  const splitTableRow = l => l.trim().replace(/^\|/,"").replace(/\|\s*$/,"")
-                                   .split("|").map(c=>c.trim());
-  const alignAttr = a => a==="center" ? ' style="text-align:center"'
-                          : a==="right" ? ' style="text-align:right"' : "";
-  while(i < lines.length){
-    const line = lines[i];
-    /* 围栏代码块：从 ``` 开始到下一个 ``` 结束，内容原样保留（仅转义 HTML） */
-    if(/^```/.test(line)){
-      i++;
-      const buf = [];
-      while(i < lines.length && !/^```/.test(lines[i])){ buf.push(lines[i]); i++; }
-      if(i < lines.length) i++; /* 跳过结束的 ``` */
-      html += "<pre><code>"+escHtml(buf.join("\n"))+"</code></pre>";
-      continue;
-    }
-    if(!line.trim()){ i++; continue; }
-    let m = line.match(/^(#{1,6})\s+(.*)$/);
-    if(m){ const n=m[1].length; html += "<h"+n+">"+inline(m[2])+"</h"+n+">"; i++; continue; }
-    if(isHr(line)){ html += "<hr>"; i++; continue; }
-    /* 表格：表头行 + 分隔行 + 若干数据行 */
-    if(isTableRow(line) && i+1 < lines.length && isTableSep(lines[i+1])){
-      const headers = splitTableRow(line);
-      const aligns = splitTableRow(lines[i+1]).map(c=>
-        /^:.*:$/.test(c) ? "center" : /:$/.test(c) ? "right" : "left");
-      i += 2;
-      let t = "<table><thead><tr>";
-      headers.forEach((h,idx)=>{ t += "<th"+alignAttr(aligns[idx])+">"+inline(h)+"</th>"; });
-      t += "</tr></thead><tbody>";
-      while(i < lines.length && isTableRow(lines[i])){
-        t += "<tr>";
-        splitTableRow(lines[i]).forEach((c,idx)=>{
-          t += "<td"+alignAttr(aligns[idx])+">"+inline(c)+"</td>";
-        });
-        t += "</tr>"; i++;
-      }
-      t += "</tbody></table>";
-      html += t; continue;
-    }
-    if(isUl(line)){
-      html += "<ul>";
-      while(i < lines.length && isUl(lines[i])){
-        html += "<li>"+inline(lines[i].replace(/^\s*[-*]\s+/, ""))+"</li>"; i++;
-      }
-      html += "</ul>"; continue;
-    }
-    if(isOl(line)){
-      html += "<ol>";
-      while(i < lines.length && isOl(lines[i])){
-        html += "<li>"+inline(lines[i].replace(/^\s*\d+\.\s+/, ""))+"</li>"; i++;
-      }
-      html += "</ol>"; continue;
-    }
-    /* 段落：合并连续普通行 */
-    const para = [];
-    while(i < lines.length && lines[i].trim() && !isHeading(lines[i]) && !isHr(lines[i])
-          && !isUl(lines[i]) && !isOl(lines[i])){ para.push(lines[i]); i++; }
-    html += "<p>"+inline(para.join("<br>"))+"</p>";
+  const NEWTAB = ' target="_blank" rel="noopener noreferrer"';
+
+  /* ---------- 行内 ---------- */
+  function inline(text){
+    let s = escHtml(text);
+    /* 反斜杠转义：\* \_ \` 等原样输出，放在最前，避免被后面的规则吃掉 */
+    s = s.replace(/\\([\\`*_{}\[\]()#+\-.!>~|"'])/g, (m, c) => keep(c));
+    /* 行内代码：`x` 与 ``x`y``；内容在上面已整体转义，这里直接包 <code> */
+    s = s.replace(/(`+)([\s\S]*?)\1(?!`)/g, (m, fence, code) => keep("<code>" + code + "</code>"));
+    /* 图片：![替代文字](地址 "标题") */
+    s = s.replace(/!\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+["']([^"']*)["'])?\s*\)/g,
+      (m, alt, src, title) => '<img src="' + keep(safeUrl(src)) + '" alt="' + alt + '"'
+        + (title ? ' title="' + title + '"' : "") + ">");
+    /* 链接：[文字](地址 "标题")；地址进占位符，里面的 * _ 不会被当成强调 */
+    s = s.replace(/\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+["']([^"']*)["'])?\s*\)/g,
+      (m, txt, url, title) => '<a href="' + keep(safeUrl(url)) + '"'
+        + (title ? ' title="' + title + '"' : "") + NEWTAB + ">" + txt + "</a>");
+    /* 自动链接：<https://…> 与裸链接（末尾标点留在链接外） */
+    s = s.replace(/&lt;((?:https?:\/\/|mailto:)[^\s&]+)&gt;/g,
+      (m, url) => '<a href="' + keep(url) + '"' + NEWTAB + ">" + url + "</a>");
+    s = s.replace(/(^|[\s(（])(https?:\/\/[^\s<>"'）】]+)/g, (m, pre, url) => {
+      const tail = (url.match(/[.,;:!?。，；：！？、]+$/) || [""])[0];
+      const href = tail ? url.slice(0, url.length - tail.length) : url;
+      if(!href) return m;
+      return pre + '<a href="' + keep(href) + '"' + NEWTAB + ">" + href + "</a>" + tail;
+    });
+    /* 删除线 */
+    s = s.replace(/~~([^\s~](?:[\s\S]*?[^\s~])?)~~/g, "<del>$1</del>");
+    /* 粗斜体 → 粗体 → 斜体，顺序不能反（否则 ***x*** 会先被当成斜体） */
+    s = s.replace(/\*\*\*([^\s*](?:[\s\S]*?[^\s*])?)\*\*\*/g, "<strong><em>$1</em></strong>");
+    s = s.replace(/(^|[^\w])___([^\s_](?:[\s\S]*?[^\s_])?)___(?!\w)/g, "$1<strong><em>$2</em></strong>");
+    s = s.replace(/\*\*([^\s*](?:[\s\S]*?[^\s*])?)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/(^|[^\w])__([^\s_](?:[\s\S]*?[^\s_])?)__(?!\w)/g, "$1<strong>$2</strong>");
+    s = s.replace(/\*([^\s*](?:[^*]*?[^\s*])?)\*/g, "<em>$1</em>");
+    s = s.replace(/(^|[^\w])_([^\s_](?:[^_]*?[^\s_])?)_(?!\w)/g, "$1<em>$2</em>");
+    return s;
   }
-  return html;
+
+  /* ---------- 块级 ---------- */
+  const RE_ATX    = /^ {0,3}(#{1,6})\s+(.*)$/;
+  const RE_FENCE  = /^ {0,3}(`{3,}|~{3,})\s*(\S*)\s*$/;
+  const RE_HR     = /^ {0,3}(?:(?:\*\s*){3,}|(?:-\s*){3,}|(?:_\s*){3,})$/;
+  const RE_QUOTE  = /^ {0,3}> ?/;
+  const RE_ITEM   = /^(\s*)([-*+]|\d{1,9}[.)])\s+([\s\S]*)$/;
+  const RE_SETEXT = /^ {0,3}(=+|-+)\s*$/;
+  const RE_TASK   = /^\[([ xX])\]\s+([\s\S]*)$/;
+
+  const indentOf = l => (l.match(/^[ \t]*/) || [""])[0].length;
+  /* 表格：表头行含竖线、下一行是分隔行，且两行列数一致 */
+  const isTableSep = l => l.indexOf("-") >= 0 && /^ {0,3}\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(l);
+  function splitRow(l){
+    const s = l.trim().replace(/^\|/, "").replace(/\|$/, "");
+    const cells = [];
+    let cur = "";
+    for(let k = 0; k < s.length; k++){
+      const ch = s.charAt(k);
+      if(ch === "\\" && s.charAt(k + 1) === "|"){ cur += "|"; k++; continue; }
+      if(ch === "|"){ cells.push(cur.trim()); cur = ""; continue; }
+      cur += ch;
+    }
+    cells.push(cur.trim());
+    return cells;
+  }
+  const alignAttr = c => /^:.*:$/.test(c) ? ' style="text-align:center"'
+                         : /:$/.test(c) ? ' style="text-align:right"' : "";
+  const isTableStart = (l, next) =>
+    l.indexOf("|") >= 0 && next !== undefined && isTableSep(next) &&
+    splitRow(next).length === splitRow(l).length;
+  /* 这一行是否开启一个新块（段落遇到它就得收尾） */
+  const startsBlock = (l, next) =>
+    RE_ATX.test(l) || RE_HR.test(l) || RE_QUOTE.test(l) || RE_FENCE.test(l) ||
+    RE_ITEM.test(l) || isTableStart(l, next);
+
+  /* 列表：按缩进收集每一项的内容，再递归解析，天然支持嵌套与项内代码块 */
+  function listBlock(lines, start){
+    const first = lines[start].match(RE_ITEM);
+    const ordered = /\d/.test(first[2].charAt(0));
+    const baseIndent = first[1].length;
+    const startNo = ordered ? (parseInt(first[2], 10) || 1) : 1;
+    const items = [];
+    let loose = false, i = start, endList = false;
+    while(i < lines.length && !endList){
+      const m = lines[i].match(RE_ITEM);
+      if(!m || m[1].length !== baseIndent || /\d/.test(m[2].charAt(0)) !== ordered) break;
+      const contentAt = m[1].length + m[2].length + 1;   /* 标记后的内容起点 */
+      const item = [m[3]];
+      i++;
+      while(i < lines.length){
+        const L = lines[i];
+        if(!L.trim()){
+          /* 空行：看它后面那行属于本项、还是同一层的下一项 */
+          let j = i;
+          while(j < lines.length && !lines[j].trim()) j++;
+          if(j >= lines.length){ endList = true; break; }
+          const nx = lines[j].match(RE_ITEM);
+          if(indentOf(lines[j]) > baseIndent){ item.push(""); i++; continue; }
+          if(nx && nx[1].length === baseIndent && /\d/.test(nx[2].charAt(0)) === ordered){
+            loose = true;          /* 项与项之间空行 → 松散列表 */
+            i = j;
+            break;
+          }
+          endList = true;
+          break;
+        }
+        if(indentOf(L) > baseIndent){
+          /* 去掉与标记等宽的缩进，更深的部分留给递归（嵌套列表靠它） */
+          item.push(L.slice(Math.min(contentAt, indentOf(L))));
+          i++;
+          continue;
+        }
+        break;
+      }
+      items.push(item);
+    }
+    const tag = ordered ? "ol" : "ul";
+    /* 松散列表项内保留 <p>，紧凑列表去掉首个段落的外壳，和浏览器默认排版一致 */
+    if(items.some(it => it.indexOf("") >= 0)) loose = true;
+    let out = "<" + tag + (ordered && startNo !== 1 ? ' start="' + startNo + '"' : "") + ">";
+    items.forEach(item => {
+      let check = "";
+      const tm = item[0].match(RE_TASK);
+      if(tm){ check = tm[1] === " " ? "☐" : "☑"; item[0] = tm[2]; }
+      let inner = blocks(item);
+      if(!loose) inner = inner.replace(/^<p>([\s\S]*?)<\/p>/, "$1");
+      out += "<li" + (check ? ' class="mdTask"' : "") + ">"
+           + (check ? '<span class="mdCheck">' + check + "</span>" : "") + inner + "</li>";
+    });
+    return { html: out + "</" + tag + ">", next: i };
+  }
+
+  function blocks(lines){
+    let html = "", i = 0;
+    while(i < lines.length){
+      const line = lines[i];
+      if(!line.trim()){ i++; continue; }
+
+      /* 围栏代码块：内容原样保留，只转义 HTML */
+      let m = line.match(RE_FENCE);
+      if(m){
+        const fence = m[1].charAt(0), len = m[1].length;
+        const closeRe = new RegExp("^ {0,3}" + fence + "{" + len + ",}\\s*$");
+        const buf = [];
+        i++;
+        while(i < lines.length && !closeRe.test(lines[i])){ buf.push(lines[i]); i++; }
+        if(i < lines.length) i++;
+        html += "<pre><code>" + escHtml(buf.join("\n")) + "</code></pre>";
+        continue;
+      }
+
+      /* ATX 标题：结尾那串 # 是装饰，去掉 */
+      m = line.match(RE_ATX);
+      if(m){
+        const lv = m[1].length;
+        html += "<h" + lv + ">" + inline(m[2].replace(/\s+#+\s*$/, "").trim()) + "</h" + lv + ">";
+        i++;
+        continue;
+      }
+
+      /* 引用：连续 > 行（中间夹的 > 空行也算），内容递归解析；
+         只有 > 没有内容的空引用不输出，免得留一条空色条 */
+      if(RE_QUOTE.test(line)){
+        const buf = [];
+        while(i < lines.length){
+          if(RE_QUOTE.test(lines[i])){ buf.push(lines[i].replace(RE_QUOTE, "")); i++; }
+          else if(!lines[i].trim() && i + 1 < lines.length && RE_QUOTE.test(lines[i + 1])){ buf.push(""); i++; }
+          else break;
+        }
+        const inner = blocks(buf);
+        if(inner) html += "<blockquote>" + inner + "</blockquote>";
+        continue;
+      }
+
+      /* 列表 */
+      if(RE_ITEM.test(line)){
+        const r = listBlock(lines, i);
+        html += r.html;
+        i = r.next;
+        continue;
+      }
+
+      /* 表格 */
+      if(isTableStart(line, lines[i + 1])){
+        const headers = splitRow(line), seps = splitRow(lines[i + 1]);
+        i += 2;
+        let t = "<table><thead><tr>";
+        headers.forEach((h, idx) => { t += "<th" + alignAttr(seps[idx]) + ">" + inline(h) + "</th>"; });
+        t += "</tr></thead><tbody>";
+        while(i < lines.length && lines[i].trim() && lines[i].indexOf("|") >= 0){
+          const cells = splitRow(lines[i]);
+          t += "<tr>";
+          headers.forEach((h, idx) => {
+            t += "<td" + alignAttr(seps[idx]) + ">" + inline(cells[idx] === undefined ? "" : cells[idx]) + "</td>";
+          });
+          t += "</tr>";
+          i++;
+        }
+        html += t + "</tbody></table>";
+        continue;
+      }
+
+      /* Setext 标题：本行是文字、下一行是 === 或 --- */
+      if(i + 1 < lines.length && RE_SETEXT.test(lines[i + 1]) && !startsBlock(line, lines[i + 2])){
+        const lv = lines[i + 1].trim().charAt(0) === "=" ? 1 : 2;
+        html += "<h" + lv + ">" + inline(line.trim()) + "</h" + lv + ">";
+        i += 2;
+        continue;
+      }
+
+      /* 水平线 */
+      if(RE_HR.test(line)){ html += "<hr>"; i++; continue; }
+
+      /* 段落：连续普通行，行间保留换行 */
+      const para = [];
+      while(i < lines.length && lines[i].trim() && !startsBlock(lines[i], lines[i + 1])
+            && !(i + 1 < lines.length && RE_SETEXT.test(lines[i + 1]))){
+        para.push(lines[i]);
+        i++;
+      }
+      if(!para.length){ para.push(line); i++; }
+      html += "<p>" + para.map(inline).join("<br>") + "</p>";
+    }
+    return html;
+  }
+
+  const out = blocks(String(md).replace(/\r\n?/g, "\n").split("\n"));
+  /* 最后统一还原占位符（链接地址、行内代码、转义字符） */
+  return out.replace(/\x7f(\d+)\x7f/g, (m, n) => stash[n] === undefined ? "" : stash[n]);
 }
 
 /* ================== 更新提示 ==================
