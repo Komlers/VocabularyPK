@@ -343,8 +343,10 @@
   }
 
   /* ================= 事件绑定 ================= */
-  /* 暴露刷新函数：供 events.js 在编辑器内导入名单后刷新编辑器 UI */
-  window.refreshEditor = function () {
+  /* 暴露刷新函数：供 events.js 在编辑器内导入名单后刷新编辑器 UI；
+     传班级名时顺带切到该班（新导入的班级要立刻显示出来） */
+  window.refreshEditor = function (cls) {
+    if (cls && rosters()[cls] !== undefined) edCls = cls;
     renderEdClassSelect();
     renderEdNameList();
     updateEdStat();

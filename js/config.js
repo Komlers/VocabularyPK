@@ -79,8 +79,7 @@ let redName = "", blueName = "", champFixed = false, manualMode = false, drawnPo
 let pickSide = "red";       /* 选名弹窗当前选中方 */
 let tempUnits = [];          /* 词库弹窗临时选择 */
 let libOpenBooks = new Set();  /* 词库弹窗里已展开的册（b1~b7）；默认只展开有已选词库的册 */
-let pendingClass = "";       /* 导入名单时暂存班级名 */
-let pendingImportInEditor = false;  /* 导入是否从名单编辑器发起（决定导入后刷新范围） */
+let pendingClass = "";       /* 导入名单时暂存目标班级名（导入入口只在名单编辑器里） */
 
 /* ================== 工具 ================== */
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };

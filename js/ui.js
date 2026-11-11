@@ -428,12 +428,6 @@ function renderChips(){
   });
   const tip = $("noRosterTip");
   if(tip) tip.style.display = names.length ? "none" : "";
-  /* 已有名单后，主页面不再显示导入按钮，导入功能移至名单编辑器内 */
-  const ib = $("importRosterBtn");
-  if(ib){
-    ib.textContent = "📥 导入班级名单（TXT）";
-    ib.style.display = names.length ? "none" : "";
-  }
   const row = document.querySelector(".classRow");
   if(row) row.classList.toggle("has-roster", names.length > 0);
 }
@@ -516,13 +510,13 @@ function renderHistory(){
 
   /* 名单载入状态：直观确认名单已导入、还剩多少人没抽 */
   if(!S.cls){
-    $("rosterInfo").textContent = "💡 还没有班级名单：可直接在下方输入两位选手名字体验一局，或先导入 TXT 名单。";
+    $("rosterInfo").textContent = "💡 还没有班级名单：可直接在下方输入两位选手名字体验一局，或点「✏️ 名单编辑器」新建班级后导入 TXT。";
     return;
   }
   const roster = rosters()[S.cls] || [];
   $("rosterInfo").textContent = roster.length
     ? "✅ 名单已载入：" + S.cls + " · 共 " + roster.length + " 人"
-    : "⚠ 「" + S.cls + "」名单为空：可导入 TXT，也可直接输入名字（这局的战绩会记到本班）。";
+    : "⚠ 「" + S.cls + "」名单为空：可在「✏️ 名单编辑器」里导入 TXT 或逐个添加，也可直接输入名字（这局的战绩会记到本班）。";
 }
 
 /* ================== 抽人 ================== */
@@ -594,7 +588,7 @@ function renderPickGrid(){
   const roster = rosters()[S.cls] || [];
   grid.innerHTML = "";
   if(!roster.length){
-    grid.innerHTML = '<div class="pickEmpty">当前班级还没有名单，请先导入 TXT 名单</div>';
+    grid.innerHTML = '<div class="pickEmpty">当前班级还没有名单，请在「✏️ 名单编辑器」里导入 TXT 或添加名字</div>';
     return;
   }
   const cur = pickSide === "red" ? redName : blueName;

@@ -74,16 +74,15 @@
     <h3><span class="stepNo">1</span>选择班级<span class="hint">名单 / 战绩 / 擂主按班级分开保存</span></h3>
     <div class="classRow">
       <div class="chips" id="classChips"></div>
-      <button class="drawBtn" id="importRosterBtn">📥 导入班级名单（TXT）</button>
       <button class="drawBtn" id="openEditorBtn">✏️ 名单编辑器</button>
     </div>
-    <div class="mini" id="noRosterTip" style="margin-top:14px;color:#9a6a00">⚠ 还没有班级名单，点击按钮导入TXT。（一行一个名字，仅保存在本机。）<br>也可以先不导入，直接在下方的「上台选手」里输入两个名字试玩。</div>
+    <div class="mini" id="noRosterTip" style="margin-top:14px;color:#9a6a00">⚠ 还没有班级名单，点「✏️ 名单编辑器」新建班级并导入 TXT（一行一个名字，仅保存在本机）。<br>也可以先不导入，直接在下方的「上台选手」里输入两个名字试玩。</div>
     <input type="file" id="rosterFile" accept=".txt,text/plain" style="display:none">
   </div>
 
   <div class="card">
     <h3><span class="stepNo">2</span>上台选手<span class="hint" id="drawHint">先抽擂主（红方），再抽挑战者（蓝方）</span></h3>
-    <div class="mini" id="rosterInfo" style="margin:-4px 0 14px">请先在上方选择或导入班级名单。</div>
+    <div class="mini" id="rosterInfo" style="margin:-4px 0 14px">先在上方选择班级，或点「✏️ 名单编辑器」新建并导入名单。</div>
     <div class="drawRow">
       <div class="drawBox red clickable" id="redBox"><div class="dlabel">🛡 擂主 · 红方（点击抽取）</div><div class="dname" id="redNameBox">待抽取</div></div>
       <div class="vsBadge">VS</div>

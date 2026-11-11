@@ -95,26 +95,13 @@ $("classChips").addEventListener("click", async e=>{
   resetDrawn(); refreshNameBoxes(); restoreCfg(); renderHistory();
 });
 
-/* ================== 导入 TXT 名单 ================== */
-$("importRosterBtn").addEventListener("click", async ()=>{
-  const name = await dlgPrompt({
-    title: "导入班级名单",
-    message: "请输入要导入的班级名称：",
-    placeholder: "例如：高一3班",
-    validate: v => v.trim() ? "" : "班级名称不能为空。"
-  });
-  if(name === null) return;
-  const cls = name.trim();
-  if(!cls) return;
-  pendingClass = cls;
-  pendingImportInEditor = false;
-  $("rosterFile").click();
-});
+/* ================== 导入 TXT 名单 ==================
+   入口只有一个：名单编辑器里的「📥 导入」。导入前先把班级名记在 pendingClass，
+   文件选好后由下面的 change 处理（仍是编辑器上下文，只刷新编辑器与班级 chips）。 */
 $("rosterFile").addEventListener("change", e=>{
   const file = e.target.files && e.target.files[0];
   if(!file) return;
   const cls = pendingClass; pendingClass = "";
-  const inEditor = pendingImportInEditor; pendingImportInEditor = false;
   const reader = new FileReader();
   reader.onload = async ()=>{
     const {names, stat} = parseRosterText(reader.result);
@@ -125,7 +112,7 @@ $("rosterFile").addEventListener("change", e=>{
       return;
     }
     const existing = rosters();
-    if(existing[cls]){
+    if(existing[cls] && existing[cls].length){
       const overwrite = await dlgConfirm(
         "班级「" + cls + "」已有名单（" + existing[cls].length + " 人），导入将覆盖旧名单，确定继续？",
         { type: "warning", title: "覆盖名单", okText: "覆盖导入", cancelText: "取消" });
@@ -138,17 +125,9 @@ $("rosterFile").addEventListener("change", e=>{
     if(stat.comment) skip.push("注释行 " + stat.comment);
     if(stat.invalid)  skip.push("特殊字符行 " + stat.invalid);
     if(stat.dup)      skip.push("重复名 " + stat.dup);
-    if(inEditor){
-      /* 从名单编辑器内导入：不改变主页面当前班级/选手，只刷新编辑器与班级 chips */
-      refreshEditor();
-      renderChips();
-    }else{
-      /* 主页面首次导入：切换到该班级并刷新主界面 */
-      S.cls = cls;
-      saveUI({cls:cls});
-      redName = ""; blueName = ""; champFixed = false;
-      resetDrawn(); restoreCfg(); refreshNameBoxes(); renderHistory();
-    }
+    /* 导入始终在名单编辑器里进行：不改变主页面当前班级/选手，只刷新编辑器与班级 chips */
+    refreshEditor(cls);
+    renderChips();
     dlgAlert("已导入「" + esc(cls) + "」共 " + names.length + " 人。"
       + (skip.length ? "<br>跳过：" + skip.join("、") : ""),
       { type: "success", title: "导入成功", html: true });
@@ -156,15 +135,27 @@ $("rosterFile").addEventListener("change", e=>{
   reader.readAsText(file, "UTF-8");
 });
 
-/* 名单编辑器内的「📥 导入TXT」：导入到当前选中的班级 */
-$("edImportBtn").addEventListener("click", ()=>{
-  const cls = $("edClassSelect").value;
+/* 名单编辑器内的「📥 导入TXT」：导入到下拉框里选中的班级；
+   一个班都还没有时，先问一个班级名，建好后直接导入（新用户的唯一入口） */
+$("edImportBtn").addEventListener("click", async ()=>{
+  let cls = $("edClassSelect").value;
   if(!cls){
-    dlgAlert("请先「新建班级」，再导入名单。", { type: "warning", title: "还没有班级" });
-    return;
+    const name = await dlgPrompt({
+      title: "导入班级名单",
+      message: "还没有班级，先给这份名单起个班级名，导入时会自动建好。",
+      placeholder: "例如：高一3班",
+      validate: v => {
+        const c = v.trim();
+        if(!c) return "班级名称不能为空。";
+        if(rosters()[c] !== undefined) return "已存在同名班级「" + c + "」。";
+        return "";
+      }
+    });
+    if(name === null) return;
+    cls = name.trim();
+    if(!cls) return;
   }
   pendingClass = cls;
-  pendingImportInEditor = true;
   $("rosterFile").click();
 });
 
