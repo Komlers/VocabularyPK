@@ -404,13 +404,15 @@ function endBattle(){
     recordWrongBook();
     /* ② 战绩与最高连击 */
     const h = loadHis(S.cls);
-    /* 限分模式把模式与满分一并记下，战绩列表里可回看是哪一种玩法 */
+    /* 限分模式把模式与满分一并记下，战绩列表里可回看是哪一种玩法；
+       题量（本局出过的题数）也记下来，导出的战绩单里能看出这一局答了多少题 */
     const modeInfo = S.scoreMode === "open" ? {} : { mode:S.scoreMode, cap:S.scoreCap };
+    const asked = S.asked || 0;
     if(S.solo){
       /* 单人作答按「单人记录」保存：只有名字、总分与题量，不参与胜负统计与擂主 */
-      h.matches.push(Object.assign({t:Date.now(), solo:1, p:S.p1, s:a, unit:S.units.join("+")}, modeInfo));
+      h.matches.push(Object.assign({t:Date.now(), solo:1, p:S.p1, s:a, q:asked, unit:S.units.join("+")}, modeInfo));
     }else{
-      h.matches.push(Object.assign({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, unit:S.units.join("+")}, modeInfo));
+      h.matches.push(Object.assign({t:Date.now(), p1:S.p1, p2:S.p2, s1:a, s2:b, q:asked, unit:S.units.join("+")}, modeInfo));
       [S.p1, S.p2].forEach((n,i)=>{
         if(S.maxStreak[i] > (h.streaks[n]||0)) h.streaks[n] = S.maxStreak[i];
       });

@@ -440,9 +440,18 @@
 <!-- ================= 历史战绩弹窗 ================= -->
 <div id="hisModal" class="modal hidden">
   <div class="modalMask"></div>
-  <div class="modalBox fixedFoot">
+  <div class="modalBox fixedFoot hisBox">
     <h3 id="hisTitle">📊 本班战绩</h3>
-    <div id="hisBody" class="mini modalScroll">暂无记录</div>
+    <!-- 范围切换：同时作用于下面的列表与「导出当前范围」 -->
+    <div class="hisBar">
+      <div class="hisTabs" id="hisTabs">
+        <button class="hisTab on" data-days="0">全部</button>
+        <button class="hisTab" data-days="30">近 30 天</button>
+        <button class="hisTab" data-days="7">近 7 天</button>
+      </div>
+      <button class="wbBulkBtn" id="hisExportBtn">⬇ 导出当前范围</button>
+    </div>
+    <div id="hisBody" class="modalScroll">暂无记录</div>
     <button class="clearBtn hidden" id="clearBtn">清空本班历史</button>
     <div class="btnRow" style="margin-top:20px">
       <button class="drawBtn" id="hisClose">关闭</button>

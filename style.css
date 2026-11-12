@@ -133,28 +133,52 @@
                  transform:translateY(-2px);box-shadow:0 6px 18px rgba(74,127,224,.18);}
   .heroBtn:active{transform:translateY(0) scale(.97);}
 
-  /* 历史战绩弹窗内 */
-  #hisModal .row{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;}
-  #hisModal .stat{background:#f5f7fb;border:1px solid var(--line);border-radius:14px;
-                  padding:12px 22px;font-size:25px;}
-  #hisModal .stat b{color:var(--blue-d);}
-  #recentList{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+  /* 战绩弹窗：顶部范围切换 + 导出，下面是概览与按日期分组的列表 */
+  .hisBox{max-width:760px;}
+  .hisBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;}
+  .hisTabs{display:flex;gap:4px;background:#eef2f9;border-radius:12px;padding:4px;}
+  .hisTab{font:inherit;font-size:17px;font-weight:700;color:var(--muted);background:transparent;
+          border:none;border-radius:9px;padding:6px 14px;cursor:pointer;white-space:nowrap;transition:.15s;}
+  .hisTab:hover{color:var(--blue-d);}
+  .hisTab.on{background:#fff;color:var(--blue-d);box-shadow:0 2px 8px rgba(28,39,72,.12);}
+  #hisExportBtn{margin-left:auto;}
+
+  .hisStats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+  .hisStat{flex:1 1 0;min-width:118px;background:#f5f7fb;border:1px solid var(--line);
+           border-radius:14px;padding:9px 12px;text-align:center;}
+  .hisStat b{display:block;font-size:26px;font-weight:800;color:var(--blue-d);
+             line-height:1.25;font-variant-numeric:tabular-nums;}
+  .hisStat i{font-style:normal;font-size:15px;color:var(--muted);}
+
   /* 战绩按日期分组：日期标题 + 当天场次 */
   .dateHead{display:flex;align-items:center;gap:10px;margin-top:14px;
             font-size:21px;font-weight:800;color:var(--blue-d);letter-spacing:1px;}
   .dateHead:first-child{margin-top:2px;}
   .dateHead i{font-style:normal;font-size:17px;font-weight:600;color:var(--muted2);
               background:#eef2f9;border-radius:8px;padding:2px 10px;letter-spacing:0;}
-  .recentItem{display:flex;justify-content:space-between;align-items:center;gap:14px;
-              background:#f8f9fc;border-radius:12px;padding:11px 18px;font-size:25px;}
+  .dateHead .hisExp{margin-left:auto;}
+
+  .hisItem{display:flex;align-items:center;justify-content:space-between;gap:12px;
+           background:#f8f9fc;border-radius:12px;padding:9px 14px;}
+  .hisLeft{min-width:0;}
+  .hisMain{font-size:23px;font-weight:600;color:var(--ink2);}
+  .hisMain b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;}
+  .hisMeta{font-size:16px;color:var(--muted);margin-top:2px;
+           overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .hisRight{display:flex;align-items:center;gap:8px;flex:none;}
+  .hisRes{font-size:15px;font-weight:800;border-radius:8px;padding:2px 10px;white-space:nowrap;}
+  .hisRes.red{background:var(--red-bg);color:var(--red-d);}
+  .hisRes.blue{background:var(--blue-bg);color:var(--blue-d);}
+  .hisRes.draw{background:#eef2f9;color:var(--muted);}
+  .hisExp{width:34px;height:34px;padding:0;font-size:16px;line-height:1;cursor:pointer;
+          border:2px solid #c9d8f2;border-radius:9px;background:#fff;color:var(--blue-d);transition:.15s;}
+  .hisExp:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .hisEmpty{font-size:20px;color:var(--muted);text-align:center;line-height:1.9;padding:40px 10px;}
   /* 单人作答记录的小标签 */
   .tagSolo{font-style:normal;font-size:16px;font-weight:600;color:var(--muted2);
            background:#eef2f9;border-radius:8px;padding:1px 8px;margin-left:4px;vertical-align:middle;}
-  /* 战绩里标记限分模式 */
-  .tagMode{font-style:normal;font-size:15px;font-weight:700;color:#3a6fd0;
-           background:#e8f0fe;border-radius:7px;padding:1px 7px;margin-right:6px;vertical-align:middle;}
-  .clearBtn{margin-top:16px;padding:10px 26px;border-radius:12px;border:2px solid #f0b9b9;
-            background:#fff5f5;color:var(--red-d);font-size:24px;cursor:pointer;transition:.15s;}
+  .clearBtn{align-self:center;margin-top:16px;padding:8px 22px;border-radius:12px;border:2px solid #f0b9b9;
+            background:#fff5f5;color:var(--red-d);font-size:20px;cursor:pointer;transition:.15s;}
   .clearBtn:hover{background:#ffecec;border-color:var(--red);}
   .mini{font-size:23px;color:var(--muted);}
 
@@ -792,10 +816,11 @@ html.no-flex-gap .footLinks > * + *{margin-left:18px;}
 html.no-flex-gap .pickTabs > * + *{margin-left:10px;}
 html.no-flex-gap .btnRow > * + *{margin-left:20px;}
 html.no-flex-gap #wrongChips > * + *{margin-left:12px;}
-html.no-flex-gap #recentList > * + *{margin-top:8px;}
 html.no-flex-gap .dateHead > * + *{margin-left:10px;}
-html.no-flex-gap #hisModal .row > * + *{margin-left:18px;}
-html.no-flex-gap .recentItem > * + *{margin-left:14px;}
+html.no-flex-gap .hisStats > * + *{margin-left:10px;}
+html.no-flex-gap .hisBar > * + *{margin-left:10px;}
+html.no-flex-gap .hisItem > * + *{margin-left:12px;}
+html.no-flex-gap .hisRight > * + *{margin-left:8px;}
 html.no-flex-gap #fsBtn > * + *, html.no-flex-gap #installBtn > * + *,
 html.no-flex-gap #abortBtn > * + *{margin-left:8px;}
 html.no-flex-gap .card h3 .stepNo{margin-right:14px;}

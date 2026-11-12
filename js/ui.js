@@ -443,60 +443,118 @@ function dayLabel(d){
   const date = d.getFullYear() === now.getFullYear() ? md : d.getFullYear() + "年" + md;
   return date + " 周" + w;
 }
-function renderHistory(){
+/* ================== 战绩列表 ==================
+   窗口顶部可切「全部 / 近 30 天 / 近 7 天」，列表与「导出当前范围」都跟着走；
+   每一天、每一场右侧的 ⬇ 可以单独导出那一天 / 那一场。范围含今天，共 N 个自然日。 */
+let hisRange = 0;                 /* 0 = 全部，7 / 30 = 近 N 天 */
+function hisDayStart(offset){
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - offset);
+  return d.getTime();
+}
+/* 当前班级的全部记录（倒序），再按范围过滤 */
+function hisFiltered(){
+  const all = loadHis(S.cls).matches.slice().sort((a, b) => b.t - a.t);
+  if(!hisRange) return all;
+  const from = hisDayStart(hisRange - 1);
+  return all.filter(m => m.t >= from);
+}
+/* 范围内的胜负统计：胜场只算双人局 */
+function hisStats(list){
+  const wins = {};
+  let solo = 0;
+  list.forEach(m => {
+    if(m.solo){ solo++; return; }
+    if(m.s1 > m.s2) wins[m.p1] = (wins[m.p1] || 0) + 1;
+    else if(m.s2 > m.s1) wins[m.p2] = (wins[m.p2] || 0) + 1;
+  });
+  const top = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
+  return {
+    total: list.length, solo: solo, duo: list.length - solo,
+    winTop: top ? { name: top[0], n: top[1] } : null
+  };
+}
+const hisDayKey = d => d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+/* 一场比赛的说明行：模式 / 词库 / 题量 / 时分（旧记录没有题量就不显示） */
+function hisMetaText(m, d){
+  const parts = [];
+  if(m.mode === "knockout") parts.push("淘汰制 " + (m.cap || 100));
+  else if(m.mode === "accumulate") parts.push("累加制 " + (m.cap || 100));
+  if(m.unit) parts.push(m.unit);
+  if(m.q) parts.push(m.q + " 题");
+  parts.push(pad2(d.getHours()) + ":" + pad2(d.getMinutes()));
+  return parts.join(" · ");
+}
+
+function renderHisBody(){
+  const body = $("hisBody"), clearBtn = $("clearBtn"), expBtn = $("hisExportBtn");
+  if(!body) return;
   const h = loadHis(S.cls);
-  const t = $("hisTitle"); if(t) t.textContent = S.cls ? ("📊 " + S.cls + " 战绩") : "📊 战绩";
-  renderChips();
-  const body = $("hisBody"), clearBtn = $("clearBtn");
-  if(!h.matches.length){
-    body.innerHTML = "暂无记录";
-    clearBtn.classList.add("hidden");
-  }else{
-    const wins = {};
-    h.matches.forEach(m => {
-      if(m.solo) return;                       /* 单人记录不参与胜负统计 */
-      if(m.s1 > m.s2) wins[m.p1] = (wins[m.p1]||0)+1;
-      else if(m.s2 > m.s1) wins[m.p2] = (wins[m.p2]||0)+1;
-    });
-    const winTop = Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
-    const stTop = Object.entries(h.streaks||{}).sort((a,b)=>b[1]-a[1])[0];
-    const soloCount = h.matches.filter(m=>m.solo).length;
-    let html = '<div class="row">'
-      + '<div class="stat">总场次 <b>' + h.matches.length + '</b></div>';
-    if(winTop) html += '<div class="stat">胜场王 <b>' + esc(dispName(winTop[0])) + ' ' + winTop[1] + '胜</b></div>';
-    if(stTop) html += '<div class="stat">连击纪录 <b>' + esc(dispName(stTop[0])) + ' x' + stTop[1] + '</b></div>';
-    if(soloCount) html += '<div class="stat">单人作答 <b>' + soloCount + ' 场</b></div>';
-    html += "</div>";
-    /* 全部记录：按时间戳倒序（最新在前），再按日期分组，同一天折叠在一个日期标题下 */
-    const all = h.matches.slice().sort((a, b) => b.t - a.t);
-    const dayKey = d => d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-    const dayCount = {};
-    all.forEach(m => { const k = dayKey(new Date(m.t)); dayCount[k] = (dayCount[k] || 0) + 1; });
-    let lastDay = "", list = "";
-    all.forEach(m => {
-      const d = new Date(m.t), k = dayKey(d);
-      if(k !== lastDay){
-        lastDay = k;
-        list += '<div class="dateHead">' + dayLabel(d) + ' <i>' + dayCount[k] + ' 场</i></div>';
-      }
-      const hm = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
-      /* 限分模式的历史记录带一枚模式标签，旧记录没有该字段则不显示 */
-      const modeTag = m.mode === "knockout" ? '<i class="tagMode">淘汰制 ' + (m.cap || 100) + '</i>'
-                    : m.mode === "accumulate" ? '<i class="tagMode">累加制 ' + (m.cap || 100) + '</i>' : "";
+  const list = hisFiltered();
+  document.querySelectorAll("#hisTabs .hisTab").forEach(b =>
+    b.classList.toggle("on", (Number(b.dataset.days) || 0) === hisRange));
+  if(!list.length){
+    body.innerHTML = h.matches.length
+      ? '<div class="hisEmpty">这个范围里还没有比赛记录。<br>切到「全部」就能看到更早的战绩。</div>'
+      : '<div class="hisEmpty">这个班级还没有比赛记录。<br>打完一局，这里会按日期列出每场比分，并可导出成 HTML。</div>';
+    if(clearBtn) clearBtn.classList.toggle("hidden", !h.matches.length);
+    if(expBtn) expBtn.disabled = true;
+    return;
+  }
+  if(clearBtn) clearBtn.classList.remove("hidden");
+  if(expBtn) expBtn.disabled = false;
+
+  const st = hisStats(list);
+  const rec = Object.entries(h.streaks || {}).sort((a, b) => b[1] - a[1])[0];
+  let html = '<div class="hisStats">'
+    + '<div class="hisStat"><b>' + st.total + '</b><i>场次</i></div>';
+  if(st.winTop) html += '<div class="hisStat"><b>' + esc(dispName(st.winTop.name)) + ' ' + st.winTop.n
+    + '</b><i>胜场王</i></div>';
+  /* 连击纪录按班级整库存，不随范围缩小，所以单独标「纪录」 */
+  if(rec) html += '<div class="hisStat"><b>x' + rec[1] + '</b><i>' + esc(dispName(rec[0])) + ' 连击纪录</i></div>';
+  if(st.solo) html += '<div class="hisStat"><b>' + st.duo + ' / ' + st.solo + '</b><i>双人 / 单人</i></div>';
+  html += "</div>";
+
+  /* 按日期分组，同一天折叠在一个日期标题下 */
+  const groups = [];
+  list.forEach(m => {
+    const d = new Date(m.t), k = hisDayKey(d);
+    let g = groups[groups.length - 1];
+    if(!g || g.key !== k){ g = { key: k, d: d, items: [] }; groups.push(g); }
+    g.items.push(m);
+  });
+  groups.forEach(g => {
+    html += '<div class="dateHead"><span>' + dayLabel(g.d) + '</span><i>' + g.items.length + ' 场</i>'
+      + '<button class="hisExp" data-day="' + g.key + '" title="导出这一天">⬇</button></div>';
+    g.items.forEach(m => {
+      const d = new Date(m.t);
+      const meta = '<div class="hisMeta">' + esc(hisMetaText(m, d)) + "</div>";
       if(m.solo){
-        /* 单人记录：只有名字、得分与题量 */
-        list += '<div class="recentItem"><span>' + esc(dispName(m.p)) + ' <i class="tagSolo">单人</i>'
-          + '</span><span class="mini">' + modeTag + m.unit + " · " + m.s + " 分 · " + hm + '</span></div>';
+        html += '<div class="hisItem"><div class="hisLeft">'
+          + '<div class="hisMain">' + esc(dispName(m.p)) + ' <b>' + m.s + '</b> 分'
+          + '<i class="tagSolo">单人</i></div>' + meta + "</div>"
+          + '<div class="hisRight"><button class="hisExp" data-t="' + m.t + '" title="导出这一场">⬇</button></div>'
+          + "</div>";
         return;
       }
-      const res = m.s1===m.s2 ? "平局" : (m.s1>m.s2 ? esc(dispName(m.p1))+" 胜" : esc(dispName(m.p2))+" 胜");
-      list += '<div class="recentItem"><span>' + esc(dispName(m.p1)) + ' ' + m.s1 + ' : ' + m.s2 + ' ' + esc(dispName(m.p2))
-        + '</span><span class="mini">' + modeTag + m.unit + " · " + res + " · " + hm + '</span></div>';
+      const resCls = m.s1 === m.s2 ? "draw" : (m.s1 > m.s2 ? "red" : "blue");
+      const resTxt = m.s1 === m.s2 ? "平局" : ((m.s1 > m.s2 ? dispName(m.p1) : dispName(m.p2)) + " 胜");
+      html += '<div class="hisItem"><div class="hisLeft">'
+        + '<div class="hisMain">' + esc(dispName(m.p1)) + ' <b>' + m.s1 + '</b> : <b>' + m.s2 + '</b> '
+        + esc(dispName(m.p2)) + '</div>' + meta + "</div>"
+        + '<div class="hisRight"><span class="hisRes ' + resCls + '">' + esc(resTxt) + "</span>"
+        + '<button class="hisExp" data-t="' + m.t + '" title="导出这一场">⬇</button></div>'
+        + "</div>";
     });
-    html += '<div id="recentList">' + list + "</div>";
-    body.innerHTML = html;
-    clearBtn.classList.remove("hidden");
-  }
+  });
+  body.innerHTML = html;
+}
+
+function renderHistory(){
+  const t = $("hisTitle"); if(t) t.textContent = S.cls ? ("📊 " + S.cls + " 战绩") : "📊 战绩";
+  renderChips();
+  renderHisBody();
   /* 未开启「错词优先复现」时不显示待复现错词（即使历史上有 wrongs 数据） */
   const rw = S.rememberWrong ? reviewWords(S.cls).length : 0;
   let info = "";
@@ -517,6 +575,200 @@ function renderHistory(){
   $("rosterInfo").textContent = roster.length
     ? "✅ 名单已载入：" + S.cls + " · 共 " + roster.length + " 人"
     : "⚠ 「" + S.cls + "」名单为空：可在「✏️ 名单编辑器」里导入 TXT 或逐个添加，也可直接输入名字（这局的战绩会记到本班）。";
+}
+
+/* ================== 战绩导出（HTML） ==================
+   scope：{type:"range"} 当前范围 / {type:"day", key} 某一天 / {type:"match", t} 某一场。
+   导出内容与窗口里看到的范围一致，且只取当前班级的记录（按班级隔离）。
+   产物是自带样式的独立网页，双击能看，也能直接打印或发到班级群。 */
+const HIS_HTML_CSS = [
+":root{--red:#e05555;--red-d:#c0392b;--red-bg:#fdecea;--blue:#4a7fe0;--blue-d:#2c5cb8;",
+"      --blue-bg:#ecf2fe;--ink:#1f242e;--ink2:#3a4150;--muted:#79808f;--line:#e3e8f1;}",
+"*{box-sizing:border-box;}",
+"body{margin:0;padding:34px 5vw 48px;background:#f4f6fb;color:var(--ink);",
+"     font-family:'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif;font-size:17px;line-height:1.55;}",
+".sheet{max-width:1040px;margin:0 auto;}",
+"h1{font-size:32px;margin:0 0 6px;}",
+".meta{font-size:15px;color:var(--muted);margin-bottom:6px;}",
+".meta b{color:var(--blue-d);}",
+".sum{display:flex;gap:26px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);",
+"     border-radius:14px;padding:14px 20px;margin:18px 0 22px;box-shadow:0 2px 10px rgba(28,39,72,.05);}",
+".sum div{display:flex;flex-direction:column;}",
+".sum span{font-size:13px;color:var(--muted);letter-spacing:1px;}",
+".sum b{font-size:26px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}",
+".hero{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:18px 0 22px;",
+"      text-align:center;box-shadow:0 2px 10px rgba(28,39,72,.05);}",
+".hero .score{font-size:44px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums;}",
+".hero .score .r{color:var(--red);} .hero .score .b{color:var(--blue);}",
+".hero .res{display:inline-block;margin-top:10px;font-size:17px;font-weight:700;border-radius:10px;padding:4px 16px;}",
+".hero .res.red{background:var(--red-bg);color:var(--red-d);}",
+".hero .res.blue{background:var(--blue-bg);color:var(--blue-d);}",
+".hero .res.draw{background:#eef2f9;color:var(--muted);}",
+".day{margin-bottom:24px;}",
+".day h2{font-size:20px;margin:0 0 10px;padding:8px 14px;border-left:5px solid var(--blue);",
+"        border-radius:0 8px 8px 0;background:linear-gradient(90deg,#e8f0fe,transparent);}",
+".day h2 small{font-size:14px;font-weight:600;color:var(--muted);margin-left:10px;}",
+"table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);",
+"      border-radius:12px;overflow:hidden;}",
+"th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:16px;}",
+"th{background:#eef2f9;color:var(--ink2);font-size:14px;letter-spacing:1px;white-space:nowrap;}",
+"tr:last-child td{border-bottom:none;}",
+"td.hm{width:72px;color:var(--muted);font-variant-numeric:tabular-nums;}",
+"td.num{font-weight:800;font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap;}",
+"td.res{width:96px;font-weight:700;}",
+"td.res.red{color:var(--red-d);} td.res.blue{color:var(--blue-d);} td.res.draw{color:var(--muted);}",
+"td.mini{color:var(--muted);font-size:15px;}",
+".solo{font-size:13px;color:var(--blue-d);background:var(--blue-bg);border-radius:8px;padding:1px 8px;}",
+".foot{margin-top:30px;font-size:13px;color:var(--muted);text-align:center;letter-spacing:1px;}",
+".empty{padding:40px;text-align:center;color:var(--muted);background:#fff;border-radius:14px;}",
+"@media (max-width:760px){",
+"  body{font-size:15px;padding:20px 14px 32px;}",
+"  h1{font-size:24px;} .sum b{font-size:22px;} .hero .score{font-size:32px;}",
+"  th,td{padding:7px 8px;font-size:14px;}",
+"  td.unit,th.unit{display:none;}",
+"}",
+"@media print{",
+"  body{background:#fff;padding:0;}",
+"  .sum,.hero,table{box-shadow:none;}",
+"  .day{break-inside:avoid;}",
+"}"
+].join("\n");
+
+function hisScopeMatches(scope){
+  const all = loadHis(S.cls).matches.slice().sort((a, b) => b.t - a.t);
+  if(scope.type === "day") return all.filter(m => hisDayKey(new Date(m.t)) === scope.key);
+  if(scope.type === "match") return all.filter(m => m.t === scope.t);
+  if(!hisRange) return all;
+  return all.filter(m => m.t >= hisDayStart(hisRange - 1));
+}
+/* 范围文案：窗口里怎么叫，导出文件里就怎么写 */
+function hisScopeLabel(scope){
+  if(scope.type === "day"){
+    const p = scope.key.split("-").map(Number);
+    return dayLabel(new Date(p[0], p[1] - 1, p[2]));
+  }
+  if(scope.type === "match"){
+    const d = new Date(scope.t);
+    return dayLabel(d) + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + " 单场";
+  }
+  return hisRange ? ("近 " + hisRange + " 天") : "全部";
+}
+function hisBuildHtml(scope, list){
+  const st = resultStamp();
+  const cls = S.cls || "未选班级";
+  const label = hisScopeLabel(scope);
+  const s = hisStats(list);
+  /* 单场：顶部给一块大比分，多场：按日期分表 */
+  let hero = "";
+  if(scope.type === "match" && list[0]){
+    const m = list[0], d = new Date(m.t);
+    const when = '<div class="meta">' + esc(hisMetaText(m, d)) + "</div>";
+    if(m.solo){
+      hero = '<div class="hero"><div class="score"><span class="r">' + esc(dispName(m.p)) + " " + m.s
+        + '</span></div><div class="res draw">单人作答</div>' + when + "</div>";
+    }else{
+      const rc = m.s1 === m.s2 ? "draw" : (m.s1 > m.s2 ? "red" : "blue");
+      const rt = m.s1 === m.s2 ? "平局" : ((m.s1 > m.s2 ? dispName(m.p1) : dispName(m.p2)) + " 胜");
+      hero = '<div class="hero"><div class="score"><span class="r">' + esc(dispName(m.p1)) + " " + m.s1
+        + '</span> : <span class="b">' + m.s2 + " " + esc(dispName(m.p2)) + "</span></div>"
+        + '<div class="res ' + rc + '">' + esc(rt) + "</div>" + when + "</div>";
+    }
+  }
+  /* 按日期分组的小节 */
+  const groups = [];
+  list.forEach(m => {
+    const d = new Date(m.t), k = hisDayKey(d);
+    let g = groups[groups.length - 1];
+    if(!g || g.key !== k){ g = { key: k, d: d, items: [] }; groups.push(g); }
+    g.items.push(m);
+  });
+  const sections = groups.map(g => {
+    const rows = g.items.map(m => {
+      const d = new Date(m.t), hm = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+      const mode = m.mode === "knockout" ? "淘汰制 " + (m.cap || 100)
+                 : m.mode === "accumulate" ? "累加制 " + (m.cap || 100) : "无限制";
+      if(m.solo) return "<tr>"
+        + '<td class="hm">' + hm + "</td>"
+        + "<td>" + esc(dispName(m.p)) + ' <span class="solo">单人</span></td>'
+        + '<td class="mini">—</td>'
+        + '<td class="num">' + m.s + " 分</td>"
+        + '<td class="res draw">单人</td>'
+        + "<td>" + mode + "</td>"
+        + '<td class="mini unit">' + esc(m.unit || "—") + "</td>"
+        + '<td class="num">' + (m.q ? m.q + " 题" : "—") + "</td>"
+        + "</tr>";
+      const rc = m.s1 === m.s2 ? "draw" : (m.s1 > m.s2 ? "red" : "blue");
+      const rt = m.s1 === m.s2 ? "平局" : ((m.s1 > m.s2 ? dispName(m.p1) : dispName(m.p2)) + " 胜");
+      return "<tr>"
+        + '<td class="hm">' + hm + "</td>"
+        + "<td>" + esc(dispName(m.p1)) + "</td>"
+        + "<td>" + esc(dispName(m.p2)) + "</td>"
+        + '<td class="num">' + m.s1 + " : " + m.s2 + "</td>"
+        + '<td class="res ' + rc + '">' + esc(rt) + "</td>"
+        + "<td>" + mode + "</td>"
+        + '<td class="mini unit">' + esc(m.unit || "—") + "</td>"
+        + '<td class="num">' + (m.q ? m.q + " 题" : "—") + "</td>"
+        + "</tr>";
+    }).join("");
+    return '<section class="day">'
+      + "<h2>" + dayLabel(g.d) + "<small>" + g.items.length + " 场</small></h2>"
+      + "<table><thead><tr><th>时间</th><th>红方 / 选手</th><th>蓝方</th><th>比分</th>"
+      + "<th>结果</th><th>计分模式</th><th class='unit'>词库</th><th>题量</th></tr></thead>"
+      + "<tbody>" + rows + "</tbody></table></section>";
+  }).join("");
+
+  return [
+    "<!DOCTYPE html>",
+    '<html lang="zh-CN">',
+    "<head>",
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    "<title>战绩记录 · " + esc(cls) + " · " + esc(label) + "</title>",
+    "<style>", HIS_HTML_CSS, "</style>",
+    "</head>",
+    "<body>",
+    '<div class="sheet">',
+    "<h1>📊 战绩记录</h1>",
+    '<div class="meta">班级：<b>' + esc(cls) + "</b>　·　范围：<b>" + esc(label)
+      + "</b>　·　导出时间：" + st.day + " " + st.hm + "</div>",
+    hero,
+    '<div class="sum">',
+    "<div><span>场次</span><b>" + s.total + "</b></div>",
+    "<div><span>双人 / 单人</span><b>" + s.duo + " / " + s.solo + "</b></div>",
+    s.winTop ? "<div><span>胜场王</span><b>" + esc(dispName(s.winTop.name)) + " " + s.winTop.n + " 胜</b></div>" : "",
+    "</div>",
+    sections || '<div class="empty">该范围内还没有比赛记录。</div>',
+    '<div class="foot">词汇擂台 PK · 战绩记录　·　' + esc(cls) + "　·　" + st.day + "</div>",
+    "</div>",
+    "</body>",
+    "</html>"
+  ].join("\n");
+}
+function hisFileName(scope){
+  const st = resultStamp();
+  const cls = (S.cls || "未选班级").replace(/[\\/:*?"<>|\s　]/g, "");
+  let tag = "全部";
+  if(scope.type === "day") tag = scope.key;
+  else if(scope.type === "match"){
+    const d = new Date(scope.t);
+    tag = "单场_" + hisDayKey(d) + "-" + pad2(d.getHours()) + pad2(d.getMinutes());
+  }else if(hisRange) tag = "近" + hisRange + "天";
+  return "战绩_" + cls + "_" + tag + "_" + st.file + ".html";
+}
+function hisExport(scope){
+  const list = hisScopeMatches(scope);
+  if(!list.length){
+    dlgAlert("这个范围里还没有比赛记录。", { type: "warning", title: "暂无数据" });
+    return;
+  }
+  const name = hisFileName(scope);
+  try{
+    downloadHtmlFile(hisBuildHtml(scope, list), name);
+    dlgAlert("已导出「" + esc(name) + "」<br>双击就能用浏览器打开，也可以直接打印或发到班级群。",
+      { type: "success", title: "已导出", html: true });
+  }catch(e){
+    dlgAlert("导出失败：" + esc(e.message), { type: "error", title: "导出失败" });
+  }
 }
 
 /* ================== 抽人 ================== */

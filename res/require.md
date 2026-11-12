@@ -115,7 +115,7 @@
 | 页面与弹窗动画 | CSS `transition` / `@keyframes`（老内核也支持） | 老内核上动画会被简化或跳过，不影响答题；也可在设置里关掉「渲染动画效果」 |
 | 单词朗读 | 系统已安装英语语音包 | 无声音，答题不受影响 |
 | 音效 | `AudioContext` | 无提示音，答题不受影响 |
-| 保存作答结果为 HTML | `Blob` + `URL.createObjectURL` + `<a download>` | 无法导出，其余功能不受影响 |
+| 导出战绩 / 保存作答结果为 HTML | `Blob` + `URL.createObjectURL` + `<a download>` | 无法导出，其余功能不受影响 |
 
 > Service Worker 与安装能力都要求安全上下文：`https://` 或本机 `localhost`。用 `file://` 双击打开时词库无法加载（浏览器禁止本地 fetch），必须通过 HTTP 访问。
 

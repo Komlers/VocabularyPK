@@ -451,6 +451,21 @@ $("hisClose").addEventListener("click", ()=>$("hisModal").classList.add("hidden"
 $("hisModal").addEventListener("click", e=>{
   if(e.target.classList.contains("modalMask")) $("hisModal").classList.add("hidden");
 });
+/* 范围切换：列表与「导出当前范围」都跟着走 */
+$("hisTabs").addEventListener("click", e=>{
+  const btn = e.target.closest(".hisTab");
+  if(!btn) return;
+  hisRange = Number(btn.dataset.days) || 0;
+  renderHisBody();
+});
+$("hisExportBtn").addEventListener("click", ()=> hisExport({ type: "range" }));
+/* 列表里的 ⬇：日期标题导出一整天，条目导出一场 */
+$("hisBody").addEventListener("click", e=>{
+  const btn = e.target.closest(".hisExp");
+  if(!btn) return;
+  if(btn.dataset.day) hisExport({ type: "day", key: btn.dataset.day });
+  else if(btn.dataset.t) hisExport({ type: "match", t: Number(btn.dataset.t) });
+});
 
 /* ================== 开始 PK / 限时 ================== */
 $("startBtn").addEventListener("click", async ()=>{
