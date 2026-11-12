@@ -322,17 +322,32 @@ $("wrongPenaltyChk").addEventListener("change", e=>{
   renderSettingStatus();
 });
 
-/* ================== 本次PK不计入战绩（临时赛） / 单人作答 ==================
-   两项都随改随存，下次打开保持上次的选择 */
-$("noRecordChk").addEventListener("change", e=>{
-  S.noRecord = e.target.checked;
+/* ================== 临时赛 / 双人·单人 ==================
+   两项都随改随存，下次打开保持上次的选择（跟设备走，不分班级） */
+$("tempBtn").addEventListener("click", ()=>{
+  S.noRecord = !S.noRecord;
   saveUI({noRecord:S.noRecord});
+  syncRuleUI();
 });
-/* 单人作答：一位选手即可开局，比赛改为单列选项（淡紫），一题只答一次 */
-$("soloChk").addEventListener("change", e=>{
-  S.solo = e.target.checked;
+/* 双人 / 单人：单人只出单列选项（淡紫），一题只答一次 */
+$("soloSeg").addEventListener("click", e=>{
+  const btn = e.target.closest(".miniSegOpt");
+  if(!btn) return;
+  S.solo = btn.dataset.solo === "1";
   saveUI({solo:S.solo});
+  syncRuleUI();
 });
+
+/* ================== 渲染设置弹窗 ==================
+   只影响本机显示：动画档位、计分飘字、音效、自动朗读，改动即落盘。 */
+$("renderBtn").addEventListener("click", ()=>$("renderModal").classList.remove("hidden"));
+$("renderClose").addEventListener("click", ()=>$("renderModal").classList.add("hidden"));
+$("renderModal").addEventListener("click", e=>{
+  if(e.target.classList.contains("modalMask")) $("renderModal").classList.add("hidden");
+});
+$("fxChk").addEventListener("change", e=>{ S.fx = e.target.checked; saveUI({fx:S.fx}); });
+$("soundChk").addEventListener("change", e=>{ S.sound = e.target.checked; saveUI({sound:S.sound}); });
+$("speakChk").addEventListener("change", e=>{ S.speakWord = e.target.checked; saveUI({speakWord:S.speakWord}); });
 
 /* ================== 擂台设置弹窗 ================== */
 $("settingBtn").addEventListener("click", ()=>$("settingModal").classList.remove("hidden"));

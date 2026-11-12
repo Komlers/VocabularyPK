@@ -22,6 +22,7 @@
 
 /* ================== 音效与特效 ================== */
 function speak(txt){
+  if(S.speakWord === false) return;     /* 渲染设置里关掉自动朗读 */
   try{
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(txt);
@@ -30,6 +31,7 @@ function speak(txt){
   }catch(e){}
 }
 function beep(freq, dur){
+  if(S.sound === false) return;         /* 渲染设置里关掉音效 */
   try{
     const ctx = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
     const o = ctx.createOscillator(), g = ctx.createGain();
@@ -41,6 +43,7 @@ function beep(freq, dur){
   }catch(e){}
 }
 function fx(txt, color, xPct){
+  if(S.fx === false) return;            /* 渲染设置里关掉计分飘字 */
   const d = document.createElement("div");
   d.className = "fx"; d.textContent = txt;
   d.style.color = color;
@@ -1010,6 +1013,36 @@ function renderLibChips(){
 function updateLibBtn(){
   const n = S.units.length;
   $("openLibModal").textContent = n ? "📚 已选 " + n + " 个词库" : "📚 选择词库";
+  renderLibPrev();
+}
+/* 已选词库预览：显示「必修1 Unit1」这样的小标签，最多 5 个，其余用省略号 */
+function renderLibPrev(){
+  const box = $("libPrev");
+  if(!box) return;
+  const tags = S.units || [];
+  box.innerHTML = "";
+  box.classList.toggle("hidden", !tags.length);
+  if(!tags.length) return;
+  const nameOf = tag => {
+    const info = LIB_INFO[tag];
+    if(!info) return tag;
+    /* 内置词库的 label 形如「必修1 U1」，换成更易读的「必修1 Unit1」 */
+    const base = info.label || info.name || tag;
+    return base.replace(/\s*U(\d+)$/i, " Unit$1");
+  };
+  tags.slice(0, 5).forEach(tag => {
+    const el = document.createElement("span");
+    el.className = "libPrevTag";
+    el.textContent = nameOf(tag);
+    box.appendChild(el);
+  });
+  if(tags.length > 5){
+    const more = document.createElement("span");
+    more.className = "libPrevMore";
+    more.textContent = "…";
+    box.appendChild(more);
+  }
+  box.title = "已选 " + tags.length + " 个词库：" + tags.map(nameOf).join("、");
 }
 /* 限时：格式化秒数为 m:ss */
 function fmtDur(sec){
@@ -1065,12 +1098,17 @@ function restoreCfg(){
   renderQuestionTimeoutUI();
   renderScoreModeUI();
   renderSettingStatus();
-  /* 临时赛 / 单人作答 / 渲染动画：沿用上次退出前的勾选，改动即落盘（不分班级） */
+  /* 临时赛 / 单人作答 / 渲染设置：沿用上次退出前的选择，改动即落盘（不分班级） */
   const ui = loadUI();
   S.noRecord = !!ui.noRecord;
-  $("noRecordChk").checked = S.noRecord;
   S.solo = !!ui.solo;
-  $("soloChk").checked = S.solo;
+  syncRuleUI();
+  S.fx = ui.fx !== false;
+  S.sound = ui.sound !== false;
+  S.speakWord = ui.speakWord !== false;
+  if($("fxChk")) $("fxChk").checked = S.fx;
+  if($("soundChk")) $("soundChk").checked = S.sound;
+  if($("speakChk")) $("speakChk").checked = S.speakWord;
   S.anim = normAnim(ui.anim);
   applyAnimUI();
   updateDurBtn();
@@ -1117,6 +1155,17 @@ function renderScoreModeUI(){
     if(box) box.classList.toggle("hidden", limited);
   });
 }
+/* 主页第 4 段：临时赛开关与双人 / 单人切换的选中态 */
+function syncRuleUI(){
+  const chip = $("tempBtn");
+  if(chip){
+    chip.classList.toggle("on", !!S.noRecord);
+    chip.setAttribute("aria-pressed", S.noRecord ? "true" : "false");
+  }
+  document.querySelectorAll("#soloSeg .miniSegOpt").forEach(b =>
+    b.classList.toggle("active", (b.dataset.solo === "1") === !!S.solo));
+}
+
 /* 主页「当前擂台设置」状态行：错词复现 / 是否只加载纯单词 / 单题超时 */
 function renderSettingStatus(){
   const box = $("setStatusLine");
@@ -1143,10 +1192,11 @@ function planInfo(){
   const mins = (S.dur/60).toFixed(1).replace(/\.0$/, "");
   const rg = poolRange();
   /* 计分模式已在绿色状态行显示，这里只讲时长与词库，避免重复 */
-  let s = mins + "分钟 | " + (S.units.length ? S.units.length + "个词库" : "未选择词库");
-  if(rg.words) s += " | " + rg.words + "个单词";
-  if(rg.chunks) s += " & " + rg.chunks + "个词块";
-  $("planInfo").textContent = s;
+  const parts = [mins + "分钟", S.units.length ? S.units.length + "个词库" : "未选择词库"];
+  if(rg.words) parts.push(rg.words + "个单词");
+  if(rg.chunks) parts.push(rg.chunks + "个词块");
+  $("planInfo").innerHTML = parts.map(t => '<span>' + esc(t) + '</span>')
+                                 .join('<span class="setSep">|</span>');
 }
 /* 没有指定班级时，自动选 LocalStorage 里第一个班级 */
 function autoSelectClass(){

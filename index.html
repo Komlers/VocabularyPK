@@ -103,26 +103,31 @@
 
   <div class="card">
     <h3><span class="stepNo">3</span>出题范围与时长<span class="hint">题池按范围自动扩满，全程不重复出题</span></h3>
-    <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;">
-      <button class="drawBtn" id="openLibModal" style="font-size:26px;padding:14px 26px">📚 选择词库</button>
-      <button class="drawBtn" id="openDurModal" style="font-size:26px;padding:14px 26px">⏱ 限时 1:00</button>
+    <div class="cardBtns">
+      <button class="drawBtn" id="openLibModal">📚 选择词库</button>
+      <button class="drawBtn" id="openDurModal">⏱ 限时 1:00</button>
     </div>
-    <div class="mini" id="planInfo" style="margin-top:14px"></div>
+    <!-- 已选词库预览：最多 5 个，超出用省略号（见 renderLibPrev） -->
+    <div class="libPrev hidden" id="libPrev"></div>
+    <div class="planLine" id="planInfo"></div>
   </div>
 
   <div class="card">
-    <h3><span class="stepNo">4</span>擂台设置与本次规则<span class="hint">计分模式 / 错词复现 / 单题超时 / 临时赛</span></h3>
-    <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;">
-      <button class="drawBtn" id="settingBtn" style="font-size:26px;padding:14px 26px">⚙️ 擂台设置</button>
+    <h3><span class="stepNo">4</span>对局规则与设置<span class="hint">擂台设置 · 渲染设置 · 临时赛 · 双人 / 单人</span></h3>
+    <div class="cardBtns">
+      <button class="drawBtn" id="settingBtn">⚙️ 擂台设置</button>
+      <button class="drawBtn" id="renderBtn">🎬 渲染设置</button>
     </div>
-    <label class="wordsOnlyLabel">
-      <input type="checkbox" id="noRecordChk">
-      本次PK不计入战绩（临时赛）
-    </label>
-    <label class="wordsOnlyLabel">
-      <input type="checkbox" id="soloChk">
-      本次PK为单人作答（单人检测）
-    </label>
+    <!-- 本次对局形态：临时赛（不计入战绩）+ 双人 / 单人 -->
+    <div class="ruleRow">
+      <button type="button" class="tempChip" id="tempBtn" aria-pressed="false">
+        <span class="tempDot"></span>临时赛
+      </button>
+      <div class="miniSeg" id="soloSeg">
+        <button type="button" class="miniSegOpt active" data-solo="0">双人</button>
+        <button type="button" class="miniSegOpt" data-solo="1">单人</button>
+      </div>
+    </div>
     <!-- 当前擂台设置状态（计分模式 / 连击 / 错词复现 / 单题超时），由 renderSettingStatus 更新 -->
     <div class="setStatusLine" id="setStatusLine"></div>
   </div>
@@ -259,17 +264,6 @@
       <div class="setHint">下一局优先出本班错词（最多 8 个），答对即移出；错词记录照常收录。</div>
     </div>
 
-    <div class="setItem">
-      <span class="wordsOnlyLabel setStaticLabel">渲染动画效果</span>
-      <div class="segRow" id="animRow">
-        <button type="button" class="segOpt animOpt active" data-anim="full">完全</button>
-        <button type="button" class="segOpt animOpt" data-anim="part">部分</button>
-        <button type="button" class="segOpt animOpt" data-anim="off">禁用</button>
-      </div>
-      <div class="setHint">完全：页面切换、弹窗开关、开局入场、切题都有过渡。<br>
-        部分：页面 / 弹窗 / 切题瞬间完成，只保留 +N、超时漂浮字与奖杯等小动效。<br>
-        禁用：动画一律不加载，最省性能。此项只影响本机显示，不随班级保存。</div>
-    </div>
 
     </div>
     <div class="btnRow" style="margin-top:26px">
@@ -287,6 +281,56 @@
     <div class="btnRow" style="margin-top:20px">
       <button class="drawBtn" id="updateLater">稍后处理</button>
       <button class="startBtn small" id="updateGotIt">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 渲染设置弹窗 ================= -->
+<div id="renderModal" class="modal hidden">
+  <div class="modalMask"></div>
+  <div class="modalBox fixedFoot">
+    <h3>🎬 渲染设置<span class="hint">只影响本机显示</span></h3>
+    <div class="modalScroll">
+
+    <div class="setItem">
+      <span class="wordsOnlyLabel setStaticLabel">渲染动画效果</span>
+      <div class="segRow" id="animRow">
+        <button type="button" class="segOpt animOpt active" data-anim="full">完全</button>
+        <button type="button" class="segOpt animOpt" data-anim="part">部分</button>
+        <button type="button" class="segOpt animOpt" data-anim="off">禁用</button>
+      </div>
+      <div class="setHint">完全：页面切换、弹窗开关、开局入场、切题都有过渡。<br>
+        部分：页面 / 弹窗 / 切题瞬间完成，只保留 +N、超时漂浮字与奖杯等小动效。<br>
+        禁用：动画一律不加载，最省性能。</div>
+    </div>
+
+    <div class="setItem">
+      <label class="wordsOnlyLabel">
+        <input type="checkbox" id="fxChk">
+        计分飘字
+      </label>
+      <div class="setHint">答对 / 答错 / 超时时飘出 +N、-N、⏰ 提示；关掉后只看顶部分数变化。</div>
+    </div>
+
+    <div class="setItem">
+      <label class="wordsOnlyLabel">
+        <input type="checkbox" id="soundChk">
+        答题音效
+      </label>
+      <div class="setHint">答对、答错与结算时的提示音；关掉后全程静音（朗读不受影响）。</div>
+    </div>
+
+    <div class="setItem">
+      <label class="wordsOnlyLabel">
+        <input type="checkbox" id="speakChk">
+        自动朗读单词
+      </label>
+      <div class="setHint">单词题出现时朗读英文；本机没有英语语音包时自动静音。</div>
+    </div>
+
+    </div>
+    <div class="btnRow" style="margin-top:20px">
+      <button class="startBtn small" id="renderClose">关 闭</button>
     </div>
   </div>
 </div>
