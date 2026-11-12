@@ -185,6 +185,8 @@ function questionTimeout(){
   fx("⏰ 超时", "#9a8c5b", S.solo ? 50 : 18);
   if(!S.solo) fx("⏰ 超时", "#9a8c5b", 82);
   beep(160, .25);
+  /* 整题超时：双方都没答对，两边的连击都中断 */
+  breakStreak(1); breakStreak(2);
   setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, 700);
 }
 function scheduleNext(delay){
@@ -231,6 +233,15 @@ function resumeBattleClock(snap){
     }, snap.nextRest);
   }
 }
+/* 连击被打断：清零计数并抹掉顶栏的「🔥 N 连击！」标签。
+   双人局里一题只要被对方答对（或整题超时），本方这题就没答对，
+   连击链到此为止，下一题答对重新从 1 开始累计。 */
+function breakStreak(k){
+  if(!S.streak[k-1]) return;
+  S.streak[k-1] = 0;
+  const el = $("st"+k);
+  if(el) el.textContent = "";
+}
 /* 计分：
    · 无限制（open）——答对：「连击加分」开启时 +10，且每层连击再 +5（加成封顶 +20，单题 10~30）；
            答错：「答错扣分」开启时按连续答错 5 / 10 / 15 / 20 递增，未开启时固定 -5，扣到 0 为止。
@@ -246,6 +257,8 @@ function score(k, ok){
     S.right[k-1]++;
     S.streak[k-1]++;
     S.maxStreak[k-1] = Math.max(S.maxStreak[k-1], S.streak[k-1]);
+    /* 本方答对即换题，对方这题没答对，连击一并中断（单人只有一列，无需处理） */
+    if(!S.solo) breakStreak(k === 1 ? 2 : 1);
     let pts = S.basePoints;
     if(limited) pts = 5;
     else if(S.comboBonus && !S.revival) pts += Math.min((S.streak[k-1]-1)*5, 20);
@@ -272,8 +285,7 @@ function score(k, ok){
     beep(880, .12);
   }else{
     S.bad[k-1]++;
-    S.streak[k-1] = 0;
-    $("st"+k).textContent = "";
+    breakStreak(k);
     if(limited || (S.wrongPenalty && !S.revival)){
       let pen;
       if(limited){
