@@ -49,30 +49,48 @@ function fx(txt, color, xPct){
   setTimeout(()=>d.remove(), 1000);
 }
 
-/* ================== 渲染动画开关 ==================
-   「擂台设置 → 渲染动画效果」默认开启。关闭后给 <html> 加 .no-anim，
-   由 style.css 末尾统一取消动画与过渡，页面切换也不再等出场动画，
-   老旧笔记本 / 投屏一体机这类低性能设备能明显跟手。
-   开关属于设备偏好，存 vpk_ui（跟设备走），不随班级变化。
-   系统开了「减少动态效果」时同样按关闭处理，只影响效果、不改用户的勾选。 */
+/* ================== 渲染动画（三档） ==================
+   「擂台设置 → 渲染动画效果」分三档，默认 full：
+     · full  完全：页面切换、弹窗开关、开局入场、切题都有过渡；
+     · part  部分：只保留「小动效」（+N/-N/超时漂浮字、答对答错反馈、奖杯 pop、
+                  计时器闪烁、抽人脉冲），页面 / 弹窗 / 切题全部瞬间完成；
+     · off   禁用：动画与过渡一律不加载，最省性能。
+   档位属于设备偏好，存 vpk_ui（跟设备走），不随班级变化。
+   系统开了「减少动态效果」时按 off 处理，只影响效果、不改用户的选择。 */
 let reduceMotion = false;
 try{
   reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 }catch(e){}
 
-/* 是否播放动画：用户没关，且系统没要求减少动态 */
+/* 规范化档位：旧版本存的是布尔开关（true / false），这里一并兼容 */
+function normAnim(v){
+  if(v === "part" || v === "off") return v;
+  if(v === false) return "off";
+  return "full";
+}
+/* 当前生效档位（系统要求减少动态时按禁用处理） */
+function animLevel(){
+  return reduceMotion ? "off" : normAnim(S.anim);
+}
+/* 页面切换、弹窗、切题这类「过渡」是否播放：只有完全档播 */
 function animOn(){
-  return S.anim !== false && !reduceMotion;
+  return animLevel() === "full";
 }
-/* 把当前设置落到 DOM 与设置面板上；改开关时调用即可立即生效 */
+/* 把档位落到 <html> 与设置面板上；换档时调用即可立即生效 */
 function applyAnimUI(){
-  try{ document.documentElement.classList.toggle("no-anim", !animOn()); }catch(e){}
-  const chk = $("animChk");
-  if(chk) chk.checked = S.anim !== false;   /* 复选框只反映用户设置，不反映系统偏好 */
+  const lv = animLevel();
+  try{
+    document.documentElement.classList.toggle("no-anim", lv === "off");
+    document.documentElement.classList.toggle("part-anim", lv === "part");
+  }catch(e){}
+  /* 分段按钮只反映用户的选择，不反映系统偏好 */
+  const cur = normAnim(S.anim);
+  document.querySelectorAll("#animRow .animOpt").forEach(b =>
+    b.classList.toggle("active", b.dataset.anim === cur));
 }
-/* 启动即应用：脚本在 body 末尾，早于首帧渲染，避免先播一次入场动画再被关掉 */
+/* 启动即应用：脚本在 body 末尾，早于首帧渲染，避免先播一次入场动画再被改掉 */
 (function initAnim(){
-  try{ if(loadUI().anim === false) S.anim = false; }catch(e){}
+  try{ S.anim = normAnim(loadUI().anim); }catch(e){}
   applyAnimUI();
 })();
 
@@ -1053,7 +1071,7 @@ function restoreCfg(){
   $("noRecordChk").checked = S.noRecord;
   S.solo = !!ui.solo;
   $("soloChk").checked = S.solo;
-  S.anim = ui.anim !== false;
+  S.anim = normAnim(ui.anim);
   applyAnimUI();
   updateDurBtn();
   updateLibBtn();

@@ -860,7 +860,7 @@ html.no-focus-visible .libGroupTitle:focus,
 html.no-focus-visible .wbBookToggle:focus,
 html.no-focus-visible .segOpt:focus{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px;}
 
-/* ============ 关闭渲染动画（擂台设置 → 渲染动画效果） ============
+/* ============ 关闭渲染动画（擂台设置 → 渲染动画效果 = 禁用） ============
    给低性能设备留的后路：关掉后动画与过渡一律不加载，页面切换也不等出场动画。
    与下面的「减少动态效果」不同，这里是用户显式关掉的，弹窗也直接 display:none，
    连关闭态的布局开销一并省掉。 */
@@ -870,6 +870,29 @@ html.no-anim *, html.no-anim *::before, html.no-anim *::after{
   scroll-behavior:auto !important;
 }
 html.no-anim .modal.hidden{display:none !important;}
+
+/* ============ 部分渲染动画（擂台设置 → 渲染动画效果 = 部分） ============
+   只关「大动作」：页面切换、弹窗开关、开局入场、切题与结算页的依次上浮；
+   漂浮字（+N / -N / 超时）、答对答错反馈、奖杯 pop、计时器闪烁、抽人脉冲
+   这些小动效照旧，观感更稳但不呆板。 */
+html.part-anim .screen:not(.hidden),
+html.part-anim .screen.leaving{animation:none !important;}
+html.part-anim #battle.starting .pcard.red,
+html.part-anim #battle.starting .pcard.blue,
+html.part-anim #battle.starting .timerWrap,
+html.part-anim #battle.starting .qzone,
+html.part-anim #battle.starting .arena .side.red,
+html.part-anim #battle.starting .arena .side.blue{animation:none !important;}
+html.part-anim #qWord.qIn,
+html.part-anim .side.qIn .opt{animation:none !important;}
+html.part-anim #result #winName,
+html.part-anim #result #finalScore,
+html.part-anim #result .accRow,
+html.part-anim #result #wrongBox,
+html.part-anim #result .btnRow{animation:none !important;}
+html.part-anim .modal,
+html.part-anim .modal .modalBox{transition:none !important;}
+html.part-anim .modal.hidden{display:none !important;}
 
 /* ============ 减少动态效果 ============
    系统开启「减少动态效果」时，关闭全部动画与过渡，避免眩晕与干扰。 */

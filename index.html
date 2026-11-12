@@ -260,11 +260,15 @@
     </div>
 
     <div class="setItem">
-      <label class="wordsOnlyLabel">
-        <input type="checkbox" id="animChk">
-        渲染动画效果
-      </label>
-      <div class="setHint">关闭后不加载动画与过渡，操作立即生效，适合低性能设备。</div>
+      <span class="wordsOnlyLabel setStaticLabel">渲染动画效果</span>
+      <div class="segRow" id="animRow">
+        <button type="button" class="segOpt animOpt active" data-anim="full">完全</button>
+        <button type="button" class="segOpt animOpt" data-anim="part">部分</button>
+        <button type="button" class="segOpt animOpt" data-anim="off">禁用</button>
+      </div>
+      <div class="setHint">完全：页面切换、弹窗开关、开局入场、切题都有过渡。<br>
+        部分：页面 / 弹窗 / 切题瞬间完成，只保留 +N、超时漂浮字与奖杯等小动效。<br>
+        禁用：动画一律不加载，最省性能。此项只影响本机显示，不随班级保存。</div>
     </div>
 
     </div>

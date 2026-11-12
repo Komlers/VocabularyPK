@@ -112,7 +112,7 @@
 | 安装为桌面应用 | Chromium 内核（Edge / Chrome）+ HTTPS | 左上角「安装」按钮不显示；iOS 需手动「分享 → 添加到主屏幕」 |
 | 离线打开 | 支持 Service Worker（Chrome 45 / FF 44 / Safari 11.1 起）+ HTTPS | 断网后无法打开页面 |
 | 自动全屏 | 桌面浏览器均支持；iOS Safari 需 16.4+ 且为部分实现 | 「全屏」按钮自动隐藏，不影响答题 |
-| 页面与弹窗动画 | CSS `transition` / `@keyframes`（老内核也支持） | 老内核上动画会被简化或跳过，不影响答题；也可在设置里关掉「渲染动画效果」 |
+| 页面与弹窗动画 | CSS `transition` / `@keyframes`（老内核也支持） | 老内核上动画会被简化或跳过，不影响答题；也可把「渲染动画效果」调成「部分」或「禁用」 |
 | 单词朗读 | 系统已安装英语语音包 | 无声音，答题不受影响 |
 | 音效 | `AudioContext` | 无提示音，答题不受影响 |
 | 导出战绩 / 保存作答结果为 HTML | `Blob` + `URL.createObjectURL` + `<a download>` | 无法导出，其余功能不受影响 |

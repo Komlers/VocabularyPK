@@ -346,9 +346,11 @@ $("rememberWrongChk").addEventListener("change", e=>{
   planInfo();
   renderSettingStatus();
 });
-/* 渲染动画效果：设备级开关，切换后立即生效（存 vpk_ui，不分班级） */
-$("animChk").addEventListener("change", e=>{
-  S.anim = e.target.checked;
+/* 渲染动画三档（完全 / 部分 / 禁用）：切完立即生效，存 vpk_ui，不分班级 */
+$("animRow").addEventListener("click", e=>{
+  const btn = e.target.closest(".animOpt");
+  if(!btn) return;
+  S.anim = btn.dataset.anim;
   saveUI({anim:S.anim});
   applyAnimUI();
 });

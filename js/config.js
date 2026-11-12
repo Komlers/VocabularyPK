@@ -57,7 +57,7 @@ let S = {
   units:[], useChunks:false, dur:60, wordsOnly:false, noRecord:false,
   rememberWrong:false,      /* 「错词优先复现」开关：只决定下一局是否插错词，不影响错词记录（键名沿用旧称，旧配置才能直接生效） */
   solo:false,   /* 本次PK为单人作答：只出一列选项（淡紫），一人一答，不再保留对侧补救 */
-  anim:true,    /* 渲染动画效果：关闭后全部动画与过渡不加载，低性能设备更流畅（跟设备走，不分班级） */
+  anim:"full",  /* 渲染动画档位：full 完全 / part 部分（只有小动效）/ off 禁用，跟设备走、不分班级 */
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
   comboBonus:true, wrongPenalty:false,   /* 连击加分 / 答错扣分（擂台设置） */
   scoreMode:"open",        /* 计分模式：open 无限制 / knockout 淘汰制 / accumulate 累加制 */
