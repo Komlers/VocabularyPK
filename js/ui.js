@@ -230,6 +230,9 @@ function mdToHtml(md){
     return t.charAt(0) === "\\" ? "#" : t;
   };
   const NEWTAB = ' target="_blank" rel="noopener noreferrer"';
+  /* 属性值转义：正文已整体转义过 & < >，但双引号没有，
+     alt 文字或地址里出现 " 会把属性截断（例如 ![他说"你好"](a.png)） */
+  const attr = s => String(s).replace(/"/g, "&quot;");
 
   /* ---------- 行内 ---------- */
   function inline(text){
@@ -240,20 +243,20 @@ function mdToHtml(md){
     s = s.replace(/(`+)([\s\S]*?)\1(?!`)/g, (m, fence, code) => keep("<code>" + code + "</code>"));
     /* 图片：![替代文字](地址 "标题") */
     s = s.replace(/!\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+["']([^"']*)["'])?\s*\)/g,
-      (m, alt, src, title) => '<img src="' + keep(safeUrl(src)) + '" alt="' + alt + '"'
-        + (title ? ' title="' + title + '"' : "") + ">");
+      (m, alt, src, title) => '<img src="' + keep(attr(safeUrl(src))) + '" alt="' + attr(alt) + '"'
+        + (title ? ' title="' + attr(title) + '"' : "") + ">");
     /* 链接：[文字](地址 "标题")；地址进占位符，里面的 * _ 不会被当成强调 */
     s = s.replace(/\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+["']([^"']*)["'])?\s*\)/g,
-      (m, txt, url, title) => '<a href="' + keep(safeUrl(url)) + '"'
-        + (title ? ' title="' + title + '"' : "") + NEWTAB + ">" + txt + "</a>");
+      (m, txt, url, title) => '<a href="' + keep(attr(safeUrl(url))) + '"'
+        + (title ? ' title="' + attr(title) + '"' : "") + NEWTAB + ">" + txt + "</a>");
     /* 自动链接：<https://…> 与裸链接（末尾标点留在链接外） */
     s = s.replace(/&lt;((?:https?:\/\/|mailto:)[^\s&]+)&gt;/g,
-      (m, url) => '<a href="' + keep(url) + '"' + NEWTAB + ">" + url + "</a>");
+      (m, url) => '<a href="' + keep(attr(url)) + '"' + NEWTAB + ">" + url + "</a>");
     s = s.replace(/(^|[\s(（])(https?:\/\/[^\s<>"'）】]+)/g, (m, pre, url) => {
       const tail = (url.match(/[.,;:!?。，；：！？、]+$/) || [""])[0];
       const href = tail ? url.slice(0, url.length - tail.length) : url;
       if(!href) return m;
-      return pre + '<a href="' + keep(href) + '"' + NEWTAB + ">" + href + "</a>" + tail;
+      return pre + '<a href="' + keep(attr(href)) + '"' + NEWTAB + ">" + href + "</a>" + tail;
     });
     /* 删除线 */
     s = s.replace(/~~([^\s~](?:[\s\S]*?[^\s~])?)~~/g, "<del>$1</del>");
