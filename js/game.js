@@ -198,17 +198,22 @@ function questionTimeout(){
   beep(160, .25);
   /* 整题超时：双方都没答对，两边的连击都中断 */
   breakStreak(1); breakStreak(2);
-  setTimeout(()=>{ if(S.left > 0) nextQuestion(); }, 700);
+  /* 用 armNext 而不是裸 setTimeout：这 0.7 秒也要能被暂停（终止确认框）停住 */
+  armNext(700);
 }
-function scheduleNext(delay){
-  if(S.pendingNext) return;
-  S.pendingNext = true;
-  clearQuestionTimer();
+/* 排一次换题：记下到期时间，暂停计时（见 pauseBattleClock）才能把它一起停掉 */
+function armNext(delay){
   S.nextDeadline = Date.now() + delay;
   S.nextTimer = setTimeout(()=>{
     S.nextTimer = null; S.nextDeadline = 0;
     if(S.left > 0) nextQuestion();
   }, delay);
+}
+function scheduleNext(delay){
+  if(S.pendingNext) return;
+  S.pendingNext = true;
+  clearQuestionTimer();
+  armNext(delay);
 }
 
 /* ================== 计时暂停 / 恢复 ==================
