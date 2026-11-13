@@ -202,14 +202,24 @@ function specFromWrong(en, cn, kind){
   if(w) return {t:"w", w:w};
   return null;
 }
-/* 上节课错的词与词块：按错误次数取前 8 优先复现；
-   未开启「错词优先复现」时返回空，每次完全用当前词库出题。
+/* 上节课错的词与词块：只复现「当前所选词库」范围内的，按错误次数取前 8；
+   未开启「错词优先复现」或没选词库时返回空，完全用当前词库出题。
+   换成必修 2 后就不会再被必修 1 的旧错词占掉开场几题；
+   其它词库的错词仍然留在错词记录里，只是不在这一局插进来。
    注意：这只影响出题，错词本（vpk_wrongbook_*）始终照常收录。 */
 function reviewSpecs(cls){
-  if(!S.rememberWrong) return [];
+  if(!S.rememberWrong || !S.units.length) return [];
   const h = loadHis(cls);
-  return Object.entries(h.wrongs||{}).sort((a,b)=>b[1]-a[1]).slice(0,8)
-    .map(e=>specFromWrong(e[0],"","")).filter(Boolean);
+  return Object.entries(h.wrongs||{})
+    .sort((a,b)=>b[1]-a[1])
+    .map(e => {
+      const spec = specFromWrong(e[0], "", "");
+      if(!spec) return null;
+      const tag = spec.t === "w" ? (spec.w[2] || "") : (CHUNKS[spec.i] ? CHUNKS[spec.i][6] : "");
+      return tag && S.units.includes(tag) ? spec : null;
+    })
+    .filter(Boolean)
+    .slice(0, 8);
 }
 
 /* ================== 干扰项生成 ================== */
