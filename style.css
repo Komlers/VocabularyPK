@@ -975,6 +975,19 @@ html.no-flex-gap .wbWords > * + *{margin-left:8px;}
 html.no-flex-gap .wbWord > * + *{margin-left:8px;}
 html.no-flex-gap .ruleBody > * + *{margin-top:16px;}
 html.no-flex-gap .importLibRow > * + *{margin-left:16px;}
+/* 主页规则行 / 战绩页签 / 数据管理 / 词库与错词本标题条：
+   这些是后来新增的 flex+gap 布局，缺了回退在老内核上会挤成一团。
+   注意 .libGTMeta / .wbBookMeta 本身用 margin-left:auto 顶到右边，
+   所以这两条只给箭头补间距，不能用 > * + * 把 auto 覆盖掉。 */
+html.no-flex-gap .tempChip .tempDot{margin-right:9px;}
+html.no-flex-gap .answerHint > * + *{margin-left:9px;}
+html.no-flex-gap .footNav > * + *{margin-left:8px;}
+html.no-flex-gap .hisTabs > * + *{margin-left:4px;}
+html.no-flex-gap .dataPart input{margin-right:7px;}
+html.no-flex-gap .dataClsList > * + *{margin-top:8px;}
+html.no-flex-gap .dataCls > * + *{margin-left:12px;}
+html.no-flex-gap .libGroupTitle .libGTArrow,
+html.no-flex-gap .wbBookToggle .libGTArrow{margin-left:12px;}
 @media (max-width:1279px){ html.no-flex-gap .pcard > * + *{margin-left:12px;} }
 @media (max-width:1100px){ html.no-flex-gap .pcard > * + *{margin-left:10px;} }
 @media (max-width:820px){ html.no-flex-gap .accRow > * + *{margin-left:40px;} }
