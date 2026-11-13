@@ -304,15 +304,21 @@
     <div class="modalScroll">
 
     <div class="setItem">
+      <label class="wordsOnlyLabel setStaticLabel" for="fontSel">全局字体</label>
+      <!-- 选项由 applyFont() 从 FONT_OPTIONS 生成；下面这行用所选字体实时预览 -->
+      <select class="fontSel" id="fontSel"></select>
+      <div class="fontPrev" id="fontPrev">词汇擂台 · Vocabulary 1234</div>
+      <div class="setHint">只换本地的显示字体；本机没装的字体会自动回退，下面这行是字体预览。</div>
+    </div>
+
+    <div class="setItem">
       <span class="wordsOnlyLabel setStaticLabel">渲染动画效果</span>
       <div class="segRow" id="animRow">
         <button type="button" class="segOpt animOpt active" data-anim="full">完全</button>
         <button type="button" class="segOpt animOpt" data-anim="part">部分</button>
         <button type="button" class="segOpt animOpt" data-anim="off">禁用</button>
       </div>
-      <div class="setHint">完全：页面切换、弹窗开关、开局入场、切题都有过渡。<br>
-        部分：页面 / 弹窗 / 切题瞬间完成，只保留 +N、超时漂浮字与奖杯等小动效。<br>
-        禁用：动画一律不加载，最省性能。</div>
+      <div class="setHint">禁用动画可以获得更好的性能，启用动画会有更精致的效果。</div>
     </div>
 
     <div class="setItem">

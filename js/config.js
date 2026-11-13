@@ -37,6 +37,20 @@ const CUSTOM_LIB_KEY = "vpk_custom_libs";  /* 自定义词库持久化键 */
 const BOOK_NAMES = { b1:"必修1", b2:"必修2", b3:"必修3", b4:"选必1", b5:"选必2", b6:"选必3", b7:"选必4" };
 const BOOK_ORDER = ["b1","b2","b3","b4","b5","b6","b7"];
 
+/* ================== 全局字体 ==================
+   渲染设置里可换，存 vpk_ui.font（跟设备走、不分班级）。
+   FONT_STACK 是兜底顺序（与 style.css 的 --font 一致）：选中哪款就把它提到最前面，
+   后面的照旧依次兜底，所以本机没装选中的字体也不会崩，只是往下一款回退。 */
+const FONT_STACK = '"PingFang SC","Microsoft YaHei","Noto Sans SC","Noto Sans CJK SC","MiSans","HarmonyOS Sans SC","HarmonyOS Sans",sans-serif';
+const FONT_OPTIONS = [
+  { v:"Microsoft YaHei",   name:"微软雅黑",   en:"Microsoft YaHei" },
+  { v:"PingFang SC",       name:"苹方",       en:"PingFang SC" },
+  { v:"Noto Sans SC",      name:"思源黑体",   en:"Noto Sans SC" },
+  { v:"Noto Sans CJK SC",  name:"思源黑体",   en:"Noto Sans CJK SC" },
+  { v:"MiSans",            name:"小米 MiSans", en:"MiSans" },
+  { v:"HarmonyOS Sans SC", name:"鸿蒙黑体",   en:"HarmonyOS Sans SC" }
+];
+
 /* ================== 版本与更新提示 ==================
    每次发布更新时修改 APP_VERSION，并在 res/update.md 写明更新内容。
    已读版本号存 localStorage（UPDATE_READ_KEY），版本不同则弹窗提醒。 */
@@ -61,6 +75,7 @@ let S = {
   solo:false,   /* 本次PK为单人作答：只出一列选项（淡紫），一人一答，不再保留对侧补救 */
   anim:"full",  /* 渲染动画档位：full 完全 / part 部分（只有小动效）/ off 禁用，跟设备走、不分班级 */
   fx:true, sound:true, speakWord:true,   /* 渲染设置：计分飘字 / 答题音效 / 自动朗读（设备级） */
+  font:"",      /* 渲染设置：全局字体（设备级）；空 = 还没选过，按操作系统给默认值 */
   questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
   comboBonus:true, wrongPenalty:false,   /* 连击加分 / 答错扣分（擂台设置） */
   scoreMode:"open",        /* 计分模式：open 无限制 / knockout 淘汰制 / accumulate 累加制 */

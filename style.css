@@ -731,8 +731,13 @@
   /* 设置项较多，弹窗允许更高一些；上下内边距收 6px，1440×900 下整份设置刚好一屏放下
      （项间距动不了：.setItem 里 .wordsOnlyLabel 的 16px 上边距会跟父级折叠上来） */
   #settingModal .modalBox{max-height:88vh;padding-top:22px;padding-bottom:22px;}
-  /* 渲染设置四项，同样放开到 88vh，1280×720 的屏也不用滚 */
+  /* 渲染设置五项，同样放开到 88vh；加字体选择后 1280×720 需要滚一点点，属正常 */
   #renderModal .modalBox{max-height:88vh;}
+  /* 全局字体下拉 + 实机预览（预览行用的是当前选中的字体，本机没装时看到的就是回退结果） */
+  .fontSel{margin:10px 0 0 34px;font-size:20px;font-weight:600;padding:10px 16px;
+           border-radius:12px;min-width:320px;max-width:calc(100% - 34px);}
+  .fontPrev{margin:10px 0 0 34px;padding:10px 18px;border:1px dashed var(--line);
+            border-radius:12px;background:#fff;color:var(--ink2);font-size:21px;letter-spacing:.5px;}
   /* 词库选择与战绩列表内容最多，一律放到 88vh（用 id 提权重，压过后面的 .fixedFoot 82vh） */
   #libModal .modalBox, #hisModal .modalBox{max-height:88vh;}
   .setItem{margin-top:16px;}

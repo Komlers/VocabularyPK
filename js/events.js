@@ -347,6 +347,12 @@ $("renderClose").addEventListener("click", ()=>$("renderModal").classList.add("h
 $("renderModal").addEventListener("click", e=>{
   if(e.target.classList.contains("modalMask")) $("renderModal").classList.add("hidden");
 });
+/* 全局字体：换完立即生效（写 --font），只影响本机 */
+$("fontSel").addEventListener("change", e=>{
+  S.font = e.target.value;
+  saveUI({font:S.font});
+  applyFont();
+});
 $("fxChk").addEventListener("change", e=>{ S.fx = e.target.checked; saveUI({fx:S.fx}); });
 $("soundChk").addEventListener("change", e=>{ S.sound = e.target.checked; saveUI({sound:S.sound}); });
 $("speakChk").addEventListener("change", e=>{ S.speakWord = e.target.checked; saveUI({speakWord:S.speakWord}); });

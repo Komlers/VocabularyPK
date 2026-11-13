@@ -97,6 +97,62 @@ function applyAnimUI(){
   applyAnimUI();
 })();
 
+/* ================== 全局字体（渲染设置） ==================
+   选中哪款就把它提到 --font 最前面，后面照旧接 FONT_STACK 的兜底顺序；
+   本机没装该字体时浏览器自动往下回退，观感不会崩。
+   新用户（或存了已下线的字体）按操作系统猜一个：Windows 雅黑、macOS 苹方、
+   鸿蒙鸿蒙黑体、其它 Noto Sans SC，并顺手落盘，之后不再变。 */
+function defaultFont(){
+  const ua = navigator.userAgent || "";
+  if(/HarmonyOS|OpenHarmony/i.test(ua)) return "HarmonyOS Sans SC";
+  if(/Macintosh|Mac OS X|iPhone|iPad|iPod/i.test(ua)) return "PingFang SC";
+  if(/Windows/i.test(ua)) return "Microsoft YaHei";
+  if(/Android|Linux|X11/i.test(ua)) return "Noto Sans SC";
+  return "Microsoft YaHei";
+}
+function isFontChoice(v){ return FONT_OPTIONS.some(o => o.v === v); }
+/* 当前实际使用的字体族 */
+function currentFont(){
+  return isFontChoice(S.font) ? S.font : defaultFont();
+}
+/* 把字体落到 <html> 的 --font、下拉框与预览行上；换字体时调用即可立即生效 */
+function applyFont(){
+  const fam = currentFont();
+  /* 把选中那款从兜底串里摘掉，避免列表里出现两次同一个字体族 */
+  const quoted = '"' + fam + '"';
+  const tail = FONT_STACK.split(",").filter(x => x !== quoted);
+  const stack = quoted + "," + tail.join(",");
+  try{ document.documentElement.style.setProperty("--font", stack); }catch(e){}
+  const sel = $("fontSel");
+  if(sel){
+    if(!sel.options.length){
+      FONT_OPTIONS.forEach(o => {
+        const op = document.createElement("option");
+        op.value = o.v;
+        op.textContent = o.name + " · " + o.en;
+        sel.appendChild(op);
+      });
+    }
+    sel.value = fam;
+  }
+  const prev = $("fontPrev");
+  if(prev){
+    prev.style.fontFamily = stack;
+    prev.textContent = "词汇擂台 · Vocabulary 1234";
+  }
+}
+/* 启动即应用，早于首帧，避免先按兜底字体渲染再跳一下 */
+(function initFont(){
+  let v = "";
+  try{ v = loadUI().font || ""; }catch(e){}
+  if(!isFontChoice(v)){
+    v = defaultFont();
+    saveUI({ font:v });
+  }
+  S.font = v;
+  applyFont();
+})();
+
 /* ================== 角按钮显隐（安装 / 终止） ==================
    左上角：主界面显示「安装」（浏览器允许安装时），比赛中换成「终止」；
    右上角的全屏按钮三种界面都在，不参与切换。
@@ -1114,6 +1170,9 @@ function restoreCfg(){
   if($("speakChk")) $("speakChk").checked = S.speakWord;
   S.anim = normAnim(ui.anim);
   applyAnimUI();
+  /* 全局字体：跟设备走，切班级不影响；存的值失效时退回系统默认 */
+  S.font = isFontChoice(ui.font) ? ui.font : defaultFont();
+  applyFont();
   updateDurBtn();
   updateLibBtn();
 }
