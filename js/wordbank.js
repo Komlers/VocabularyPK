@@ -94,11 +94,12 @@ function importCustomLib(jsonText){
   const tag = nextCustomTag();
   const name = data.name || ("自定义词库 " + tag);
   const entry = { name, words: w.words, chunks: c.chunks };
-  /* 持久化 */
+  /* 持久化：写不进去就别往内存里加，否则刷新后词库就没了 */
   let all = {};
   try{ all = JSON.parse(localStorage.getItem(CUSTOM_LIB_KEY)) || {}; }catch(e){}
   all[tag] = entry;
-  localStorage.setItem(CUSTOM_LIB_KEY, JSON.stringify(all));
+  try{ localStorage.setItem(CUSTOM_LIB_KEY, JSON.stringify(all)); }
+  catch(e){ throw new Error("写入本地存储失败（可能是空间已满），词库没有保存。可先到「数据管理」导出备份再清理旧数据。"); }
   /* 合并到内存 */
   LIB_INFO[tag] = { name, file: "custom" };
   WORD_BANK_FILES.push({ file: "custom", tag });
@@ -112,7 +113,7 @@ function deleteCustomLib(tag){
   let all = {};
   try{ all = JSON.parse(localStorage.getItem(CUSTOM_LIB_KEY)) || {}; }catch(e){}
   delete all[tag];
-  localStorage.setItem(CUSTOM_LIB_KEY, JSON.stringify(all));
+  lsSet(CUSTOM_LIB_KEY, all);
   /* 从 WORD_BANK_FILES 移除 */
   const idx = WORD_BANK_FILES.findIndex(x => x.tag === tag);
   if(idx >= 0) WORD_BANK_FILES.splice(idx, 1);
