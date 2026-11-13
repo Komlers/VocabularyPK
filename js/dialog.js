@@ -72,8 +72,18 @@
         okBtn.removeEventListener("click", onOk);
         cancelBtn.removeEventListener("click", onCancel);
         input.removeEventListener("keydown", onKey);
+        document.removeEventListener("keydown", onDocKey);
         resolve(v);
       }
+      /* 没有输入框时（alert / confirm）键盘焦点在按钮上，Esc 也需要能关掉：
+         输入框自己已经处理了 Esc 并 preventDefault，这里跳过，避免触发两次 */
+      function onDocKey(e) {
+        if (e.key !== "Escape" || e.defaultPrevented) return;
+        e.preventDefault();
+        if (cfg.cancel === false) finish(false);
+        else onCancel();
+      }
+      document.addEventListener("keydown", onDocKey);
       function onOk() {
         if (cfg.input) {
           const v = input.value;

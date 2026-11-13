@@ -50,7 +50,7 @@
 </button>
 
 <!-- ================= 全屏按钮 ================= -->
-<button id="fsBtn" title="全屏 / 退出全屏（快捷键 F，Esc 退出）">
+<button id="fsBtn" title="全屏 / 退出全屏（快捷键 F，Esc 退出）" aria-label="全屏 / 退出全屏">
   <svg class="icoEnter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
   <svg class="icoExit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"></path></svg>
   <span id="fsLabel">全屏</span>
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="mini" style="text-align:center;margin-bottom:24px">快捷键：<kbd>F</kbd> 进入 / 退出全屏 · <kbd>Esc</kbd> 退出全屏（右上角按钮）</div>
+  <div class="mini" style="text-align:center;margin-bottom:24px">快捷键：<kbd>F</kbd> 进入 / 退出全屏 · <kbd>Esc</kbd> 关闭弹窗 / 退出全屏</div>
 
   <div class="card">
     <h3><span class="stepNo">1</span>选择班级<span class="hint">名单 / 战绩 / 擂主按班级分开保存</span></h3>
@@ -683,6 +683,7 @@
 <script src="js/wrongbook.js?v=23"></script>
 <script src="js/data.js?v=23"></script>
 <script src="js/events.js?v=23"></script>
+<script src="js/a11y.js?v=23"></script>
 <script src="js/pwa.js?v=23"></script>
 
 

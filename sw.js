@@ -30,6 +30,7 @@ const SHELL = [
   "js/wrongbook.js",
   "js/data.js",
   "js/events.js",
+  "js/a11y.js",
   "js/pwa.js",
   "icons/icon-96.png",
   "icons/icon-128.png",
