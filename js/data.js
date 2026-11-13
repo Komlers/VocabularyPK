@@ -605,7 +605,8 @@ $("dataClsList").addEventListener("click", async e => {
     if(it.matches) detail.push("战绩 " + it.matches + " 场");
     if(it.wrongs) detail.push("错词 " + it.wrongs + " 条");
     const ok = await dlgConfirm(
-      "确定删除班级「" + cls + "」的全部数据？" + (detail.length ? "<br>" + detail.join(" · ") : "")
+      /* 班级名是用户输入，提示走 html 模式，必须转义后再拼 */
+      "确定删除班级「" + dEsc(cls) + "」的全部数据？" + (detail.length ? "<br>" + detail.join(" · ") : "")
         + "<br><br>名单、战绩、擂主、错词记录、该班配置都会清除，不可恢复。",
       { type:"error", danger:true, title:"删除班级数据", okText:"确认删除", cancelText:"取消", html:true });
     if(!ok) return;
