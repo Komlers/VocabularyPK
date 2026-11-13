@@ -197,13 +197,24 @@ function orderDecoys(i, n){
   while(out.length<n) out.push("……");
   return out;
 }
-/* 词块按能力分配续题题型：c2 需配对题干(c[3])、c3 需重组片段(c[5])，否则退回选义 */
-function chunkKindFor(i, seq){
-  const c = CHUNKS[i];
-  if(seq % 3 === 0) return "c1";
-  if(c[3]) return "c2";
-  if(c[5]) return "c3";
-  return "c1";
+/* 词块题型分配：给一批词块下标排出 c1 选义 / c2 配对 / c3 重组的题型。
+   名额约 c3 25%、c2 35%、其余 c1；先满足最难凑的重组题（只分给带片段 c[5] 的词块），
+   再给带配对题干 c[3] 的分 c2，剩下的都出选义。
+   旧逻辑是「先判 c[3] 再判 c[5]」，而带重组片段的词块几乎都有配对题干，
+   结果 c3 永远轮不到，整池只剩 buildPool 末尾强行改的那一道。 */
+function chunkKindsFor(idxs){
+  const n = idxs.length;
+  const kinds = new Array(n).fill("");
+  const fill = (kind, need, ok) => {
+    let got = 0;
+    for(let k = 0; k < n && got < need; k++){
+      if(kinds[k] || !ok(CHUNKS[idxs[k]])) continue;
+      kinds[k] = kind; got++;
+    }
+  };
+  fill("c3", Math.round(n * 0.25), c => !!c[5]);
+  fill("c2", Math.round(n * 0.35), c => !!c[3]);
+  return kinds.map(k => k || "c1");
 }
 /* 单词题干扰项：同单元优先 → 全书兜底；保证 3 个干扰项互不相同且 != 答案 */
 function wordDistract(spec, dir){
@@ -265,9 +276,10 @@ function buildPool(){
   const mk = (arr, s) => { const e = specEn(s); if(used.has(e)) return; used.add(e); arr.push(s); };
   shuffle(wordSource()).forEach(w => mk(words, {t:"w", w:w}));
   if(S.useChunks){
-    let n = 0;
-    shuffle(chunkIdxInScope()).forEach(i => mk(chunks, {t:chunkKindFor(i, n++), i:i}));
-    /* 保证本局能出现重组题：若整池没有 c3，但存在带片段的词块，借一道改成 c3 */
+    const idxs = shuffle(chunkIdxInScope());
+    const kinds = chunkKindsFor(idxs);
+    idxs.forEach((i, k) => mk(chunks, {t:kinds[k], i:i}));
+    /* 兜底：整池没有重组题，但存在带片段的词块，就借一道改成 c3 */
     if(!chunks.some(s => s.t === "c3")){
       const s = chunks.find(s => CHUNKS[s.i][5]);
       if(s) s.t = "c3";
