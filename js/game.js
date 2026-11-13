@@ -20,6 +20,10 @@ function playBattleEntrance(){
 function startBattle(revival){
   S.revival = revival;
   S.basePoints = revival ? 5 : 10;
+  /* 本局实际时长：加时赛固定 30 秒。注意不要改写 S.dur——它是班级配置（下次开局的限时），
+     改了会连着把 vpk_cfg_ 的时长一起改掉，回主页后限时按钮与实际时长就对不上了 */
+  const matchDur = revival ? 30 : S.dur;
+  S.durMatch = matchDur;
   if(revival){
     /* 加时赛：题池=本局错词/错块，按原题型重现 */
     const items = [...S.wrongSet].map(s=>{
@@ -35,7 +39,6 @@ function startBattle(revival){
     S.reviewList = items.map(specEn);
     S.pool = shuffle(items);
     S.wrongSet = new Set();
-    S.dur = 30;
   }else{
     S.wrongSet = new Set();
     buildPool();
@@ -51,7 +54,7 @@ function startBattle(revival){
   S.qi = 0; S.round = 1; S.scores = [initScore, initScore]; S.streak = [0,0]; S.maxStreak = [0,0];
   S.right = [0,0]; S.bad = [0,0]; S.badStreak = [0,0];
   S.asked = 0; S.done = 0; S.endReason = "time"; S.ending = false; S.ended = false;
-  S.left = S.dur; S.pendingNext = false;
+  S.left = matchDur; S.pendingNext = false;
   /* 上一局可能留下的延时 / 暂停状态一并清掉 */
   if(S.nextTimer){ clearTimeout(S.nextTimer); }
   S.nextTimer = null; S.nextDeadline = 0; S.qDeadline = 0;
@@ -523,7 +526,7 @@ function endBattle(){
     ? '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span>"
     : '<span class="r">' + esc(dispName(S.p1)) + " " + a + "</span> : " + b + ' <span class="b">' + esc(dispName(S.p2)) + "</span>";
   $("finalScore").innerHTML = scoreHtml + accHtml
-    + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.dur>=60 ? (S.dur/60)+" 分钟" : S.dur+" 秒")
+    + '<div class="mini" style="margin-top:8px">' + scopeTxt + " · " + (S.durMatch>=60 ? (S.durMatch/60)+" 分钟" : S.durMatch+" 秒")
     + " · 共答 " + S.asked + " 道题</div>";
   const wc = $("wrongChips");
   wc.innerHTML = "";
@@ -627,7 +630,7 @@ const RESULT_HTML_CSS = [
 function buildResultHtml(){
   const [a, b] = S.scores;
   const st = resultStamp();
-  const dur = S.dur >= 60 ? (S.dur/60) + " 分钟" : S.dur + " 秒";
+  const dur = S.durMatch >= 60 ? (S.durMatch/60) + " 分钟" : S.durMatch + " 秒";
   const title = S.resultTitle || (dispName(S.p1) + " 完成作答");
   const color = S.resultColor || "#3a4150";
   const score = S.solo

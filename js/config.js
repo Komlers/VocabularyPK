@@ -89,6 +89,7 @@ let S = {
   asked:0,                  /* 本局出现过的题目总数（含超时跳过、双方都没答的） */
   done:0,                   /* 本局已判定过的题目数（有作答、非超时），供单人模式实时统计 */
   locked:[false,false], timer:null, left:0, pendingNext:false,
+  durMatch:60,   /* 本局实际时长：加时赛固定 30s，但不改写 dur（dur 是班级配置，下次开局仍用它） */
   qDeadline:0, nextTimer:null, nextDeadline:0,   /* 单题限时 / 换题延时的到期时间，供暂停计时用 */
   wrongSet:new Set(), revival:false, basePoints:10, curQ:null, reviewList:[],
   trialChamp:""   /* 临时体验（无班级）时的擂主：只在本会话内继承，不写 localStorage */
