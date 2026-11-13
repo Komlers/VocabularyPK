@@ -2,8 +2,15 @@
 <html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>404 · 词汇擂台</title>
-<link rel="icon" href="https://pk.danevan.top/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="https://pk.danevan.top/style.css">
+<!-- 资源地址按当前站点的根目录拼，不写死域名：
+     换自定义域名、用 IP 预览、部署到子路径都能正常取到样式与图标 -->
+<script>
+  (function () {
+    var root = (location.origin && location.origin !== "null" ? location.origin : "") + "/";
+    document.write('<link rel="icon" href="' + root + 'favicon.ico" type="image/x-icon">');
+    document.write('<link rel="stylesheet" href="' + root + 'style.css">');
+  })();
+</script>
 <style>
   .nf{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
       text-align:center;padding:40px 20px;}
