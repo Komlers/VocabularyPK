@@ -1026,8 +1026,10 @@ function renderLibPrev(){
   const nameOf = tag => {
     const info = LIB_INFO[tag];
     if(!info) return tag;
-    /* 内置词库的 label 形如「必修1 U1」，换成更易读的「必修1 Unit1」 */
+    /* 内置词库的 label 形如「必修1 U1」，换成更易读的「必修1 Unit1」；
+       必修1 U0 是 Welcome Unit，没有「Unit0」这种叫法，直接写「必修1 Welcome」 */
     const base = info.label || info.name || tag;
+    if(/\s*U0$/i.test(base)) return base.replace(/\s*U0$/i, " Welcome");
     return base.replace(/\s*U(\d+)$/i, " Unit$1");
   };
   tags.slice(0, 5).forEach(tag => {

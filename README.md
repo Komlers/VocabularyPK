@@ -87,11 +87,11 @@
 
 ## 词库覆盖
 
-共 **35 个内置词库**，覆盖人教版高中英语必修 1～3 与选择性必修 1～4：
+共 **36 个内置词库**，覆盖人教版高中英语必修 1～3（含必修1 Welcome Unit）与选择性必修 1～4：
 
 | 书 | 单元主题 |
 |----|---------|
-| 必修1 | Teenage Life、Travelling Around、Sports and Fitness、Natural Disasters、Languages Around the World |
+| 必修1 | Welcome Unit、Teenage Life、Travelling Around、Sports and Fitness、Natural Disasters、Languages Around the World |
 | 必修2 | Cultural Heritage、Wildlife Protection、The Internet、History and Traditions、Music |
 | 必修3 | Festivals and Celebrations、Morals and Virtues、Diverse Cultures、Space Exploration、The Value of Money |
 | 选必1 | People of Achievement、Looking into the Future、Fascinating Parks、Body Language、Working the Land |
@@ -126,7 +126,7 @@ vcpk/
 │   ├── wrongbook.js      # 错词记录本：累计统计、分组展示、导出 HTML
 │   ├── events.js         # 事件绑定
 │   └── pwa.js            # 安装引导（注册 SW、安装按钮）
-├── lib/                  # 内置词库（35 个 JSON）
+├── lib/                  # 内置词库（36 个 JSON）
 │   ├── b1u1.json ~ b1u5.json   # 必修一
 │   ├── b2u1.json ~ b2u5.json   # 必修二
 │   ├── b3u1.json ~ b3u5.json   # 必修三
@@ -200,7 +200,7 @@ npx serve .
 ### 2. 选择词库
 
 - 点击「选择词库」打开弹窗，内置词库按册分组，**每一册默认收起**，点标题展开；已选词库所在的册会自动展开
-- 每一册右侧有「全选 / 清空」，顶部「全部单元」可一次选中或清空 35 个内置词库
+- 每一册右侧有「全选 / 清空」，顶部「全部单元」可一次选中或清空 36 个内置词库
 - 自定义词库在单独选项卡管理
 
 ### 3. 开始 PK

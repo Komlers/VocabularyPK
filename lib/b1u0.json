@@ -1,0 +1,367 @@
+{
+  "book": "b1",
+  "unit": "u0",
+  "label": "必修1 U0",
+  "name": "Welcome Unit",
+  "title": "Welcome Unit",
+  "words": [
+    [
+      "exchange",
+      "交换；交流"
+    ],
+    [
+      "lecture",
+      "讲座；讲课"
+    ],
+    [
+      "registration",
+      "登记；注册"
+    ],
+    [
+      "register",
+      "登记；注册"
+    ],
+    [
+      "sex",
+      "性别"
+    ],
+    [
+      "female",
+      "女（性）的；女子"
+    ],
+    [
+      "male",
+      "男（性）的；男子"
+    ],
+    [
+      "nationality",
+      "国籍；民族"
+    ],
+    [
+      "nation",
+      "国家；民族；国民"
+    ],
+    [
+      "designer",
+      "设计者"
+    ],
+    [
+      "design",
+      "设计；设计方案"
+    ],
+    [
+      "campus",
+      "校园；校区"
+    ],
+    [
+      "formal",
+      "正式的；正规的"
+    ],
+    [
+      "anxious",
+      "焦虑的；不安的"
+    ],
+    [
+      "annoyed",
+      "恼怒的；生气的"
+    ],
+    [
+      "annoy",
+      "使恼怒；打扰"
+    ],
+    [
+      "frightened",
+      "惊吓的；害怕的"
+    ],
+    [
+      "p.m.",
+      "下午"
+    ],
+    [
+      "a.m.",
+      "上午"
+    ],
+    [
+      "senior",
+      "级别（或地位）高的；较年长者"
+    ],
+    [
+      "senior high school",
+      "高中"
+    ],
+    [
+      "at last",
+      "终于；最终"
+    ],
+    [
+      "outgoing",
+      "爱交际的；外向的"
+    ],
+    [
+      "impression",
+      "印象；感想"
+    ],
+    [
+      "impress",
+      "使印象深刻；使铭记"
+    ],
+    [
+      "make an impression",
+      "留下印象"
+    ],
+    [
+      "what if",
+      "要是……会怎么样呢"
+    ],
+    [
+      "guy",
+      "小伙子；家伙"
+    ],
+    [
+      "concentrate",
+      "集中（注意力）；聚精会神"
+    ],
+    [
+      "concentrate on",
+      "集中精力于"
+    ],
+    [
+      "experiment",
+      "实验；试验"
+    ],
+    [
+      "leave...alone",
+      "不打扰；不惊动"
+    ],
+    [
+      "awkward",
+      "尴尬的；笨拙的"
+    ],
+    [
+      "junior",
+      "较年幼的；职位低的"
+    ],
+    [
+      "junior high school",
+      "初中"
+    ],
+    [
+      "explore",
+      "探索；勘探"
+    ],
+    [
+      "confident",
+      "自信的；有把握的"
+    ],
+    [
+      "confidence",
+      "信心；信任"
+    ],
+    [
+      "look forward to",
+      "盼望；期待"
+    ],
+    [
+      "take notes",
+      "记笔记"
+    ],
+    [
+      "flash card",
+      "识字卡；抽认卡"
+    ],
+    [
+      "organise",
+      "组织；筹备"
+    ],
+    [
+      "organisation",
+      "组织；团体；机构"
+    ],
+    [
+      "goal",
+      "目标；球门"
+    ],
+    [
+      "strategy",
+      "策略；规划"
+    ],
+    [
+      "partner",
+      "搭档；同伴"
+    ],
+    [
+      "improve",
+      "改进；改善"
+    ],
+    [
+      "challenge",
+      "挑战；向……挑战"
+    ],
+    [
+      "curious",
+      "好奇的"
+    ],
+    [
+      "curiosity",
+      "好奇；好奇心"
+    ],
+    [
+      "attitude",
+      "态度；看法"
+    ],
+    [
+      "behaviour",
+      "行为；举止"
+    ]
+  ],
+  "chunks": [
+    [
+      "concentrate on",
+      "集中精力于",
+      "prep",
+      "concentrate ____ your homework",
+      "on",
+      null
+    ],
+    [
+      "look forward to",
+      "盼望；期待",
+      "prep",
+      "look forward ____ hearing from you",
+      "to",
+      null
+    ],
+    [
+      "be anxious about",
+      "为……焦虑",
+      "prep",
+      "be anxious ____ the coming exam",
+      "about",
+      null
+    ],
+    [
+      "be curious about",
+      "对……好奇",
+      "prep",
+      "be curious ____ the outside world",
+      "about",
+      null
+    ],
+    [
+      "be confident of",
+      "对……有信心",
+      "prep",
+      "be confident ____ passing the test",
+      "of",
+      null
+    ],
+    [
+      "be impressed by",
+      "被……打动",
+      "prep",
+      "be impressed ____ her first speech",
+      "by",
+      null
+    ],
+    [
+      "be annoyed with",
+      "对……生气",
+      "prep",
+      "be annoyed ____ his roommate",
+      "with",
+      null
+    ],
+    [
+      "make an impression",
+      "留下印象",
+      "coll",
+      "make an ____ on the teacher",
+      "impression",
+      [
+        "make",
+        "an",
+        "impression"
+      ]
+    ],
+    [
+      "exchange student",
+      "交换生",
+      "coll",
+      "exchange ____（交换生）",
+      "student",
+      [
+        "exchange",
+        "student"
+      ]
+    ],
+    [
+      "senior high school",
+      "高中",
+      "coll",
+      "senior high ____（高中）",
+      "school",
+      [
+        "senior",
+        "high",
+        "school"
+      ]
+    ],
+    [
+      "junior high school",
+      "初中",
+      "coll",
+      "junior high ____（初中）",
+      "school",
+      [
+        "junior",
+        "high",
+        "school"
+      ]
+    ],
+    [
+      "flash card",
+      "识字卡；抽认卡",
+      "coll",
+      "flash ____（抽认卡）",
+      "card",
+      [
+        "flash",
+        "card"
+      ]
+    ],
+    [
+      "take notes",
+      "记笔记",
+      "phr",
+      "take ____ in class（课上记笔记）",
+      "notes",
+      [
+        "take",
+        "notes"
+      ]
+    ],
+    [
+      "at last",
+      "终于；最终",
+      "phr",
+      "at ____（终于；最终）",
+      "last",
+      [
+        "at",
+        "last"
+      ]
+    ],
+    [
+      "leave...alone",
+      "不打扰；不惊动",
+      "phr",
+      "leave me ____（别管我）",
+      "alone",
+      [
+        "leave",
+        "me",
+        "alone"
+      ]
+    ]
+  ]
+}

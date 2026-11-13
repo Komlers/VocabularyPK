@@ -2,6 +2,7 @@
 
 /* ================== 词库：从 lib/ 目录加载 ==================
    文件命名：lib/{书号}{单元}.json
+     b1u0      = 必修一 Welcome Unit（第 0 单元）
      b1u1~b1u5 = 必修一 Unit 1~5
      b2u1~b2u5 = 必修二 Unit 1~5
      b3u1~b3u5 = 必修三 Unit 1~5
@@ -15,6 +16,7 @@ let LIB = [];      // [英文, 中文, 单元标签]
 let CHUNKS = [];   // 词块表 [英文,中文,家族,题干,答案,重组片段,词库tag]（下标6为内部标记）
 let LIB_INFO = {}; // tag -> { name, file } 词库展示名
 const WORD_BANK_FILES = [
+  { file:"b1u0", tag:"B1U0" },
   { file:"b1u1", tag:"B1U1" }, { file:"b1u2", tag:"B1U2" }, { file:"b1u3", tag:"B1U3" },
   { file:"b1u4", tag:"B1U4" }, { file:"b1u5", tag:"B1U5" },
   { file:"b2u1", tag:"B2U1" }, { file:"b2u2", tag:"B2U2" }, { file:"b2u3", tag:"B2U3" },
