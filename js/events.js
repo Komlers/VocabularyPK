@@ -262,7 +262,9 @@ $("libFile").addEventListener("change", e=>{
       tempUnits.push(r.tag);
       renderLibChips();
       await dlgAlert("已导入词库「" + esc(r.name) + "」：" + r.count + " 个单词"
-        + (r.chunks ? " + " + r.chunks + " 个词块" : "") + "。<br>已自动选中，点确定后生效。",
+        + (r.chunks ? " + " + r.chunks + " 个词块" : "") + "。"
+        + (r.skipped ? "<br>已跳过 " + r.skipped + " 条格式不正确的条目（每条需要 [英文, 中文] 两个非空字段）。" : "")
+        + "<br>已自动选中，点确定后生效。",
         { type: "success", title: "✅ 词库导入成功", html: true });
     }catch(err){
       dlgAlert("导入失败：" + err.message,

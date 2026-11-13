@@ -19,18 +19,57 @@ async function loadWordBank(){
 /* ================== 自定义词库（本地导入，持久化到 localStorage） ==================
    存储格式：{ "C1": {name, words:[[en,cn]], chunks:[]}, "C2": {...} }
    自定义词库 tag 以 "C" 开头，file 标记为 "custom" 便于 UI 区分。 */
+
+/* 校验单词条目：必须是 [英文, 中文] 两个非空字符串。
+   不校验的话，缺中文的条目会让那道题答案变成 undefined、永远答不对。
+   数字、null、对象一律算格式错误（想要「9」请写成字符串 "9"）。 */
+function cleanLibWords(list){
+  const out = [], seen = new Set();
+  let bad = 0;
+  const str = x => typeof x === "string" ? x.trim() : "";
+  (Array.isArray(list) ? list : []).forEach(w => {
+    const en = Array.isArray(w) ? str(w[0]) : "";
+    const cn = Array.isArray(w) ? str(w[1]) : "";
+    if(!en || !cn){ bad++; return; }
+    if(seen.has(en)) return;          /* 同一词重复出现只留一条，不算格式错误 */
+    seen.add(en);
+    out.push([en, cn]);
+  });
+  return { words: out, bad };
+}
+/* 校验词块条目：[英文, 中文, 家族, 题干, 答案, 重组片段?]。
+   前五项必须是非空字符串；片段可省（没有就只出选义 / 配对）。
+   片段不足两段时按「没有」处理，避免出现点一下就完成的假重组题。 */
+function cleanLibChunks(list){
+  const out = [];
+  let bad = 0;
+  (Array.isArray(list) ? list : []).forEach(c => {
+    if(!Array.isArray(c) || c.length < 5){ bad++; return; }
+    if(c.slice(0, 5).some(x => typeof x !== "string")){ bad++; return; }
+    const head = c.slice(0, 5).map(x => x.trim());
+    if(head.some(x => !x)){ bad++; return; }
+    const raw = Array.isArray(c[5]) ? c[5].filter(x => typeof x === "string").map(x => x.trim()).filter(Boolean) : [];
+    out.push([head[0], head[1], head[2], head[3], head[4], raw.length > 1 ? raw : null]);
+  });
+  return { chunks: out, bad };
+}
+
 function loadCustomLibs(){
   let data = {};
   try{ data = JSON.parse(localStorage.getItem(CUSTOM_LIB_KEY)) || {}; }catch(e){}
   for(const tag in data){
     const d = data[tag];
     if(!d || !Array.isArray(d.words)) continue;
+    /* 旧版本可能存进过不合规的词条，这里同样过一遍，坏数据不进内存 */
+    const w = cleanLibWords(d.words);
+    if(!w.words.length) continue;
+    const c = cleanLibChunks(d.chunks);
     LIB_INFO[tag] = { name: d.name || tag, file: "custom" };
     if(!WORD_BANK_FILES.find(x => x.tag === tag)){
       WORD_BANK_FILES.push({ file: "custom", tag });
     }
-    d.words.forEach(w => LIB.push([w[0], w[1], tag]));
-    if(Array.isArray(d.chunks)) CHUNKS = CHUNKS.concat(tagChunks(d.chunks, tag));
+    w.words.forEach(x => LIB.push([x[0], x[1], tag]));
+    if(c.chunks.length) CHUNKS = CHUNKS.concat(tagChunks(c.chunks, tag));
   }
 }
 /* 生成下一个可用的自定义 tag（C1, C2, ... 跳过已占用） */
@@ -40,16 +79,21 @@ function nextCustomTag(){
   while(used.has("C" + i)) i++;
   return "C" + i;
 }
-/* 导入自定义词库：解析 JSON → 存 localStorage → 合并到内存 → 返回 tag */
+/* 导入自定义词库：解析 JSON → 校验 → 存 localStorage → 合并到内存 → 返回 tag */
 function importCustomLib(jsonText){
   let data;
   try{ data = JSON.parse(jsonText); }catch(e){ throw new Error("JSON 解析失败：" + e.message); }
   if(!data || !Array.isArray(data.words) || !data.words.length){
     throw new Error("词库格式不正确：需要 { name, words:[[英文,中文],...] }");
   }
+  const w = cleanLibWords(data.words);
+  const c = cleanLibChunks(data.chunks);
+  if(!w.words.length){
+    throw new Error("词库里没有有效词条：每条需要 [英文, 中文] 两个非空字符串（这份文件 " + data.words.length + " 条都不合规）");
+  }
   const tag = nextCustomTag();
   const name = data.name || ("自定义词库 " + tag);
-  const entry = { name, words: data.words, chunks: Array.isArray(data.chunks) ? data.chunks : [] };
+  const entry = { name, words: w.words, chunks: c.chunks };
   /* 持久化 */
   let all = {};
   try{ all = JSON.parse(localStorage.getItem(CUSTOM_LIB_KEY)) || {}; }catch(e){}
@@ -58,9 +102,9 @@ function importCustomLib(jsonText){
   /* 合并到内存 */
   LIB_INFO[tag] = { name, file: "custom" };
   WORD_BANK_FILES.push({ file: "custom", tag });
-  entry.words.forEach(w => LIB.push([w[0], w[1], tag]));
+  entry.words.forEach(x => LIB.push([x[0], x[1], tag]));
   if(entry.chunks.length) CHUNKS = CHUNKS.concat(tagChunks(entry.chunks, tag));
-  return { tag, name, count: entry.words.length, chunks: entry.chunks.length };
+  return { tag, name, count: entry.words.length, chunks: entry.chunks.length, skipped: w.bad + c.bad };
 }
 /* 删除自定义词库：从 localStorage、内存数组、索引中清除 */
 function deleteCustomLib(tag){
