@@ -127,6 +127,8 @@
         <button type="button" class="miniSegOpt active" data-solo="0">双人</button>
         <button type="button" class="miniSegOpt" data-solo="1">单人</button>
       </div>
+      <!-- 谁在作答：双人显示两位，单人只显示红方；由 syncAnswerHint 更新 -->
+      <span class="answerHint" id="answerHint"></span>
     </div>
     <!-- 当前擂台设置状态（计分模式 / 连击 / 错词复现 / 单题超时），由 renderSettingStatus 更新 -->
     <div class="setStatusLine" id="setStatusLine"></div>

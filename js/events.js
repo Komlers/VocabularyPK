@@ -5,13 +5,13 @@ $("redBox").addEventListener("click", ()=>{
   if(!hasRoster()){ enterManualMode("m1"); return; }
   const name = takeName(blueName);
   if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取红方（请先导入或在名单中增加学生）。"; return; }
-  animateDraw("redNameBox", name, ()=>{ redName = name; champFixed = false; renderHistory(); });
+  animateDraw("redNameBox", name, ()=>{ redName = name; champFixed = false; renderHistory(); syncAnswerHint(); });
 });
 $("blueBox").addEventListener("click", ()=>{
   if(!hasRoster()){ enterManualMode("m2"); return; }
   const name = takeName(redName);
   if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取蓝方（请先导入或在名单中增加学生）。"; return; }
-  animateDraw("blueNameBox", name, ()=>{ blueName = name; renderHistory(); });
+  animateDraw("blueNameBox", name, ()=>{ blueName = name; renderHistory(); syncAnswerHint(); });
 });
 $("manualBtn").addEventListener("click", ()=>{
   manualMode = !manualMode;
@@ -24,11 +24,13 @@ $("m1").addEventListener("input", e=>{
   $("redNameBox").textContent = dispName(redName) || "待抽取";
   champFixed = false;
   renderHistory();
+  syncAnswerHint();      /* 输入时只改名字框，别整体 refreshNameBoxes（会把光标顶掉） */
 });
 $("m2").addEventListener("input", e=>{
   blueName = resolveGhostName(e.target.value.trim());
   $("blueNameBox").textContent = dispName(blueName) || "待抽取";
   renderHistory();
+  syncAnswerHint();
 });
 
 /* ================== 选名弹窗 ================== */

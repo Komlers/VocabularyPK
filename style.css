@@ -131,6 +131,13 @@
               border:none;border-radius:9px;padding:6px 20px;cursor:pointer;transition:all .15s;}
   .miniSegOpt:hover{color:var(--blue-d);}
   .miniSegOpt.active{background:#fff;color:var(--blue-d);box-shadow:0 2px 8px rgba(28,39,72,.12);}
+  /* 双人 / 单人右边的「谁在作答」提示：名字用本侧颜色，未填名字时浅灰 */
+  .answerHint{display:inline-flex;align-items:center;gap:9px;font-size:20px;line-height:1.2;}
+  .answerHint b{font-weight:800;}
+  .answerHint b.rd{color:var(--red-d);}
+  .answerHint b.bl{color:var(--blue-d);}
+  .answerHint b.tod{color:var(--muted2);font-weight:700;}
+  .answerHint .sep{color:#c3cbd9;font-weight:400;}
 
   /* 选名弹窗 */
   .pickTabs{display:flex;gap:10px;margin-bottom:18px;}

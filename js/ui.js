@@ -843,6 +843,7 @@ function refreshNameBoxes(){
   /* 手输框显示不带@的名字，内部 redName/blueName 可能存的是带@的幽灵名 */
   $("m1").value = dispName(redName);
   $("m2").value = dispName(blueName);
+  syncAnswerHint();
 }
 /* 临时体验：没有名单时直接展开手输区，免去用户去找「输入」小链接 */
 function enterManualMode(focusId){
@@ -1166,6 +1167,22 @@ function syncRuleUI(){
   }
   document.querySelectorAll("#soloSeg .miniSegOpt").forEach(b =>
     b.classList.toggle("active", (b.dataset.solo === "1") === !!S.solo));
+  syncAnswerHint();
+}
+
+/* 「谁在作答」提示（在双人 / 单人开关右边）：
+   双人局两侧各答各的，两个名字都列出来；单人局只有红方那一列，只显示红方选手。
+   名字用本侧颜色（红方偏红、蓝方偏蓝），还没填名字时显示浅灰的「待定」。 */
+function syncAnswerHint(){
+  const el = $("answerHint");
+  if(!el) return;
+  const one = (name, side, cls) => name
+    ? '<b class="' + cls + '">' + esc(name) + "（" + side + "）</b>"
+    : '<b class="tod">待定（' + side + "）</b>";
+  const r = dispName(redName), b = dispName(blueName);
+  el.innerHTML = S.solo
+    ? one(r, "红方", "rd")
+    : one(r, "红方", "rd") + '<span class="sep">·</span>' + one(b, "蓝方", "bl");
 }
 
 /* 主页「当前擂台设置」状态行：错词复现 / 是否只加载纯单词 / 单题超时 */
