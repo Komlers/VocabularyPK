@@ -83,6 +83,15 @@ function deleteCustomLib(tag){
     if(CHUNKS[i][6] === tag) CHUNKS.splice(i, 1);
   }
   buildIndex();
+  /* 若这个词库正被选中，一并从已选列表里摘掉并落盘：
+     否则主页仍显示「已选 N 个词库」，开局时题池却是空的 */
+  if(S.units.indexOf(tag) >= 0){
+    S.units = S.units.filter(t => t !== tag);
+    syncUseChunks();
+    saveCfg();
+    if(typeof updateLibBtn === "function") updateLibBtn();
+    if(typeof planInfo === "function") planInfo();
+  }
 }
 
 /* ================== 索引 ================== */

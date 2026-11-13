@@ -40,6 +40,12 @@ function startBattle(revival){
     S.wrongSet = new Set();
     buildPool();
   }
+  /* 词库被删掉 / 内容为空时题池会是 0，直接开局会在出题时崩，先拦在这里 */
+  if(!S.pool.length){
+    S.revival = false; S.basePoints = 10;
+    dlgAlert("当前所选词库没有可出的题目，请重新选择词库。", { type: "warning", title: "没有可用题目" });
+    return false;
+  }
   /* 淘汰制开局即满分（相当于血量），累加制与无限制都从 0 起 */
   const initScore = (!revival && S.scoreMode === "knockout") ? S.scoreCap : 0;
   S.qi = 0; S.round = 1; S.scores = [initScore, initScore]; S.streak = [0,0]; S.maxStreak = [0,0];
@@ -72,6 +78,7 @@ function startBattle(revival){
   clearInterval(S.timer);
   updateTimer();
   S.timer = setInterval(tickBattle, 1000);
+  return true;
 }
 /* 主时钟：每跳一次减 1 秒，到 0 结算 */
 function tickBattle(){
@@ -87,6 +94,7 @@ function updateTimer(){
 }
 function nextQuestion(){
   if(S.ending || S.ended) return;   /* 已判定胜负 / 已结算或已终止，不再出题 */
+  if(!S.pool.length) return;        /* 题池为空（词库被清空）：不再出题，等用户重新选 */
   S.pendingNext = false;
   if(S.qi >= S.pool.length){
     /* 只有把题池里每一个词条都出过一遍之后才会重新洗牌开第二轮 */

@@ -547,7 +547,8 @@ $("startBtn").addEventListener("click", async ()=>{
   else { S.p1 = redName; S.p2 = blueName; }
   /* 未全屏则自动进入全屏，保证对战体验（这一下算自动，本局结束会退出） */
   autoFullscreenForBattle();
-  startBattle(false);
+  /* startBattle 可能因题池为空而拒绝开局，此时把刚补的全屏退回去 */
+  if(startBattle(false) === false) dropAutoFullscreen();
 });
 /* ================== 时长选择弹窗 ================== */
 let tempDur = 60;
