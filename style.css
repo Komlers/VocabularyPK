@@ -168,8 +168,9 @@
                  transform:translateY(-2px);box-shadow:0 6px 18px rgba(74,127,224,.18);}
   .heroBtn:active{transform:translateY(0) scale(.97);}
 
-  /* 战绩弹窗：顶部范围切换 + 导出，下面是概览与按日期分组的列表 */
-  .hisBox{max-width:760px;}
+  /* 战绩弹窗：顶部范围切换 + 导出，下面是概览与按日期分组的列表。
+     宽度要用 .modalBox.hisBox 提权重——后面的 .modalBox{max-width:720px} 会盖掉单独的 .hisBox */
+  .modalBox.hisBox{max-width:800px;}
   .hisBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;}
   .hisTabs{display:flex;gap:4px;background:#eef2f9;border-radius:12px;padding:4px;}
   .hisTab{font:inherit;font-size:17px;font-weight:700;color:var(--muted);background:transparent;
@@ -559,7 +560,8 @@
   .dlgBtn.danger{border-color:#e6a8a8;background:#fdecec;color:#c0392b;}
   .dlgBtn.danger:hover{background:#fbdcdc;}
 
-  /* 时长选择弹窗 */
+  /* 时长选择弹窗：内容只有一个步进器，收窄到 560，别在 720 宽里空一大片 */
+  .modalBox.durBox{max-width:560px;}
   .durPicker{display:flex;align-items:center;justify-content:center;gap:30px;padding:20px 0 10px;}
   .durArrow{width:72px;height:72px;border-radius:50%;border:2px solid var(--line);
             background:#f8f9fc;color:var(--ink2);font-size:40px;font-weight:800;
@@ -618,8 +620,10 @@
   .libTab:hover{color:var(--blue);background:var(--blue-bg);}
   .libTab.active{color:var(--blue);border-bottom-color:var(--blue);}
   .libTabPanel{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
-  /* 词库弹窗：flex 列布局，标题/选项卡/按钮固定，中间面板自适应滚动 */
-  .libModalBox{display:flex;flex-direction:column;overflow:hidden;max-height:82vh;}
+  /* 词库弹窗：flex 列布局，标题/选项卡/按钮固定，中间面板自适应滚动。
+     840px 下两列单元各约 380px，长单元名（U2 - Travelling Around）能排成一行；
+     高度由下面 #libModal 那条统一给到 88vh */
+  .modalBox.libModalBox{display:flex;flex-direction:column;overflow:hidden;max-width:840px;}
   .libModalBox .btnRow{flex:none;}
 
   /* ============ 内置词库按册分组（可折叠 + 每册全选/清空） ============ */
@@ -644,7 +648,7 @@
   .libGroup:not(.collapsed) .libGTArrow::before{transform:rotate(45deg);}
   .libGroup.collapsed .libChips{display:none;}
   .libGroup.collapsed .libGroupHead{margin-bottom:0;}
-  .libGroup .libChips{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
+  .libGroup .libChips{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
 
   /* 全选 / 清空按钮：每册一个，顶部一行管全部单元 */
   .libGTActs{display:flex;gap:8px;flex:none;}
@@ -659,8 +663,13 @@
   .libBulkInfo{font-size:17px;color:var(--muted);letter-spacing:.5px;margin-right:auto;}
 
   /* 擂台设置：设置项与小号解释 */
-  /* 设置项较多，弹窗允许更高一些，常见 1080p 屏可一屏放下 */
-  #settingModal .modalBox{max-height:88vh;}
+  /* 设置项较多，弹窗允许更高一些；上下内边距收 6px，1440×900 下整份设置刚好一屏放下
+     （项间距动不了：.setItem 里 .wordsOnlyLabel 的 16px 上边距会跟父级折叠上来） */
+  #settingModal .modalBox{max-height:88vh;padding-top:22px;padding-bottom:22px;}
+  /* 渲染设置四项，同样放开到 88vh，1280×720 的屏也不用滚 */
+  #renderModal .modalBox{max-height:88vh;}
+  /* 词库选择与战绩列表内容最多，一律放到 88vh（用 id 提权重，压过后面的 .fixedFoot 82vh） */
+  #libModal .modalBox, #hisModal .modalBox{max-height:88vh;}
   .setItem{margin-top:16px;}
   .setItem:first-of-type{margin-top:10px;}
   .setHint{font-size:16px;color:var(--muted);line-height:1.55;margin:5px 0 0 34px;}
