@@ -155,12 +155,20 @@
 
   /* 主界面底部版权 */
   .mainFooter{text-align:center;font-size:15px;color:var(--muted2);
-              padding:18px 0 10px;user-select:none;}
+              padding:16px 0 12px;user-select:none;}
   .mainFooter a{color:var(--blue);text-decoration:none;font-weight:600;}
   .mainFooter a:hover{text-decoration:underline;}
+  /* 版权上方的三个文字入口：更新说明 · 数据管理 · 使用说明 */
+  .footNav{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+           gap:8px;margin-top:24px;font-size:17px;}
+  .footNav a{color:var(--blue-d);text-decoration:none;font-weight:700;
+             border-bottom:1px dashed transparent;padding-bottom:1px;transition:color .15s,border-color .15s;}
+  .footNav a:hover{color:var(--blue);border-bottom-color:currentColor;}
+  .footNav a:active{color:var(--blue-d);}
+  .footNav i{font-style:normal;color:#c3cbd9;}
 
   /* 标题下功能按钮 */
-  /* 四个按钮：宁可换行也不要把「关于项目」折成两行 */
+  /* 三个按钮：宁可换行也不要把「关于项目」折成两行 */
   .heroBtns{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:18px;}
   .heroBtn{flex:none;white-space:nowrap;padding:12px 28px;border-radius:14px;border:2px solid var(--line);
            background:#fff;color:var(--ink2);font-size:22px;font-weight:700;

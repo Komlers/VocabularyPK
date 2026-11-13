@@ -493,8 +493,9 @@ function dataReload(msg){
     .then(() => location.reload());
 }
 
-/* ================== 事件 ================== */
-$("dataBtn").addEventListener("click", dataOpen);
+/* ================== 事件 ==================
+   入口在页脚版权上方的那行文字链接里（更新说明 · 数据管理 · 使用说明） */
+$("footData").addEventListener("click", dataOpen);
 $("dataClose").addEventListener("click", () => $("dataModal").classList.add("hidden"));
 $("dataModal").addEventListener("click", e => {
   if(e.target.classList.contains("modalMask")) $("dataModal").classList.add("hidden");

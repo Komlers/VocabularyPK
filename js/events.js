@@ -411,8 +411,9 @@ $("aboutModal").addEventListener("click", e=>{
 });
 
 /* ================== 使用说明弹窗（内容从 res/tips.md 加载） ==================
-   「关于项目」底部的「使用说明」按钮触发；弹窗叠在关于窗口之上，关闭后回到关于 */
-$("aboutTipsBtn").addEventListener("click", async ()=>{
+   两个入口共用：页脚文字链接「使用说明」、「关于项目」底部的「使用说明」按钮。
+   从关于窗口打开时叠在关于之上，关闭后回到关于 */
+async function openTips(){
   try{
     const res = await fetch("res/tips.md", {cache:"no-cache"});
     if(!res.ok) throw new Error("tips.md missing");
@@ -422,7 +423,13 @@ $("aboutTipsBtn").addEventListener("click", async ()=>{
   }catch(err){
     dlgAlert("使用说明加载失败：" + err.message, { type: "error", title: "出错了" });
   }
-});
+}
+$("aboutTipsBtn").addEventListener("click", openTips);
+
+/* ================== 页脚文字入口：更新说明 · 数据管理 · 使用说明 ==================
+   数据管理的绑定在 data.js 里（那里也有 dataOpen） */
+$("footUpdate").addEventListener("click", () => showUpdateModal());
+$("footTips").addEventListener("click", openTips);
 $("tipsClose").addEventListener("click", ()=>$("tipsModal").classList.add("hidden"));
 $("tipsModal").addEventListener("click", e=>{
   if(e.target.classList.contains("modalMask")) $("tipsModal").classList.add("hidden");
