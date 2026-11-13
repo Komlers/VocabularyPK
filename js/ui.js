@@ -607,7 +607,7 @@ const HIS_HTML_CSS = [
 "      --blue-bg:#ecf2fe;--ink:#1f242e;--ink2:#3a4150;--muted:#79808f;--line:#e3e8f1;}",
 "*{box-sizing:border-box;}",
 "body{margin:0;padding:34px 5vw 48px;background:#f4f6fb;color:var(--ink);",
-"     font-family:'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif;font-size:17px;line-height:1.55;}",
+"     font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC','Noto Sans CJK SC','MiSans','HarmonyOS Sans SC','HarmonyOS Sans',sans-serif;font-size:17px;line-height:1.55;}",
 ".sheet{max-width:1040px;margin:0 auto;}",
 "h1{font-size:32px;margin:0 0 6px;}",
 ".meta{font-size:15px;color:var(--muted);margin-bottom:6px;}",

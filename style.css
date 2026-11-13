@@ -7,11 +7,16 @@
     --shadow:0 8px 26px rgba(28,39,72,.09);
     --shadow-sm:0 3px 14px rgba(28,39,72,.06);
     --ok:#27a457; --ok-bg:#e9f9ef;
+    /* 全局字体：按平台常见的中文无衬线依次回退，不检测本机装了哪一款，交给浏览器自己挑。
+       PingFang SC（macOS）→ Microsoft YaHei（Windows）→ Noto Sans SC / Noto Sans CJK SC（Linux、安卓、
+       装了思源黑体的机器）→ MiSans（小米）→ HarmonyOS Sans SC（鸿蒙），都没有才用系统 sans-serif。
+       注：鸿蒙的家族正式名是「HarmonyOS Sans SC」，无后缀的「HarmonyOS Sans」留作兜底。 */
+    --font:"PingFang SC","Microsoft YaHei","Noto Sans SC","Noto Sans CJK SC","MiSans","HarmonyOS Sans SC","HarmonyOS Sans",sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{-webkit-text-size-adjust:100%;}
+  html{-webkit-text-size-adjust:100%;font-family:var(--font);}
   body{
-    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    font-family:var(--font);
     background-color:#eef1f8;
     background-image:radial-gradient(1100px 620px at 50% -8%,#ffffff 0%,#eef1f8 58%,#e6ebf5 100%);
     background-attachment:fixed;
@@ -19,7 +24,9 @@
   }
   .hidden{display:none !important;}
   .screen{min-height:100vh;display:flex;flex-direction:column;}
-  button{font-family:inherit;color:inherit;}
+  /* 表单控件默认不继承字体，这里统一跟随全局字体（按钮文字色也跟随） */
+  button,input,select,textarea{font-family:inherit;}
+  button{color:inherit;}
 
   /* ============ 主页 ============ */
   #setup{padding:40px 5vw 34px;max-width:1120px;margin:0 auto;width:100%;}

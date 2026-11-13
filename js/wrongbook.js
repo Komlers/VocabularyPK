@@ -165,7 +165,7 @@ const WB_HTML_CSS = [
 ":root{--red:#e05555;--red-d:#c0392b;--red-bg:#fdecea;--blue:#4a7fe0;--blue-d:#2c5cb8;",
 "      --ink:#1f242e;--ink2:#3a4150;--muted:#79808f;--line:#e3e8f1;}",
 "*{box-sizing:border-box;}",
-"body{margin:0;padding:34px 5vw 48px;font-family:'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif;",
+"body{margin:0;padding:34px 5vw 48px;font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC','Noto Sans CJK SC','MiSans','HarmonyOS Sans SC','HarmonyOS Sans',sans-serif;",
 "     font-size:17px;line-height:1.55;color:var(--ink);background:#f4f6fb;}",
 ".sheet{max-width:1040px;margin:0 auto;}",
 "h1{font-size:32px;margin:0 0 6px;}",

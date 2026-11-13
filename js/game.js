@@ -580,7 +580,7 @@ const RESULT_HTML_CSS = [
 ":root{--red:#e05555;--red-d:#c0392b;--red-bg:#fdecea;--blue:#4a7fe0;--blue-d:#2c5cb8;",
 "      --ink:#1f242e;--ink2:#3a4150;--muted:#79808f;--line:#e3e8f1;--ok:#27a457;--ok-bg:#e9f9ef;}",
 "*{box-sizing:border-box;}",
-"body{margin:0;min-height:100vh;font-family:'Microsoft YaHei','PingFang SC','Segoe UI',sans-serif;",
+"body{margin:0;min-height:100vh;font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC','Noto Sans CJK SC','MiSans','HarmonyOS Sans SC','HarmonyOS Sans',sans-serif;",
 "     font-size:26px;line-height:1.42;color:var(--ink);background-color:#eef1f8;",
 "     background-image:radial-gradient(1100px 620px at 50% -8%,#fff 0%,#eef1f8 58%,#e6ebf5 100%);}",
 ".wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;",
