@@ -337,9 +337,8 @@
   function updateEdStat() {
     if (!edCls) { $("edStat").textContent = ""; return; }
     const roster = curRoster();
-    const ghost = roster.filter(n => /^@/.test(n)).length;
-    $("edStat").textContent = "「" + edCls + "」共 " + roster.length +
-      " 人";
+    /* 幽灵名（@ 开头）只是不参与随机抽取，仍然算班里的人，所以直接按总人数统计 */
+    $("edStat").textContent = "「" + edCls + "」共 " + roster.length + " 人";
   }
 
   /* ================= 事件绑定 ================= */

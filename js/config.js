@@ -81,8 +81,7 @@ let S = {
   scoreMode:"open",        /* 计分模式：open 无限制 / knockout 淘汰制 / accumulate 累加制 */
   scoreCap:100,            /* 限分模式的满分（50 / 100 / 150） */
   endReason:"time",        /* 本局结束原因：time / knockout / accumulate，供结算文案区分 */
-  ending:false, ended:false,   /* ending=已判定胜负、等结算；ended=本局已入账，防重复结算 */
-  ending:false, ended:false,   /* ending=已判定胜负正在等结算；ended=本局已结算，防重复入账 */
+  ending:false, ended:false,   /* ending=已判定胜负、等结算；ended=本局已结算，防重复入账 */
   pool:[], qi:0, round:1, scores:[0,0], streak:[0,0], maxStreak:[0,0],
   right:[0,0], bad:[0,0],   /* 双方各自的答对 / 答错题数，仅用于结算页展示 */
   badStreak:[0,0],          /* 连续答错次数：答错扣分递增用，答对即清零 */
