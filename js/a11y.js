@@ -119,6 +119,9 @@
   /* Esc：关掉最上层；Tab：在弹窗内首尾循环 */
   document.addEventListener("keydown", e => {
     if(e.key !== "Escape" && e.key !== "Tab") return;
+    /* dialog.js 处理 Esc 时会 preventDefault；输入框自己的 Esc 先一步关掉了确认框，
+       这时再往下走就会把底下的弹窗也一起关掉，所以看到已处理就直接退出 */
+    if(e.defaultPrevented) return;
     if(dlgOpen()) return;                       /* 确认框优先，交给 dialog.js */
     const top = stack[stack.length - 1];
     if(!top) return;
