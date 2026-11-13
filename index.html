@@ -65,6 +65,7 @@
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>
       <button class="heroBtn" id="hisBtn">📊 历史战绩</button>
       <button class="heroBtn" id="wrongbookBtn">📕 错词记录</button>
+      <button class="heroBtn" id="dataBtn">🗂 数据管理</button>
     </div>
   </div>
 
@@ -435,7 +436,7 @@
         班级名单支持 TXT 导入与内置编辑器（批量添加、搜索、改名、删除）；战绩、最高连击、错词本、错词记录、擂主均按班级分别保存；主页「错词记录」按册 / 单元累计出错次数，可导出 HTML。</p></div>
 
       <div class="ruleItem"><b>数据与隐私</b><p>
-        所有数据（名单、战绩、配置、自定义词库）只保存在本机浏览器，不上传服务器；无账号、无追踪、无广告。</p></div>
+        所有数据（名单、战绩、错词记录、配置、自定义词库）只保存在本机浏览器，不上传服务器；无账号、无追踪、无广告。需要换电脑或备份时，用主页的「🗂 数据管理」导出 / 导入 JSON 文件。</p></div>
 
       <div class="ruleItem"><b>安装为桌面应用</b><p>
         用 Edge / Chrome 打开时，可点左上角「安装」把本页装成桌面应用，独立窗口运行，断网也能打开。</p></div>
@@ -503,6 +504,60 @@
     <button class="clearBtn hidden" id="clearBtn">清空本班历史</button>
     <div class="btnRow" style="margin-top:20px">
       <button class="drawBtn" id="hisClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 数据管理弹窗 ================= -->
+<div id="dataModal" class="modal hidden">
+  <div class="modalMask"></div>
+  <div class="modalBox fixedFoot dataBox">
+    <h3>🗂 数据管理<span class="hint">只在本机读写，不联网</span></h3>
+    <div class="modalScroll">
+
+      <!-- 概览：班级 / 名单 / 战绩 / 错词 / 词库 数量与总体积 -->
+      <div class="dataSum" id="dataSum"></div>
+
+      <div class="dataSec">
+        <div class="dataSecHead">导出备份</div>
+        <div class="dataTip">勾选要带走的内容，导出成一个 .json 文件；换电脑、换浏览器后导入即可还原。</div>
+        <div class="dataParts" id="dataParts"></div>
+        <button class="drawBtn dataBtn" id="dataExportBtn">⬇ 导出所选数据</button>
+      </div>
+
+      <div class="dataSec">
+        <div class="dataSecHead">导入备份</div>
+        <div class="dataTip">选择之前导出的 .json。合并：保留本机数据、只补缺的部分；覆盖：用文件里的同类数据整体替换本机。</div>
+        <button class="drawBtn dataBtn" id="dataPickBtn">📥 选择备份文件</button>
+        <div class="dataPreview hidden" id="dataPreview"></div>
+        <div class="dataImportRow hidden" id="dataImportRow">
+          <button class="drawBtn dataBtn" id="dataMergeBtn">合并导入</button>
+          <button class="drawBtn dataBtn danger" id="dataReplaceBtn">覆盖导入</button>
+          <button class="drawBtn dataBtn ghost" id="dataCancelBtn">取消</button>
+        </div>
+        <input type="file" id="dataFile" accept=".json,application/json" style="display:none">
+      </div>
+
+      <div class="dataSec">
+        <div class="dataSecHead">按班级管理</div>
+        <div class="dataTip">每个班的名单、战绩、擂主、错词记录与配置可以单独导出带走，也可以单独删除。</div>
+        <div class="dataClsList" id="dataClsList"></div>
+      </div>
+
+      <div class="dataSec">
+        <div class="dataSecHead">分类清理</div>
+        <div class="dataTip">只清某一类数据，名单与其它记录保留。删除后无法恢复，建议先导出一份备份。</div>
+        <div class="dataClearRow">
+          <button class="drawBtn dataBtn danger" data-clear="history">清空全部战绩</button>
+          <button class="drawBtn dataBtn danger" data-clear="wrongbook">清空错词记录</button>
+          <button class="drawBtn dataBtn danger" data-clear="custom">清空自定义词库</button>
+          <button class="drawBtn dataBtn danger" data-clear="ui">重置个性化设置</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="btnRow" style="margin-top:16px">
+      <button class="drawBtn" id="dataClose">关闭</button>
     </div>
   </div>
 </div>
@@ -610,6 +665,7 @@
 <script src="js/editor.js?v=23"></script>
 <script src="js/game.js?v=23"></script>
 <script src="js/wrongbook.js?v=23"></script>
+<script src="js/data.js?v=23"></script>
 <script src="js/events.js?v=23"></script>
 <script src="js/pwa.js?v=23"></script>
 

@@ -28,6 +28,7 @@ const SHELL = [
   "js/editor.js",
   "js/game.js",
   "js/wrongbook.js",
+  "js/data.js",
   "js/events.js",
   "js/pwa.js",
   "icons/icon-96.png",

@@ -160,8 +160,9 @@
   .mainFooter a:hover{text-decoration:underline;}
 
   /* 标题下功能按钮 */
-  .heroBtns{display:flex;gap:16px;justify-content:center;margin-top:18px;}
-  .heroBtn{padding:12px 28px;border-radius:14px;border:2px solid var(--line);
+  /* 四个按钮：宁可换行也不要把「关于项目」折成两行 */
+  .heroBtns{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:18px;}
+  .heroBtn{flex:none;white-space:nowrap;padding:12px 28px;border-radius:14px;border:2px solid var(--line);
            background:#fff;color:var(--ink2);font-size:22px;font-weight:700;
            cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);}
   .heroBtn:hover{border-color:var(--blue);color:var(--blue-d);background:var(--blue-bg);
@@ -408,6 +409,48 @@
   /* ============ 主页 ============ */
   #home, #setup1, #setup2, #setup3{padding:20px 5vw 34px;max-width:1120px;margin:0 auto;width:100%;}
   .startBtn.small{font-size:26px;padding:16px 30px;letter-spacing:4px;width:auto;}
+
+  /* ============ 数据管理弹窗 ============ */
+  .modalBox.dataBox{max-width:760px;max-height:88vh;}
+  .dataSum{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;
+           font-size:18px;color:var(--ink2);background:#f5f7fb;border:1px solid var(--line);
+           border-radius:14px;padding:11px 16px;margin-bottom:4px;}
+  .dataSum b{color:var(--blue-d);}
+  .dataDot{color:#c3cbd9;}
+  .dataSize{font-size:16px;color:var(--muted);white-space:nowrap;}
+  .dataSec{background:#f8f9fc;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:14px;}
+  .dataSecHead{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+  .dataTip{font-size:16px;color:var(--muted);line-height:1.55;margin-bottom:12px;}
+  .dataBtn{font-size:19px;padding:8px 20px;border-radius:12px;}
+  .dataBtn.danger{border-color:#f0b9b9;background:#fff6f6;color:var(--red-d);}
+  .dataBtn.danger:hover{border-color:var(--red);background:#ffecec;color:var(--red-d);}
+  .dataBtn.ghost{border-style:dashed;color:var(--muted);font-weight:600;}
+  .dataParts{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px;}
+  .dataPart{display:flex;align-items:center;gap:7px;font-size:18px;color:var(--ink2);
+            background:#fff;border:1px solid var(--line);border-radius:11px;
+            padding:6px 13px;cursor:pointer;transition:all .15s;}
+  .dataPart:hover{border-color:#c3d2ee;}
+  .dataPart input{width:18px;height:18px;accent-color:var(--blue);cursor:pointer;}
+  .dataPreview{margin-top:12px;background:#eef4ff;border:1px solid #cddcf7;border-radius:12px;
+               padding:12px 14px;font-size:17px;color:var(--ink2);line-height:1.55;}
+  .dataPrevHead{font-weight:800;color:var(--blue-d);margin-bottom:4px;}
+  .dataPrevFile{font-size:15px;color:var(--muted);margin-top:5px;}
+  .dataImportRow{margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;}
+  .dataClsList{display:flex;flex-direction:column;gap:8px;}
+  .dataCls{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);
+           border-radius:12px;padding:9px 14px;}
+  .dataClsName{font-size:19px;font-weight:800;color:var(--ink);flex:none;max-width:9em;
+               overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dataClsMeta{font-size:16px;color:var(--muted);flex:1;min-width:0;
+               overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dataClsActs{display:flex;gap:8px;flex:none;}
+  .dataMini{font:inherit;font-size:16px;font-weight:700;color:var(--blue-d);background:#fff;
+            border:2px solid #c9d8f2;border-radius:9px;padding:3px 12px;cursor:pointer;transition:all .15s;}
+  .dataMini:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .dataMini.danger{color:var(--red-d);border-color:#f0b9b9;}
+  .dataMini.danger:hover{background:var(--red);border-color:var(--red);color:#fff;}
+  .dataEmpty{font-size:17px;color:var(--muted2);text-align:center;padding:16px 0;}
+  .dataClearRow{display:flex;flex-wrap:wrap;gap:10px;}
 
   /* ============ 词库弹窗 ============ */
   .modal{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;}
@@ -865,6 +908,11 @@ html.no-flex-gap .hisStats > * + *{margin-left:10px;}
 html.no-flex-gap .hisBar > * + *{margin-left:10px;}
 html.no-flex-gap .hisItem > * + *{margin-left:12px;}
 html.no-flex-gap .hisRight > * + *{margin-left:8px;}
+html.no-flex-gap .dataClsActs > * + *{margin-left:8px;}
+html.no-flex-gap .dataImportRow > * + *{margin-left:10px;}
+html.no-flex-gap .dataClearRow > * + *{margin-left:10px;}
+html.no-flex-gap .dataParts > * + *{margin-left:14px;}
+html.no-flex-gap .dataSum > * + *{margin-left:10px;}
 html.no-flex-gap #fsBtn > * + *, html.no-flex-gap #installBtn > * + *,
 html.no-flex-gap #abortBtn > * + *{margin-left:8px;}
 html.no-flex-gap .card h3 .stepNo{margin-right:14px;}
