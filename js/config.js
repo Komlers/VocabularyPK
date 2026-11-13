@@ -64,7 +64,7 @@ const PAIR_POOL = ["of","to","for","with","from","into","on","about","as","in","
 
 /* 词块/单词索引（buildIndex 填充） */
 let chunkIdxByEn = {};   // 词块英文 -> CHUNKS 下标
-let wordByEn = {};        // 单词英文 -> LIB 词条
+let wordByEn = {};        // 单词英文 -> [LIB 词条, ...]：跨单元同名词条都保留，按当前词库挑用
 
 /* ================== 全局状态 ================== */
 const $ = id => document.getElementById(id);

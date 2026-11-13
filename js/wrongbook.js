@@ -26,7 +26,8 @@ function recordWrongBook(){
     let tag = p[3] || "";
     if(!tag){
       const ci = chunkIdxByEn[en];
-      tag = ci !== undefined ? CHUNKS[ci][6] : (wordByEn[en] ? wordByEn[en][2] : "");
+      const we = wordEntryFor(en);
+      tag = ci !== undefined ? CHUNKS[ci][6] : (we ? we[2] : "");
     }
     if(!en || !tag) return;
     const bucket = d[tag] || (d[tag] = {});

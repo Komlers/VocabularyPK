@@ -144,7 +144,19 @@ function buildIndex(){
   for(const k in chunkIdxByEn) delete chunkIdxByEn[k];
   for(const k in wordByEn) delete wordByEn[k];
   CHUNKS.forEach((c,i)=>chunkIdxByEn[c[0]]=i);
-  LIB.forEach(w=>wordByEn[w[0]]=w);
+  /* 同一个单词可能出现在多个单元（很多单元词表本来就重叠），全部保留：
+     只留最后一条会让复现题抽出别的单元的释义。取用时再由 wordEntryFor 挑。 */
+  LIB.forEach(w => { (wordByEn[w[0]] = wordByEn[w[0]] || []).push(w); });
+}
+/* 取英文对应的词条：优先当前选中词库里的那一条，否则取第一条 */
+function wordEntryFor(en){
+  const list = wordByEn[en];
+  if(!list || !list.length) return null;
+  if(S.units && S.units.length){
+    const hit = list.find(w => S.units.includes(w[2]));
+    if(hit) return hit;
+  }
+  return list[0];
 }
 
 /* ================== 词块范围（按选中词库过滤） ==================
@@ -186,7 +198,8 @@ function specFromWrong(en, cn, kind){
     const t = (kind==="c2" || kind==="c3") ? kind : "c1";
     return {t:t, i:ci};
   }
-  if(wordByEn[en]) return {t:"w", w:wordByEn[en]};
+  const w = wordEntryFor(en);
+  if(w) return {t:"w", w:w};
   return null;
 }
 /* 上节课错的词与词块：按错误次数取前 8 优先复现；
