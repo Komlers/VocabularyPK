@@ -555,6 +555,21 @@
   .updateContent a:hover{text-decoration:underline;}
   .updateContent hr{border:none;border-top:1px solid var(--line);margin:16px 0;}
 
+  /* ============ 文档弹窗的加载占位 ============
+     点击即弹窗，正文还在路上时先摆这一块（见 ui.js 的 loadMdInto）：
+     居中的转圈 + 一行字，给一个最小高度，免得弹窗先缩成一条再撑开。 */
+  .mdLoading{min-height:200px;display:flex;flex-direction:column;align-items:center;
+             justify-content:center;gap:16px;font-size:20px;color:var(--muted);text-align:center;}
+  .mdSpin{width:40px;height:40px;border-radius:50%;border:4px solid #dfe6f2;
+          border-top-color:var(--blue);animation:mdSpin .8s linear infinite;}
+  @keyframes mdSpin{to{transform:rotate(360deg);}}
+  /* 加载失败：一句原因 + 重试，不再另弹一个提示框 */
+  .mdLoadFail b{font-size:22px;color:var(--red-d);font-weight:800;}
+  .mdFailMsg{max-width:440px;font-size:18px;line-height:1.6;}
+  .mdLoadFail .mdRetry{font-size:19px;padding:9px 30px;}
+  /* 关闭动画时转圈会停住，索性收成一圈浅色，仍能看出是等待中 */
+  html.no-anim .mdSpin{border-color:#dfe6f2;opacity:.7;}
+
   /* ============ 名单编辑器 ============ */
   .editorModalBox{display:flex;flex-direction:column;overflow:hidden;max-width:700px;}
   .edClassBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}

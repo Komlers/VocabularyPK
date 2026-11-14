@@ -13,7 +13,7 @@
 - **原生 HTML5 / CSS3 / JavaScript**，无框架、无构建、无依赖，源码即产物。
 - 单页应用：三块 `.screen`（主页 `setup` / 对战 `battle` / 结算 `result`）靠 class 切换，所有弹窗结构都写在 `index.html` 里。
 - 全局状态集中在 `S`（`js/config.js`），各模块以全局函数协作，事件统一在 `js/events.js` 绑定。
-- 词库与帮助文档用 `fetch` 加载（`lib/*.json`、`res/*.md`），Markdown 由 `ui.js` 里的 `mdToHtml()` 在本地转换成 HTML。
+- 词库与帮助文档用 `fetch` 加载（`lib/*.json`、`res/*.md`），Markdown 由 `ui.js` 里的 `mdToHtml()` 在本地转换成 HTML。文档弹窗点击即打开，正文位置先摆加载占位，取到再换内容（`loadMdInto()`）；启动时自动弹的更新说明不摆占位，取到才弹，失败则静默跳过。
 - PWA：`manifest.webmanifest` + `sw.js`，支持安装为桌面应用与断网打开。
 
 ---

@@ -461,26 +461,73 @@ function mdToHtml(md){
   return out.replace(/\x7f(\d+)\x7f/g, (m, n) => stash[n] === undefined ? "" : stash[n]);
 }
 
-/* ================== 更新提示 ==================
-   拉取 update.md 转 HTML 并显示更新弹窗（自动检查与手动入口共用） */
-async function showUpdateModal(){
-  try{
-    const res = await fetch(UPDATE_MD_URL, {cache:"no-cache"});
-    if(!res.ok) throw new Error("update.md missing");
-    const md = await res.text();
-    $("updateVer").textContent = APP_VERSION;
-    $("updateContent").innerHTML = mdToHtml(md);
-    $("updateModal").classList.remove("hidden");
-  }catch(e){
-    dlgAlert("更新内容加载失败：" + e.message, { type: "error", title: "出错了" });
+/* ================== Markdown 文档弹窗 ==================
+   更新说明 / 使用说明 / 添加帮助 / 词库制作帮助的正文都是从 res/*.md 现取的。
+   以前是「取完再弹」，网络慢的时候点了像没反应，过几秒才蹦出来；
+   现在先把弹窗打开、正文位置摆一行加载占位，拿到并转换完再换成正文。
+   同一个弹窗可能被连点或关掉重开，用 token 认领结果：过期的响应直接丢掉，
+   不会出现「后点的请求先回来，被先点的旧内容盖掉」。
+   noWait = true 用于自动弹窗（版本更新提示）：不摆占位，取到再弹，免得一进页面
+   先闪一下「正在加载」。 */
+const mdLoadToken = {};
+function mdLoadingHtml(){
+  return '<div class="mdLoading" role="status" aria-live="polite">'
+    + '<span class="mdSpin" aria-hidden="true"></span>正在加载…</div>';
+}
+function mdErrorHtml(err){
+  const raw = String((err && err.message) || err || "");
+  /* HTTP 状态类错误直接说清楚；fetch 本身失败（离线、服务器不可达）给一句人话 */
+  const msg = /HTTP/.test(raw) ? raw : "网络请求失败，请检查网络后重试。";
+  return '<div class="mdLoading mdLoadFail" role="alert">'
+    + "<b>内容加载失败</b>"
+    + '<span class="mdFailMsg">' + esc(msg) + "</span>"
+    + '<button type="button" class="drawBtn mdRetry">重试</button></div>';
+}
+/* 打开弹窗 → 占位 → 取 md → 转 HTML 填进正文 */
+function loadMdInto(modalId, contentId, url, noWait){
+  const m = $(modalId), box = $(contentId);
+  if(!m || !box) return;
+  const token = (mdLoadToken[modalId] || 0) + 1;
+  mdLoadToken[modalId] = token;
+  const stale = () => mdLoadToken[modalId] !== token;
+  if(!noWait){
+    box.innerHTML = mdLoadingHtml();
+    m.classList.remove("hidden");
   }
+  fetch(url, {cache:"no-cache"})
+    .then(res => {
+      if(!res.ok) throw new Error(url + " 加载失败（HTTP " + res.status + "）");
+      return res.text();
+    })
+    .then(md => {
+      if(stale()) return;
+      box.innerHTML = mdToHtml(md);
+      if(noWait) m.classList.remove("hidden");
+    })
+    .catch(err => {
+      if(stale()) return;
+      /* 自动弹窗不去打扰用户：这次取不到就算了，下次进入还会再试 */
+      if(noWait) return;
+      box.innerHTML = mdErrorHtml(err);
+      const retry = box.querySelector(".mdRetry");
+      if(retry) retry.addEventListener("click", ()=>loadMdInto(modalId, contentId, url));
+    });
+}
+
+/* ================== 更新提示 ==================
+   拉取 update.md 转 HTML 并显示更新弹窗。
+   auto = true 时是启动时的自动检查：不摆加载占位，取到才弹；取不到就静默跳过。
+   手动入口（页脚「更新说明」、关于窗口里的链接）走自动弹窗的即时弹出。 */
+function showUpdateModal(auto){
+  $("updateVer").textContent = APP_VERSION;
+  loadMdInto("updateModal", "updateContent", UPDATE_MD_URL, !!auto);
 }
 /* 已读版本号 !== 当前版本号时，自动弹出更新提示 */
 async function checkUpdate(){
   let readVer = "";
   try{ readVer = localStorage.getItem(UPDATE_READ_KEY) || ""; }catch(e){}
   if(readVer === APP_VERSION) return;
-  showUpdateModal();
+  showUpdateModal(true);
 }
 
 /* ================== 班级与战绩渲染 ================== */

@@ -161,17 +161,10 @@ $("edImportBtn").addEventListener("click", async ()=>{
   $("rosterFile").click();
 });
 
-/* 「❓ 添加帮助」：从 res/import.md 加载并转 HTML 显示 */
-$("edHelpBtn").addEventListener("click", async ()=>{
-  try{
-    const res = await fetch("res/import.md", {cache:"no-cache"});
-    if(!res.ok) throw new Error("help file missing");
-    const md = await res.text();
-    $("importHelpContent").innerHTML = mdToHtml(md);
-    $("importHelpModal").classList.remove("hidden");
-  }catch(err){
-    dlgAlert("帮助内容加载失败：" + err.message, { type: "error", title: "出错了" });
-  }
+/* 「❓ 添加帮助」：从 res/import.md 加载并转 HTML 显示
+   （先弹窗、正文位置先摆加载占位，见 ui.js 的 loadMdInto） */
+$("edHelpBtn").addEventListener("click", ()=>{
+  loadMdInto("importHelpModal", "importHelpContent", "res/import.md");
 });
 $("importHelpClose").addEventListener("click", ()=>$("importHelpModal").classList.add("hidden"));
 $("importHelpModal").addEventListener("click", e=>{
@@ -179,16 +172,8 @@ $("importHelpModal").addEventListener("click", e=>{
 });
 
 /* 自定义词库面板「如何制作自定义词库」：从 res/custom.md 加载并转 HTML */
-$("customHelpBtn").addEventListener("click", async ()=>{
-  try{
-    const res = await fetch("res/custom.md", {cache:"no-cache"});
-    if(!res.ok) throw new Error("custom.md missing");
-    const md = await res.text();
-    $("customHelpContent").innerHTML = mdToHtml(md);
-    $("customHelpModal").classList.remove("hidden");
-  }catch(err){
-    dlgAlert("帮助内容加载失败：" + err.message, { type: "error", title: "出错了" });
-  }
+$("customHelpBtn").addEventListener("click", ()=>{
+  loadMdInto("customHelpModal", "customHelpContent", "res/custom.md");
 });
 $("customHelpClose").addEventListener("click", ()=>$("customHelpModal").classList.add("hidden"));
 $("customHelpModal").addEventListener("click", e=>{
@@ -422,17 +407,9 @@ $("aboutModal").addEventListener("click", e=>{
 
 /* ================== 使用说明弹窗（内容从 res/tips.md 加载） ==================
    两个入口共用：页脚文字链接「使用说明」、「关于项目」底部的「使用说明」按钮。
-   从关于窗口打开时叠在关于之上，关闭后回到关于 */
-async function openTips(){
-  try{
-    const res = await fetch("res/tips.md", {cache:"no-cache"});
-    if(!res.ok) throw new Error("tips.md missing");
-    const md = await res.text();
-    $("tipsContent").innerHTML = mdToHtml(md);
-    $("tipsModal").classList.remove("hidden");
-  }catch(err){
-    dlgAlert("使用说明加载失败：" + err.message, { type: "error", title: "出错了" });
-  }
+   从关于窗口打开时叠在关于之上，关闭后回到关于；点击即弹窗，正文稍后填入。 */
+function openTips(){
+  loadMdInto("tipsModal", "tipsContent", "res/tips.md");
 }
 $("aboutTipsBtn").addEventListener("click", openTips);
 
