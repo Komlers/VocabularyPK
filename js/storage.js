@@ -197,8 +197,8 @@ function migrateWrongBook(){
 /* ================== 界面记忆（上次选的班级 + 两个临时开关） ==================
    不分班级，改动即落盘，下次打开还原到上次退出时的状态：
      cls      上次选中的班级（空字符串 = 临时体验）
-     noRecord 「本次PK不计入战绩」
-     solo     「本次PK为单人作答」 */
+     noRecord 「临时赛」（不计入战绩）
+     solo     「单人」作答 */
 const UI_KEY = "vpk_ui";
 function loadUI(){
   try{

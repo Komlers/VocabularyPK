@@ -33,7 +33,7 @@ function startBattle(revival){
     /* 错词在词库里已经找不到（比如换过词库）时不要开局，否则题池为空会直接崩 */
     if(!items.length){
       S.revival = false; S.basePoints = 10;
-      dlgAlert("本题没有可以复现的错词，直接开下一局吧。", { type: "warning", title: "无法加时" });
+      dlgAlert("本局没有可以复现的错词，直接开下一局吧。", { type: "warning", title: "无法加时" });
       return;
     }
     S.reviewList = items.map(specEn);
@@ -114,7 +114,7 @@ function nextQuestion(){
     q = {kind:"w", tag:spec.w[2], en:en, cn:cn, ans: dir==="e2c"?cn:en,
          opts1:shuffle(opts), opts2:shuffle(opts),
          big: dir==="e2c"?en:cn, cls: dir==="e2c"?"":"cn", say: dir==="e2c"?en:"",
-         tip: dir==="e2c" ? "🔊 单词 · 点击正确的中文意思（答对直接过）" : "🔊 单词 · 点击对应的英文单词（答对直接过）"};
+         tip: dir==="e2c" ? "🔊 单词 · 点击正确的中文意思（答对即换题）" : "🔊 单词 · 点击对应的英文单词（答对即换题）"};
   }else if(spec.t === "c1"){
     const c = CHUNKS[spec.i];
     const opts = shuffle([c[1]].concat(chunkDistractCn(spec.i)));
@@ -132,11 +132,14 @@ function nextQuestion(){
   }else{
     const c = CHUNKS[spec.i];
     const pieces = c[5].slice();
-    const opts = shuffle(pieces.concat(orderDecoys(spec.i, 4 - pieces.length)));
+    /* 干扰片段补到 4 个选项为止；片段本身已够 4 段时就没有干扰项，文案也不能硬写「1 个」 */
+    const decoys = orderDecoys(spec.i, Math.max(0, 4 - pieces.length));
+    const opts = shuffle(pieces.concat(decoys));
     q = {kind:"c3", tag:c[6], en:c[0], cn:c[1], ans:"", pieces:pieces, need:pieces.length,
          progress:[[],[]], opts1:opts, opts2:shuffle(opts),
          big:c[1], cls:"cn", say:"",
-         tip:"🧩 词块重组 · 按正确顺序点击 "+pieces.length+" 个片段还原（含 1 个干扰片段）"};
+         tip:"🧩 词块重组 · 按正确顺序点击 " + pieces.length + " 个片段还原"
+             + (decoys.length ? "（另有 " + decoys.length + " 个干扰片段）" : "")};
   }
   S.curQ = q; S.locked = [false,false];
   const qw = $("qWord");
@@ -674,7 +677,7 @@ function buildResultHtml(){
     '<div class="mini">' + esc(S.resultScope || "")
       + " · " + dur + " · 共答 " + S.asked + " 道题</div>",
     '<div class="wrongBox">',
-    "<h4>错词/错块本（本局错的单词与词块）</h4>",
+    "<h4>本局错词（含词块）</h4>",
     '<div class="chips">' + chips + "</div>",
     "</div>",
     '<div class="foot">' + cls + "　·　" + st.day + " " + st.hm + "　·　词汇擂台 PK</div>",

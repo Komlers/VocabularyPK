@@ -44,7 +44,7 @@
 </button>
 
 <!-- ================= 比赛中终止（只在比赛进行中出现，见 ui.js 的 syncCornerBtns） ================= -->
-<button id="abortBtn" class="hidden" title="终止本局比赛（不入账）">
+<button id="abortBtn" class="hidden" title="终止本局比赛（不计战绩）">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2.5"></rect></svg>
   <span>终止</span>
 </button>
@@ -60,7 +60,7 @@
 <div id="setup" class="screen">
   <div class="hero">
     <div class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</div>
-    <div class="sub">双人同台 · 单词 / 词块对战 · <b>败者守擂</b> · 班级名单本地保存</div>
+    <div class="sub">双人同台 · 单词 / 词块对战 · <b>败者守擂</b> · 名单只存本机</div>
     <div class="heroBtns">
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>
       <button class="heroBtn" id="hisBtn">📊 历史战绩</button>
@@ -76,13 +76,13 @@
       <div class="chips" id="classChips"></div>
       <button class="drawBtn" id="openEditorBtn">✏️ 名单编辑器</button>
     </div>
-    <div class="mini" id="noRosterTip" style="margin-top:14px;color:#9a6a00">⚠ 还没有班级名单，点「✏️ 名单编辑器」新建班级并导入 TXT（一行一个名字，仅保存在本机）。<br>也可以先不导入，直接在下方的「上台选手」里输入两个名字试玩。</div>
+    <div class="mini" id="noRosterTip" style="margin-top:14px;color:#9a6a00">⚠ 还没有班级名单。在「名单编辑器」新建班级添加名字或导入TXT名单。<br>（也可以先直接在「上台选手」里输入名字试玩）</div>
     <input type="file" id="rosterFile" accept=".txt,text/plain" style="display:none">
   </div>
 
   <div class="card">
-    <h3><span class="stepNo">2</span>上台选手<span class="hint" id="drawHint">先抽擂主（红方），再抽挑战者（蓝方）</span></h3>
-    <div class="mini" id="rosterInfo" style="margin:-4px 0 14px">先在上方选择班级，或点「✏️ 名单编辑器」新建并导入名单。</div>
+    <h3><span class="stepNo">2</span>上台选手<span class="hint" id="drawHint">点名字框抽取，也可手动输入</span></h3>
+    <div class="mini" id="rosterInfo" style="margin:-4px 0 14px">选择班级后，这里显示名单人数。</div>
     <div class="drawRow">
       <div class="drawBox red clickable" id="redBox"><div class="dlabel">🛡 擂主 · 红方（点击抽取）</div><div class="dname" id="redNameBox">待抽取</div></div>
       <div class="vsBadge">VS</div>
@@ -102,7 +102,7 @@
   </div>
 
   <div class="card">
-    <h3><span class="stepNo">3</span>出题范围与时长<span class="hint">题池按范围自动扩满，全程不重复出题</span></h3>
+    <h3><span class="stepNo">3</span>出题范围与时长<span class="hint">题池含所选词库全部词条，一轮内不重复</span></h3>
     <div class="cardBtns">
       <button class="drawBtn" id="openLibModal">📚 选择词库</button>
       <button class="drawBtn" id="openDurModal">⏱ 限时 1:00</button>
@@ -113,7 +113,7 @@
   </div>
 
   <div class="card">
-    <h3><span class="stepNo">4</span>对局规则与设置<span class="hint">擂台设置 · 渲染设置 · 临时赛 · 双人 / 单人</span></h3>
+    <h3><span class="stepNo">4</span>对局规则与设置<span class="hint">计分玩法 · 本机显示 · 对局形态</span></h3>
     <div class="cardBtns">
       <button class="drawBtn" id="settingBtn">⚙️ 擂台设置</button>
       <button class="drawBtn" id="renderBtn">🎬 渲染设置</button>
@@ -242,7 +242,7 @@
         <input type="checkbox" id="wrongPenaltyChk">
         答错扣分
       </label>
-      <div class="setHint">答错扣分：连错依次扣 5 / 10 / 15 / 20；关闭「连击加分」时固定 -5。</div>
+      <div class="setHint">连错依次扣 5 / 10 / 15 / 20；关闭「连击加分」时固定 -5。</div>
     </div>
 
     <div class="setItem">
@@ -264,7 +264,7 @@
         <input type="checkbox" id="wordsOnlyChk">
         只加载纯单词
       </label>
-      <div class="setHint">只出单词题，不出词块选义 / 配对 / 重组；新班级默认开启。</div>
+      <div class="setHint">只出单词题，不出词块选义 / 配对 / 重组（新建班级默认开启）。</div>
     </div>
 
     <div class="setItem">
@@ -308,7 +308,7 @@
       <!-- 选项由 applyFont() 从 FONT_OPTIONS 生成；下面这行用所选字体实时预览 -->
       <select class="fontSel" id="fontSel"></select>
       <div class="fontPrev" id="fontPrev">词汇擂台 · Vocabulary 1234</div>
-      <div class="setHint">只换本地的显示字体；本机没装的字体会自动回退，下面这行是字体预览。</div>
+      <div class="setHint">只换本机显示字体；本机没装的字体会自动回退。下方是实际效果。</div>
     </div>
 
     <div class="setItem">
@@ -318,7 +318,7 @@
         <button type="button" class="segOpt animOpt" data-anim="part">部分</button>
         <button type="button" class="segOpt animOpt" data-anim="off">禁用</button>
       </div>
-      <div class="setHint">禁用动画可以获得更好的性能，启用动画会有更精致的效果。</div>
+      <div class="setHint">完全：页面、弹窗、切题都有过渡 · 部分：只留小动效 · 禁用：最省性能。</div>
     </div>
 
     <div class="setItem">
@@ -437,16 +437,16 @@
 
     <div class="ruleBody modalScroll">
       <div class="ruleItem"><b>这是什么</b><p>
-        面向高中英语课堂的<b>双人单词对战网页应用</b>：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，适合教室大屏互动教学。</p></div>
+        面向高中英语课堂的<b>双人单词对战网页应用</b>：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，也可切到单人练习，适合教室大屏互动教学。</p></div>
 
       <div class="ruleItem"><b>对战方式</b><p>
-        一局 30 秒～5 分钟，屏幕左右各一套选项，双方同时作答、互不干扰。计分有<b>无限制</b>（答对得分、连击递增，可开启答错扣分）、<b>淘汰制</b>（满分开局，答错扣血，先归零者输）、<b>累加制</b>（0 分起步，先到满分者赢）三种模式可选。</p></div>
+        一局 30 秒～5 分钟，屏幕左右各一套选项，双方同时作答、互不干扰；切到单人模式则只出一列，一人一题独自练习。计分有<b>无限制</b>（答对得分、连击递增，可开启答错扣分）、<b>淘汰制</b>（满分开局，答错扣血，先归零者输）、<b>累加制</b>（0 分起步，先到满分者赢）三种模式可选。</p></div>
 
       <div class="ruleItem"><b>题型</b><p>
-        单词题：<b>单词选义</b>。词块题：<b>词块选义</b>、<b>词块配对</b>、<b>词块重组</b>，覆盖介词搭配、动词短语、固定搭配，按时长自动配比混合出题。</p></div>
+        单词题：<b>单词选义</b>。词块题：<b>词块选义</b>、<b>词块配对</b>、<b>词块重组</b>，覆盖介词搭配、动词短语、固定搭配，按比例与单词题穿插出题。</p></div>
 
       <div class="ruleItem"><b>词库</b><p>
-        内置 <b>36 个词库</b>，对齐人教版高中英语必修 1～3（含必修1 Welcome Unit）、选择性必修 1～4 共 36 个单元；支持多选混合出题，也可导入本地 JSON 自定义词库。</p></div>
+        内置 <b>36 个词库</b>：人教版必修 1～3（含必修 1 Welcome Unit）与选择性必修 1～4，共 36 个单元；支持多选混合出题，也可导入本地 JSON 自定义词库。</p></div>
 
       <div class="ruleItem"><b>名单与战绩</b><p>
         班级名单支持 TXT 导入与内置编辑器（批量添加、搜索、改名、删除）；战绩、最高连击、错词本、错词记录、擂主均按班级分别保存；主页「错词记录」按册 / 单元累计出错次数，可导出 HTML。</p></div>
@@ -491,7 +491,7 @@
     <h3>📕 错词记录</h3>
     <div class="wbSummary" id="wbSummary"></div>
     <div class="wbBulkRow">
-      <span class="wbBulkInfo">按班级统计，册 / 单元分类，×N 为累计出错次数</span>
+      <span class="wbBulkInfo">按册 / 单元分类，×N 为累计出错次数</span>
       <button class="wbBulkBtn" id="wbExportAll">⬇ 全部导出</button>
       <button class="wbBulkBtn danger" id="wbClear">清空</button>
     </div>
@@ -645,7 +645,7 @@
   <div id="winName"></div>
   <div id="finalScore"></div>
   <div class="wrongBox" id="wrongBox">
-    <h4>错词/错块本（本局错的单词与词块）</h4>
+    <h4>本局错词（含词块）</h4>
     <div id="wrongChips"></div>
   </div>
   <div class="btnRow">

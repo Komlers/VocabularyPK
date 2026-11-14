@@ -648,7 +648,7 @@ function renderHistory(){
 
   /* 名单载入状态：直观确认名单已导入、还剩多少人没抽 */
   if(!S.cls){
-    $("rosterInfo").textContent = "💡 还没有班级名单：可直接在下方输入两位选手名字体验一局，或点「✏️ 名单编辑器」新建班级后导入 TXT。";
+    $("rosterInfo").textContent = "💡 还没有班级名单：可直接在下方输入名字体验一局，或点「✏️ 名单编辑器」新建班级后导入 TXT。";
     return;
   }
   const roster = rosters()[S.cls] || [];
@@ -894,8 +894,8 @@ function refreshNameBoxes(){
   $("blueNameBox").textContent = dispName(blueName) || "待抽取";
   const h = $("drawHint");
   if(h) h.textContent = hasRoster()
-    ? "先抽擂主（红方），再抽挑战者（蓝方）"
-    : "直接输入两个名字即可开始";
+    ? "点名字框抽取，也可手动输入"
+    : "直接输入名字即可开始";
   /* 没有名单时「选择」无意义（选名列表为空），收起入口 */
   const pick = $("pickBtn");
   if(pick) pick.style.display = hasRoster() ? "" : "none";
@@ -1068,7 +1068,7 @@ function renderLibChips(){
     });
   }
   $("libHint").textContent = tempUnits.length === 0 ? "未选择词库（请至少选一个）"
-    : (tempUnits.length === 1 ? "当前单词库" : "当前多词库（已选 " + tempUnits.length + " 个）");
+    : (tempUnits.length === 1 ? "已选 1 个词库" : "已选 " + tempUnits.length + " 个词库（混合出题）");
 }
 function updateLibBtn(){
   const n = S.units.length;

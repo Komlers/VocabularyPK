@@ -4,13 +4,13 @@
 $("redBox").addEventListener("click", ()=>{
   if(!hasRoster()){ enterManualMode("m1"); return; }
   const name = takeName(blueName);
-  if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取红方（请先导入或在名单中增加学生）。"; return; }
+  if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取红方。请先在名单编辑器里补充学生。"; return; }
   animateDraw("redNameBox", name, ()=>{ redName = name; champFixed = false; renderHistory(); syncAnswerHint(); });
 });
 $("blueBox").addEventListener("click", ()=>{
   if(!hasRoster()){ enterManualMode("m2"); return; }
   const name = takeName(redName);
-  if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取蓝方（请先导入或在名单中增加学生）。"; return; }
+  if(!name){ $("drawInfo").textContent = "名单人数不足，无法抽取蓝方。请先在名单编辑器里补充学生。"; return; }
   animateDraw("blueNameBox", name, ()=>{ blueName = name; renderHistory(); syncAnswerHint(); });
 });
 $("manualBtn").addEventListener("click", ()=>{
