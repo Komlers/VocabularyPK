@@ -487,6 +487,11 @@
   .modalBox{position:relative;background:#fff;border-radius:22px;padding:28px 30px;
             max-width:720px;width:92%;max-height:82vh;overflow-y:auto;
             box-shadow:0 20px 60px rgba(28,39,72,.25);}
+  /* 弹窗面板带 tabindex="-1"，只用于接收焦点（读屏能读到「对话框」），
+     本身不是可操作控件，所以不要画焦点环——否则页面加载自动弹出的
+     更新说明会有一圈看着像「被选中」的边框。真正的控件仍有自己的焦点框。 */
+  .modalBox[role="dialog"]:focus,
+  .modalBox[role="dialog"]:focus-visible{outline:none;}
   /* 弹窗内部隐藏滚动条（保留滚动功能），圆角完整显示；
      注意：.updateContent（拉取 res/xxx.md 显示的更新/帮助弹窗）保留滚动条 */
   .modalBox::-webkit-scrollbar,

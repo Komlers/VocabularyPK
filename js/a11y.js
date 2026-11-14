@@ -39,6 +39,12 @@
   if(!modals.length) return;
 
   const stack = [];               /* 当前打开的弹窗，末尾是「最上层」 */
+  /* 页面加载后用户是否已经操作过：更新说明是异步拉完内容才弹的，
+     没法靠「初始化那一轮」判断，这里记录第一次指针 / 键盘操作 */
+  let interacted = false;
+  const markInteracted = () => { interacted = true; };
+  document.addEventListener("pointerdown", markInteracted, { once:true, passive:true });
+  document.addEventListener("keydown", markInteracted, { once:true });
   const restore = new Map();      /* 弹窗 -> 打开前聚焦的元素 */
   const visible = m => !m.classList.contains("hidden");
   const boxOf = m => m.querySelector(".modalBox") || m;
@@ -69,16 +75,21 @@
   /* 把焦点送进弹窗。
      弹窗是淡入的：从 .hidden 出来的头 ~160ms 里，visibility 仍是 hidden
      （见 style.css 的 .modal.hidden 过渡），这时 focus() 会静默失败，
-     所以在淡入结束前重试几次。用户中途自己点了别处就不再抢焦点。 */
-  function focusInto(m, box, src){
+     所以在淡入结束前重试几次。用户中途自己点了别处就不再抢焦点。
+     · 用户点的 / 键盘打开的：焦点放到第一个可操作项，键盘用户可直接回车；
+     · 页面加载时自动弹的（更新说明）：只把焦点放进面板本身。
+       否则「稍后处理」会带着一圈浏览器默认焦点环出现，看着像被误选中；
+       面板是非交互区域，不画焦点环（见 style.css 的 [role="dialog"]:focus）。 */
+  function focusInto(m, box, src, initial){
+    const target = () => initial ? box : (focusables(box)[0] || box);
     const tryOnce = () => {
       if(!visible(m)) return true;                       /* 已经关掉了 */
       if(box.contains(document.activeElement)) return true;
       const ae = document.activeElement;
       if(ae && ae !== src && ae !== document.body && ae !== document.documentElement) return true;
-      const first = focusables(box)[0];
-      try{ (first || box).focus({ preventScroll:true }); }
-      catch(e){ try{ (first || box).focus(); }catch(_){} }
+      const el = target();
+      try{ el.focus({ preventScroll:true }); }
+      catch(e){ try{ el.focus(); }catch(_){} }
       return box.contains(document.activeElement);
     };
     if(tryOnce()) return;
@@ -96,7 +107,8 @@
     restore.set(m, document.activeElement);
     const box = boxOf(m);
     const src = restore.get(m);
-    focusInto(m, box, src);
+    /* 用户还没碰过页面就自己弹出来的（更新说明）算自动弹出 */
+    focusInto(m, box, src, !interacted);
   }
   function onClose(m){
     const i = stack.indexOf(m);
