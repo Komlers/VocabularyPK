@@ -11,7 +11,7 @@
 1. **准备单词素材**（任选一种）：用手机拍照 / 扫描纸质单词表；从课件 PPT / Word / Excel 里复制单词和释义；或直接输入单元单词。
 2. **附上模板**：把本项目 [template.md](https://pk.danevan.top/template/template.md) 和 [template.json](https://pk.danevan.top/template/template.json) 的内容也一并发给 AI。
 3. **下达指令**：让 AI 按模板格式整理（可参考下面的示例指令），只输出 JSON。
-4. **保存导入**：把 AI 生成的结果保存为 `.json` 文件，核对后点「📥 导入本地词库」。
+4. **保存导入**：把 AI 生成的结果保存为 `.json` 文件，核对后点「📥 导入本地词库（JSON）」。
 
 点击下载：[template.md](https://pk.danevan.top/template/template.md)、[template.json](https://pk.danevan.top/template/template.json)，如果没有下载而是打开了文件，就右键→另存为/保存。
 
