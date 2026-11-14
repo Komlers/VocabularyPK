@@ -264,7 +264,7 @@ tag 规则（历史原因，不完全统一）：
 {
   "app": "vpk",
   "kind": "backup | class",
-  "version": "2.3",
+  "version": "2.4",
   "exportedAt": "2026-11-14T05:00:00.000Z",
   "cls": "",
   "partIds": ["rosters", "history", "wrongbook", "cfg", "ui", "custom"],

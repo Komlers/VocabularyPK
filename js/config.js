@@ -54,7 +54,7 @@ const FONT_OPTIONS = [
 /* ================== 版本与更新提示 ==================
    每次发布更新时修改 APP_VERSION，并在 res/update.md 写明更新内容。
    已读版本号存 localStorage（UPDATE_READ_KEY），版本不同则弹窗提醒。 */
-const APP_VERSION = "2.3";
+const APP_VERSION = "2.4";
 const UPDATE_READ_KEY = "vpk_update_read";
 const UPDATE_MD_URL = "res/update.md";
 
