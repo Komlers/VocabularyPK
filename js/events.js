@@ -395,10 +395,12 @@ $("updateLater").addEventListener("click", ()=>{
 $("aboutUpdateBtn").addEventListener("click", ()=>showUpdateModal());
 
 /* ================== 关于项目弹窗 ==================
-   简介为静态内容；版本号取自 config.js 的 APP_VERSION，避免两处写死不一致 */
+   头部（版本号、更新说明入口）与底部按钮固定在页面里，中间正文从 res/about.md 加载，
+   与其他文档弹窗一致：点击即弹窗，正文位置先摆加载占位。
+   版本号取自 config.js 的 APP_VERSION，避免两处写死不一致 */
 $("aboutBtn").addEventListener("click", ()=>{
   $("aboutVer").textContent = APP_VERSION;
-  $("aboutModal").classList.remove("hidden");
+  loadMdInto("aboutModal", "aboutBody", "res/about.md");
 });
 $("aboutClose").addEventListener("click", ()=>$("aboutModal").classList.add("hidden"));
 $("aboutModal").addEventListener("click", e=>{

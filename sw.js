@@ -38,6 +38,7 @@ const SHELL = [
   "icons/icon-256.png",
   "icons/icon-512.png",
   "res/update.md",
+  "res/about.md",
   "res/import.md",
   "res/custom.md",
   "res/tips.md"

@@ -60,7 +60,7 @@
 <div id="setup" class="screen">
   <div class="hero">
     <div class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</div>
-    <div class="sub">双人同台 · 单词 / 词块对战 · <b>败者守擂</b> · 名单只存本机</div>
+    <div class="sub">双人同台 · 败者守擂 · 单人检测 · 数据只存本地</div>
     <div class="heroBtns">
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>
       <button class="heroBtn" id="hisBtn">📊 历史战绩</button>
@@ -435,35 +435,8 @@
       <div class="aboutMeta">版本 <b id="aboutVer">2.3</b> · 纯前端 · 数据只存本机 · <a href="javascript:;" class="aboutLink" id="aboutUpdateBtn">更新说明</a></div>
     </div>
 
-    <div class="ruleBody modalScroll">
-      <div class="ruleItem"><b>这是什么</b><p>
-        面向高中英语课堂的<b>双人单词对战网页应用</b>：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，也可切到单人练习，适合教室大屏互动教学。</p></div>
-
-      <div class="ruleItem"><b>对战方式</b><p>
-        一局 30 秒～5 分钟，屏幕左右各一套选项，双方同时作答、互不干扰；切到单人模式则只出一列，一人一题独自练习。计分有<b>无限制</b>（答对得分、连击递增，可开启答错扣分）、<b>淘汰制</b>（满分开局，答错扣血，先归零者输）、<b>累加制</b>（0 分起步，先到满分者赢）三种模式可选。</p></div>
-
-      <div class="ruleItem"><b>题型</b><p>
-        单词题：<b>单词选义</b>。词块题：<b>词块选义</b>、<b>词块配对</b>、<b>词块重组</b>，覆盖介词搭配、动词短语、固定搭配，按比例与单词题穿插出题。</p></div>
-
-      <div class="ruleItem"><b>词库</b><p>
-        内置 <b>36 个词库</b>：人教版必修 1～3（含必修 1 Welcome Unit）与选择性必修 1～4，共 36 个单元；支持多选混合出题，也可导入本地 JSON 自定义词库。</p></div>
-
-      <div class="ruleItem"><b>名单与战绩</b><p>
-        班级名单支持 TXT 导入与内置编辑器（批量添加、搜索、改名、删除）；战绩、最高连击、错词本、错词记录、擂主均按班级分别保存；主页「错词记录」按册 / 单元累计出错次数，可导出 HTML。</p></div>
-
-      <div class="ruleItem"><b>数据与隐私</b><p>
-        所有数据（名单、战绩、错词记录、配置、自定义词库）只保存在本机浏览器，不上传服务器；无账号、无追踪、无广告。需要换电脑或备份时，用页面底部的「数据管理」导出 / 导入 JSON 文件。</p></div>
-
-      <div class="ruleItem"><b>安装为桌面应用</b><p>
-        用 Edge / Chrome 打开时，可点左上角「安装」把本页装成桌面应用，独立窗口运行，断网也能打开。</p></div>
-
-      <div class="ruleItem"><b>关于作者</b><p>
-        在线地址 <a href="https://pk.danevan.top/" target="_blank" rel="noopener noreferrer">pk.danevan.top</a> · 作者 <a href="https://www.danevan.top/" target="_blank" rel="noopener noreferrer">Dan_Evan</a> · &copy; 2026 All Rights Reserved.</p></div>
-
-      <div class="ruleItem"><b>推荐链接</b><p>
-        <a href="https://blog.danevan.top/" target="_blank" rel="noopener noreferrer">blog.danevan.top</a> - 我的博客<br>
-        <a href="https://home.danevan.top/" target="_blank" rel="noopener noreferrer">home.danevan.top</a> - 现代主页</p></div>
-    </div>
+    <!-- 中间正文从 res/about.md 加载（见 events.js 的 aboutBtn），先在占位里等它 -->
+    <div class="updateContent modalScroll" id="aboutBody"></div>
 
     <div class="btnRow" style="margin-top:22px">
       <button class="drawBtn" id="aboutTipsBtn">📖 使用说明</button>

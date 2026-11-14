@@ -658,24 +658,14 @@
   .durValue{font-size:64px;font-weight:800;color:var(--ink2);min-width:2.2em;text-align:center;
             font-variant-numeric:tabular-nums;}
 
-  /* 关于项目弹窗 */
+  /* 关于项目弹窗：头部（logo / 版本 / 更新说明）与底部按钮固定，
+     中间正文由 res/about.md 渲染，沿用 .updateContent 的文档排版，这里只调宽 */
   .aboutBox{max-width:640px;}
   .aboutHead{text-align:center;margin:-4px 0 18px;padding-bottom:18px;border-bottom:1px solid var(--line);}
   .aboutLogo{font-size:40px;font-weight:800;letter-spacing:6px;margin-bottom:8px;}
   .aboutLogo .r{color:var(--red);} .aboutLogo .b{color:var(--blue);}
   .aboutMeta{font-size:19px;color:var(--muted2);}
   .aboutMeta b{color:var(--blue-d);font-weight:700;}
-  .ruleItem p a{color:var(--blue-d);text-decoration:none;}
-  .ruleItem p a:hover{text-decoration:underline;}
-
-  /* 规则介绍弹窗 */
-  .ruleBody{display:flex;flex-direction:column;gap:16px;}
-  .ruleItem{background:#f8f9fc;border-radius:14px;padding:16px 20px;border:1px solid var(--line);}
-  .ruleItem > b{font-size:23px;color:var(--ink2);display:block;margin-bottom:6px;}
-  .ruleItem p{font-size:21px;color:var(--muted2);line-height:1.6;margin:0;}
-  .ruleItem p b{font-size:inherit;display:inline;color:var(--ink2);font-weight:700;}
-  .ruleItem kbd{background:#eef1f8;border:1px solid var(--line);border-radius:6px;
-                padding:2px 10px;font-size:19px;font-family:inherit;color:var(--ink2);}
 
   /* ============ 词库多选按钮 ============ */
   .libChips{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));grid-gap:14px;gap:14px;}
@@ -993,7 +983,6 @@ html.no-flex-gap .wbBookHead > * + *{margin-left:10px;}
 html.no-flex-gap .wbUnitHead > .wbUnitName + .wbUnitMeta{margin-left:10px;}
 html.no-flex-gap .wbWords > * + *{margin-left:8px;}
 html.no-flex-gap .wbWord > * + *{margin-left:8px;}
-html.no-flex-gap .ruleBody > * + *{margin-top:16px;}
 html.no-flex-gap .importLibRow > * + *{margin-left:16px;}
 /* 主页规则行 / 战绩页签 / 数据管理 / 词库与错词本标题条：
    这些是后来新增的 flex+gap 布局，缺了回退在老内核上会挤成一团。

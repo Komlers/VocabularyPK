@@ -46,6 +46,7 @@ vcpk/
 ├── lib/                  # 内置词库（36 个 JSON，见第六节）
 ├── res/                  # 在线文档（弹窗内加载）
 │   ├── update.md         # 当前版本更新说明
+│   ├── about.md          # 关于项目（关于弹窗的正文）
 │   ├── tips.md           # 使用说明
 │   ├── intro.md          # 本文
 │   ├── require.md        # 浏览器 / 系统需求
