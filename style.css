@@ -424,8 +424,8 @@
     .accRow{gap:40px;margin-top:8px;}
     .acc b{font-size:24px;} .acc i{font-size:15px;}
     .btnRow button{font-size:24px;padding:14px 24px;}
-    .libChips{grid-template-columns:1fr 1fr;gap:10px;}
-    .libChip{font-size:20px;padding:14px 16px;}
+    /* 注意：词库 chip 与预览弹窗的窄屏规则不在这里 —— 它们的样式定义在本文更后面，
+       写在这儿会被同权重的规则盖掉，统一放到文件末尾的「窄屏补充」块里。 */
   }
 
   /* ============ 主页 ============ */
@@ -943,6 +943,27 @@
   }
   @media (min-resolution: 2.5dppx) {
     html { zoom: 0.85; }
+  }
+
+  /* ============ 窄屏补充（≤820px） ============
+     词库 chip 与预览弹窗的样式定义在本文靠后的位置，所以这几条不能跟着上面那个
+     @media (max-width:820px) 一起写——同权重、后写优先，会被基础规则盖掉（以前那两条
+     .libChips / .libChip 就是这样从没生效过）。放在这里才真正命中：
+     把 chip 的字号与内边距收一档，手机上单元名不至于挤成三行；两列 / 一列仍交给
+     auto-fill 自己排，不硬压成两列——窄屏两列会把「U2 - Travelling Around」拆得太碎。 */
+  @media (max-width:820px){
+    .libChip{font-size:20px;padding:14px 16px;}
+    .libChip .libEye{width:25px;height:25px;font-size:13px;line-height:25px;}
+    /* 选项卡与「共 N 个单元」不许把词拆到两行；册标题条放不下就整体换行 */
+    .libTab{padding:10px 14px;font-size:20px;white-space:nowrap;}
+    .libGroupHead{flex-wrap:wrap;}
+    .libGTMeta{white-space:nowrap;}
+    .libViewBox .lvRow{font-size:18px;}
+    .libViewBox .lvEn{flex:0 0 46%;}
+    .libViewBox .lvSearch{width:180px;}
+    /* 按钮里的「关 闭」也会在空格处折行，宁可整体换行也不要拆字 */
+    .libViewBox .btnRow{flex-wrap:wrap;gap:10px;}
+    .libViewBox .btnRow button{white-space:nowrap;}
   }
 
 /* ============ 老旧内核回退（无 flex gap / 无 :focus-visible） ============
