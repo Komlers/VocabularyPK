@@ -992,7 +992,21 @@ function createLibChip(tag, file, displayText){
   const chip = document.createElement("div");
   chip.className = "libChip" + (tempUnits.includes(tag) ? " on" : "");
   chip.dataset.tag = tag;
-  chip.textContent = displayText || file;
+  /* 名字与操作分成两个子元素：名字可以换行，右侧的预览 / 删除始终贴边 */
+  const name = document.createElement("span");
+  name.className = "libName";
+  name.textContent = displayText || file;
+  chip.appendChild(name);
+
+  const acts = document.createElement("span");
+  acts.className = "libBtns";
+  const eye = document.createElement("span");
+  eye.className = "libEye";
+  eye.dataset.tag = tag;
+  eye.textContent = "👁";
+  eye.title = "预览词库内容";
+  acts.appendChild(eye);
+
   if(file === "custom"){
     chip.classList.add("customLib");
     const del = document.createElement("span");
@@ -1009,9 +1023,85 @@ function createLibChip(tag, file, displayText){
       tempUnits = tempUnits.filter(t => t !== tag);
       renderLibChips();
     });
-    chip.appendChild(del);
+    acts.appendChild(del);
   }
+  chip.appendChild(acts);
   return chip;
+}
+
+/* ================== 词库预览 / 导出 ==================
+   预览与导出共用一份内容：直接从游戏正在用的 LIB / CHUNKS 里按 tag 取，
+   而不是回头再读 lib/*.json——这样自定义词库走同一条路，导出的也就是实际出题用的那份数据。 */
+const CHUNK_FAMILY = { prep:"介词搭配", phr:"动词短语", coll:"固定搭配" };
+let libViewTag = "";
+function libViewName(tag){
+  const info = LIB_INFO[tag] || {};
+  return (info.label && info.name) ? info.label + "　" + info.name : (info.name || tag);
+}
+function libWordsOf(tag){
+  return LIB.filter(w => w[2] === tag).map(w => [w[0], w[1]]);
+}
+function libChunksOf(tag){
+  /* 片段不足两段按「没有」处理，和出题时一致，导回去也不会多出一个假的重组题 */
+  return CHUNKS.filter(c => c[6] === tag)
+    .map(c => [c[0], c[1], c[2], c[3], c[4], (c[5] && c[5].length > 1) ? c[5].slice() : null]);
+}
+function openLibView(tag){
+  if(!LIB_INFO[tag]) return;
+  libViewTag = tag;
+  $("libViewTitle").textContent = "📖 " + libViewName(tag);
+  $("libViewSearch").value = "";
+  renderLibView();
+  /* 标题带上了词库名，读屏的对话框标签也一起换 */
+  const box = $("libViewModal").querySelector(".modalBox");
+  if(box) box.setAttribute("aria-label", "预览词库：" + libViewName(tag));
+  $("libViewModal").classList.remove("hidden");
+}
+function renderLibView(){
+  const tag = libViewTag;
+  if(!tag) return;
+  const words = libWordsOf(tag), chunks = libChunksOf(tag);
+  const kw = $("libViewSearch").value.trim().toLowerCase();
+  const hit = x => !kw || String(x[0]).toLowerCase().indexOf(kw) >= 0
+    || String(x[1] || "").toLowerCase().indexOf(kw) >= 0;
+  const w = words.filter(hit), c = chunks.filter(hit);
+  $("libViewMeta").textContent = words.length + " 个单词 · " + chunks.length + " 个词块"
+    + (kw ? "　筛选出 " + (w.length + c.length) + " 条" : "");
+  const row = (en, cn, kind) => '<div class="lvRow">'
+    + '<span class="lvEn">' + esc(String(en)) + "</span>"
+    + '<span class="lvCn">' + esc(String(cn || "")) + "</span>"
+    + (kind ? '<span class="lvTag">' + esc(kind) + "</span>" : "")
+    + "</div>";
+  const sec = (title, list, kindOf) => list.length
+    ? '<div class="lvSec">' + title + " · " + list.length + " 条</div>"
+      + list.map(x => row(x[0], x[1], kindOf ? kindOf(x) : "")).join("")
+    : "";
+  $("libViewBody").innerHTML =
+    sec("单词", w) + sec("词块", c, x => CHUNK_FAMILY[x[2]] || "词块")
+    || '<div class="lvEmpty">没有匹配的内容，换个关键词试试。</div>';
+}
+function exportLibView(){
+  const tag = libViewTag;
+  if(!tag) return;
+  const info = LIB_INFO[tag] || {};
+  const name = info.name || tag;
+  const data = { name, title: info.title || name, words: libWordsOf(tag), chunks: libChunksOf(tag) };
+  if(info.label) data.label = info.label;      /* 保留「必修1 U1」；导入时用不上也不碍事 */
+  const file = ("词库_" + libViewName(tag)).replace(/[\\/:*?"<>|\s　]+/g, "_") + ".json";
+  try{
+    const blob = new Blob([JSON.stringify(data, null, 1)], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = file;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 15000);
+    dlgAlert("已导出「" + esc(file) + "」<br>可以直接改里面的词条，再用「📥 导入本地词库（JSON）」加回来。",
+      { type:"success", title:"已导出", html:true });
+  }catch(e){
+    dlgAlert("导出失败：" + esc(e.message), { type:"error", title:"导出失败" });
+  }
 }
 
 /* 词库 tag 属于哪一册（b1~b7）；自定义词库返回空串 */
@@ -1114,7 +1204,7 @@ function renderLibChips(){
       customBox.appendChild(createLibChip(tag, file, info ? info.name : tag));
     });
   }
-  $("libHint").textContent = tempUnits.length === 0 ? "未选择词库（请至少选一个）"
+  $("libHint").textContent = tempUnits.length === 0 ? "点击切换选中，点 👁 看词条"
     : (tempUnits.length === 1 ? "已选 1 个词库" : "已选 " + tempUnits.length + " 个词库（混合出题）");
 }
 function updateLibBtn(){

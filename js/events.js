@@ -224,8 +224,11 @@ document.querySelectorAll(".libTab").forEach(tab => {
   tab.addEventListener("click", () => switchLibTab(tab.dataset.tab));
 });
 
-/* chip 点击（事件委托到整个弹窗，覆盖内置和自定义两个面板） */
+/* chip 点击（事件委托到整个弹窗，覆盖内置和自定义两个面板）
+   点的是 chip 右侧的「👁」时改为打开预览，不切换选中状态 */
 $("libModal").addEventListener("click", e=>{
+  const eye = e.target.closest(".libEye");
+  if(eye){ openLibView(eye.dataset.tag); return; }
   const chip = e.target.closest(".libChip");
   if(!chip) return;
   const tag = chip.dataset.tag;
@@ -233,6 +236,14 @@ $("libModal").addEventListener("click", e=>{
   else tempUnits.push(tag);
   renderLibChips();
 });
+
+/* ================== 词库预览 / 导出 ================== */
+$("libViewClose").addEventListener("click", ()=>$("libViewModal").classList.add("hidden"));
+$("libViewModal").addEventListener("click", e=>{
+  if(e.target.classList.contains("modalMask")) $("libViewModal").classList.add("hidden");
+});
+$("libViewSearch").addEventListener("input", renderLibView);
+$("libViewExport").addEventListener("click", exportLibView);
 
 /* ================== 导入本地词库 ================== */
 $("importLibBtn").addEventListener("click", ()=>$("libFile").click());

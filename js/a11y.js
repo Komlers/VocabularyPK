@@ -23,6 +23,7 @@
     hisModal:"hisClose",
     importHelpModal:"importHelpClose",
     libModal:"libCancel",
+    libViewModal:"libViewClose",
     pickModal:"pickCancel",
     renderModal:"renderClose",
     settingModal:"settingClose",

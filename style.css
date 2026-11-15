@@ -583,6 +583,27 @@
   .libHelpLink{font-size:19px;font-weight:600;color:var(--blue-d);text-decoration:none;
                 white-space:nowrap;cursor:pointer;}
   .libHelpLink:hover{text-decoration:underline;}
+
+  /* ============ 词库预览 / 导出弹窗 ============ */
+  .libViewBox{max-width:640px;}
+  .lvBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+  .lvMeta{font-size:18px;color:var(--muted);}
+  .lvSearch{margin-left:auto;width:220px;max-width:100%;padding:9px 14px;border-radius:10px;
+            border:2px solid var(--line);background:#fafbfe;font-size:17px;color:var(--ink);
+            font-family:inherit;}
+  .lvSearch:focus{outline:none;border-color:var(--blue);background:#fff;}
+  .lvBody{line-height:1.5;}
+  .lvSec{margin:16px 0 8px;padding-left:10px;border-left:4px solid var(--blue);
+         font-size:17px;font-weight:700;color:var(--blue-d);}
+  .lvSec:first-child{margin-top:0;}
+  .lvRow{display:flex;align-items:baseline;gap:12px;padding:7px 8px;
+         border-bottom:1px solid #f0f3f9;font-size:19px;}
+  .lvRow:last-child{border-bottom:none;}
+  .lvEn{flex:0 0 42%;font-weight:700;color:var(--ink2);word-break:break-word;}
+  .lvCn{flex:1;min-width:0;color:var(--muted2);word-break:break-word;}
+  .lvTag{flex:none;font-size:14px;font-weight:600;color:var(--blue-d);background:#e8f0fe;
+         border-radius:7px;padding:2px 9px;white-space:nowrap;}
+  .lvEmpty{padding:40px 0;text-align:center;color:var(--muted);font-size:18px;}
   .edInput{flex:1;min-width:0;padding:10px 14px;font-size:20px;
             border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);}
   .edInput:focus{outline:none;border-color:var(--blue);}
@@ -681,7 +702,13 @@
   .libChip.on::before{content:"✓";background:var(--blue);border-color:var(--blue);}
   .libChip.customLib{border-style:dashed;border-color:#c9d1de;}
   .libChip.customLib.on{border-style:solid;border-color:var(--blue);}
-  .libDel{margin-left:auto;flex:none;width:26px;height:26px;border-radius:50%;
+  /* 名字可换行，右侧的预览 / 删除固定贴边 */
+  .libChip > .libName{flex:1;min-width:0;word-break:break-word;}
+  .libChip > .libBtns{display:flex;align-items:center;gap:6px;flex:none;}
+  .libEye{flex:none;width:28px;height:28px;border-radius:50%;background:#f0f2f7;
+          font-size:15px;line-height:28px;text-align:center;cursor:pointer;transition:.12s;}
+  .libEye:hover{background:var(--blue);}
+  .libDel{flex:none;width:26px;height:26px;border-radius:50%;
           background:#f0f2f7;color:var(--muted);font-size:20px;line-height:24px;text-align:center;
           cursor:pointer;transition:.12s;}
   .libDel:hover{background:var(--red);color:#fff;}
