@@ -52,7 +52,9 @@ vcpk/
 │   ├── require.md        # 浏览器 / 系统需求
 │   ├── import.md         # 名单添加帮助
 │   └── custom.md         # 自定义词库制作帮助
-├── old/                  # 历史版本更新说明（v2.0 ~ v2.2）
+├── meta/
+│   └── toy-cover.png     # 封面图（1200×900）：Toy 投稿海报，也是 og:image / twitter:image
+├── old/                  # 历史版本更新说明（v2.0 ~ v2.3）
 └── template/
     ├── template.json     # 自定义词库模板
     └── template.md       # 词库字段说明
