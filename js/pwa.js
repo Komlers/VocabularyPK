@@ -72,12 +72,50 @@
   /* 已在独立窗口中运行（例如从开始菜单打开已安装的应用）→ 直接不显示 */
   if (isStandalone()) setReady(false);
 
-  /* 注册 Service Worker（安装条件之一，同时提供离线外壳） */
+  /* ================== Service Worker ==================
+     SW 只给「自己部署的站点」用：装成桌面应用、断网还能打开。
+     放进别人的容器里就很危险 —— 典型是 B站 Toy：页面跑在
+     www.bilibili.com/toy/<slug>/ 子路径下，第一次打开一切正常，
+     SW 装好后从第二次开始接管该作用域下所有同源请求；平台一旦换部署路径、
+     加签名参数或重新发布，缓存的旧壳就会把页面顶成白屏 / 成片 404。
+     所以这种环境不但不注册，还要把以前装过的旧 SW 主动注销掉 ——
+     否则用户得自己清站点数据才能恢复。
+     判断只用「域名 + 路径」，不靠 UA：容器里的 UA 五花八门，路径更可靠。 */
+  function swBlocked(){
+    try{
+      if(!/^https?:$/.test(location.protocol)) return true;        /* file:// 等 */
+      if(/(^|\.)bilibili\.com$/i.test(location.hostname)) return true;
+      if(/^\/toy\//i.test(location.pathname)) return true;         /* 平台换域名也认得出来 */
+      return false;
+    }catch(e){ return true; }
+  }
+  /* 注销旧 SW 并丢掉它留下的缓存（只清自己的前缀，别碰同一域名下别人的缓存） */
+  function dropOldWorker(){
+    try{
+      if("serviceWorker" in navigator){
+        navigator.serviceWorker.getRegistrations().then(list => {
+          list.forEach(reg => { try{ reg.unregister(); }catch(e){} });
+        }).catch(() => {});
+      }
+      if(window.caches && caches.keys){
+        caches.keys().then(keys => {
+          keys.filter(k => /^vpk-shell/.test(k)).forEach(k => {
+            try{ caches.delete(k); }catch(e){}
+          });
+        }).catch(() => {});
+      }
+    }catch(e){}
+  }
+
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {
-        /* 注册失败（如本地 file:// 打开）不影响正常使用 */
+    if(swBlocked()){
+      dropOldWorker();
+    }else{
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {
+          /* 注册失败（如浏览器拒绝）不影响正常使用 */
+        });
       });
-    });
+    }
   }
 })();
