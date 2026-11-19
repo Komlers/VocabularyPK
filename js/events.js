@@ -612,8 +612,9 @@ function fsSupported(){
 function syncFsBtn(){
   const on = !!fsElement();
   $("fsBtn").classList.toggle("on", on);
-  /* 安装 / 终止按钮与全屏按钮同步：全屏时一起变淡，窗口模式时都是实心 */
-  [$("installBtn"), $("abortBtn")].forEach(b=>{ if(b) b.classList.toggle("on", on); });
+  /* 终止按钮与全屏按钮同步：全屏时一起变淡，窗口模式时都是实心 */
+  const abortBtn = $("abortBtn");
+  if(abortBtn) abortBtn.classList.toggle("on", on);
   $("fsLabel").textContent = on ? "退出" : "全屏";
 }
 /* 自动全屏标记：点「开始 PK」时若本来不是全屏，由代码补一次，保证投屏观感；

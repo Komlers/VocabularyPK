@@ -22,10 +22,6 @@
 
 所有数据（名单、战绩、错词记录、配置、自定义词库）只保存在本机浏览器，不上传服务器；无账号、无追踪、无广告。需要换电脑或备份时，用页面底部的「数据管理」导出 / 导入 JSON 文件。
 
-## 安装为桌面应用
-
-用 Edge / Chrome 打开时，可点左上角「安装」把本页装成桌面应用，独立窗口运行，断网也能打开。
-
 ## 关于作者
 
 在线地址 [pk.danevan.top](https://pk.danevan.top/) · 作者 [Dan_Evan](https://www.danevan.top/) · © 2026 All Rights Reserved.

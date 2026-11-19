@@ -153,14 +153,11 @@ function applyFont(){
   applyFont();
 })();
 
-/* ================== 角按钮显隐（安装 / 终止） ==================
-   左上角：主界面显示「安装」（浏览器允许安装时），比赛中换成「终止」；
-   右上角的全屏按钮三种界面都在，不参与切换。
+/* ================== 角按钮显隐（终止） ==================
+   左上角：只在比赛中显示「终止」；右上角的全屏按钮三种界面都在，不参与切换。
    inBattle 由 show() 直接传入，避免旧页面淡出期间状态滞后 160ms。 */
 function syncCornerBtns(inBattle){
   if(inBattle === undefined) inBattle = !$("battle").classList.contains("hidden");
-  const install = $("installBtn");
-  if(install) install.classList.toggle("hidden", inBattle || install.dataset.ready !== "1");
   const abort = $("abortBtn");
   if(abort) abort.classList.toggle("hidden", !inBattle);
 }

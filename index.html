@@ -13,9 +13,6 @@
 <meta name="language" content="zh-CN">
 <meta name="theme-color" content="#4a7fe0">
 <meta name="application-name" content="词汇擂台 PK">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="词汇擂台">
 <link rel="canonical" href="https://pk.danevan.top/">
 
 <!-- ================= Open Graph（社交分享 / 搜索结果预览） ================= -->
@@ -58,17 +55,9 @@
 </script>
 
 <link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- ================= 安装为桌面应用（浏览器允许安装时才显示，见 js/pwa.js） ================= -->
-<button id="installBtn" class="hidden" title="将本网页安装为桌面应用">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"></path><path d="M7.5 9.5 12 14l4.5-4.5"></path><path d="M4 16v2.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V16"></path></svg>
-  <span id="installLabel">安装</span>
-</button>
 
 <!-- ================= 比赛中终止（只在比赛进行中出现，见 ui.js 的 syncCornerBtns） ================= -->
 <button id="abortBtn" class="hidden" title="终止本局比赛（不计战绩）">
@@ -701,7 +690,6 @@
 <script src="js/data.js?v=24"></script>
 <script src="js/events.js?v=24"></script>
 <script src="js/a11y.js?v=24"></script>
-<script src="js/pwa.js?v=24"></script>
 
 
 </body></html>
