@@ -375,6 +375,26 @@
   .btnRow button{font-size:29px;padding:18px 34px;border-radius:16px;border:none;cursor:pointer;
                  font-weight:700;transition:all .15s;}
   .btnRow button:active{transform:scale(.97);}
+  /* 弹窗底部操作区：比结算页那组小一档。
+     高缩放 / 高 DPI 屏幕（尤其是教室一体机与 150% 以上的系统缩放）里，
+     原来 29px 的字 + 18px 内边距会让按钮条吃掉大半个可视区，正文只剩几条；
+     这里统一收到 23px / 12px 26px，并把按钮组与正文的间距压到 16px。
+     结算页（#result）不在此列，仍用上面那套大按钮。 */
+  .modalBox .btnRow{gap:14px;}
+  .modalBox .btnRow button:not(.dlgBtn){font-size:23px;padding:12px 26px;border-radius:14px;}
+  /* 主操作按钮别再靠 flex:1 撑满（原来会拉成一条横幅），按文字宽度收着放，
+     只给一个最小宽度兜底，单按钮时也不至于缩成一小坨 */
+  .modalBox .btnRow .startBtn.small{flex:0 1 auto;min-width:150px;max-width:none;
+    font-size:23px;padding:12px 30px;letter-spacing:3px;}
+  /* 通用确认框：本身已经比正文小，跟着再收一点，和上面视觉统一 */
+  .modalBox .dlgBtns{margin-top:16px;}
+  .modalBox .dlgBtn{font-size:19px;padding:10px 24px;border-radius:11px;}
+  /* 窄屏（手机 / 高缩放后 CSS 视口变窄）再收一档：约 420px 宽时两个按钮也能并排 */
+  @media (max-width:820px){
+    .modalBox .btnRow{gap:10px;}
+    .modalBox .btnRow button:not(.dlgBtn){font-size:21px;padding:11px 20px;}
+    .modalBox .btnRow .startBtn.small{min-width:120px;font-size:21px;padding:11px 22px;letter-spacing:2px;}
+  }
   /* 结算页按钮：返回主页是主操作（醒目），加时赛次要，保存结果第三 */
   #homeBtn{background:linear-gradient(90deg,var(--blue),#6f9df0);color:#fff;
            box-shadow:0 8px 20px rgba(74,127,224,.32);}
