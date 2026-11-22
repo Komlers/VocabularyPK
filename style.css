@@ -31,7 +31,8 @@
   /* ============ 主页 ============ */
   #setup{padding:40px 5vw 34px;max-width:1120px;margin:0 auto;width:100%;}
   .hero{text-align:center;margin-bottom:14px;}
-  .logo{font-size:54px;font-weight:800;letter-spacing:8px;margin-bottom:10px;}
+  /* 首页品牌名是 h1（语义标题），这里清掉标题默认的上下 margin */
+  .logo{font-size:54px;font-weight:800;letter-spacing:8px;margin:0 0 10px;}
   .logo .r{color:var(--red);} .logo .b{color:var(--blue);}
   .sub{font-size:24px;color:var(--muted);}
   .sub b{color:var(--blue-d);font-weight:700;}

@@ -6,17 +6,23 @@
 
 <!-- ================= SEO 基础元信息 ================= -->
 <title>词汇擂台 PK | 高中英语课堂双人单词对战游戏</title>
-<meta name="description" content="词汇擂台是一款面向高中英语课堂的双人单词 PK 网页应用：红方擂主 vs 蓝方挑战者，限时答题，支持单词选义、词块选义、词块配对、词块重组等多种题型，败者守擂实现车轮战。纯前端运行，无需注册，数据本地保存，适合教室大屏互动教学。">
+<meta name="description" content="词汇擂台 PK 是面向高中英语课堂的双人单词对战网页应用：同屏限时抢答、词块三题型、败者守擂车轮战，纯前端免注册，数据只存本机。">
 <meta name="keywords" content="词汇擂台,英语单词PK,高中英语,单词游戏,课堂互动,英语词汇,单词对战,词块搭配,英语教学,双人PK,单词听写,词汇练习,人教版英语,必修英语,选择性必修">
-<meta name="author" content="词汇擂台">
+<meta name="author" content="Dan_Evan">
 <meta name="robots" content="index, follow">
 <meta name="language" content="zh-CN">
+<!-- 站长验证：Bing / Google / 百度（验证通过后保留即可，删掉会掉验证状态） -->
+<meta name="msvalidate.01" content="664EB11E2A1EEACBA6AE4178CD89BE67">
+<meta name="google-site-verification" content="I_emY9vT2S_G5BBp7YSAU1dNiRzx4Xc9oSWhOOJBsfY">
+<meta name="baidu-site-verification" content="codeva-gJXeOPkmha">
 <meta name="theme-color" content="#4a7fe0">
 <meta name="application-name" content="词汇擂台 PK">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="词汇擂台">
 <link rel="canonical" href="https://pk.danevan.top/">
+<link rel="alternate" hreflang="zh-CN" href="https://pk.danevan.top/">
+<link rel="alternate" hreflang="x-default" href="https://pk.danevan.top/">
 
 <!-- ================= Open Graph（社交分享 / 搜索结果预览） ================= -->
 <meta property="og:type" content="website">
@@ -49,9 +55,24 @@
   "image": "https://pk.danevan.top/meta/toy-cover.png",
   "description": "面向高中英语课堂的双人单词对战网页应用：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，也可切到单人练习。",
   "applicationCategory": "EducationalApplication",
+  "applicationSubCategory": "英语词汇教学",
   "operatingSystem": "Web",
   "inLanguage": "zh-CN",
+  "softwareVersion": "2.4",
   "isAccessibleForFree": true,
+  "keywords": "高中英语,单词对战,词块搭配,课堂互动,词汇练习",
+  "author": {
+    "@type": "Person",
+    "name": "Dan_Evan",
+    "url": "https://www.danevan.top/"
+  },
+  "featureList": [
+    "双人同屏限时对战与单人练习",
+    "单词选义、词块选义、词块配对、词块重组四种题型",
+    "36 个内置词库，可按册多选混合出题",
+    "败者守擂车轮战，战绩与错词记录按班级保存",
+    "纯前端运行，可安装为桌面应用，数据只存本机"
+  ],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
   "browserRequirements": "需要支持 ES2017 的现代浏览器（Chrome / Edge / Firefox / Safari）"
 }
@@ -86,7 +107,8 @@
 <!-- ================= 主页 ================= -->
 <div id="setup" class="screen">
   <div class="hero">
-    <div class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</div>
+    <!-- 品牌名做成页面上唯一的 h1：搜索引擎与读屏都靠它认标题 -->
+    <h1 class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</h1>
     <div class="sub">双人同台 · 败者守擂 · 单人检测 · 数据只存本地</div>
     <div class="heroBtns">
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>

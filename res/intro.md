@@ -29,6 +29,8 @@ vcpk/
 ├── sw.js                 # Service Worker（安装条件 + 离线外壳）
 ├── favicon.ico
 ├── sample.txt            # 名单示例
+├── robots.txt            # 爬虫规则：全站放行、屏蔽 /lib/、指向 sitemap
+├── sitemap.xml           # 站点地图（目前只有首页）
 ├── icons/                # PWA 图标（96 / 128 / 192 / 256 / 512）
 ├── js/
 │   ├── config.js         # 全局配置、词库注册、状态 S、字体与计分常量
