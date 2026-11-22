@@ -289,9 +289,14 @@ function wordDistract(spec, dir){
   const en = spec.w[0], cn = spec.w[1];
   const key = dir === "e2c" ? 1 : 0;
   const out = [], seen = new Set([dir === "e2c" ? cn : en]);
+  /* 中→英时题干是中文：中文释义相同的另一个英文（如 register / registration）
+     同样算答对，不能拿来当干扰项，否则会出现「两个都对却只认一个」 */
+  const senses = s => String(s).split(/[；;，,、/]+/).map(x => x.trim()).filter(Boolean);
+  const ansSenses = new Set(senses(cn));
   const pool = libFiltered().concat(LIB);
   for(const w of shuffle(pool)){
     if(w[0] === en) continue;
+    if(dir === "c2e" && senses(w[1]).some(s => ansSenses.has(s))) continue;
     const v = w[key];
     if(!v || seen.has(v)) continue;
     seen.add(v); out.push(v);

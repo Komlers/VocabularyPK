@@ -114,7 +114,7 @@ function nextQuestion(){
     q = {kind:"w", tag:spec.w[2], en:en, cn:cn, ans: dir==="e2c"?cn:en,
          opts1:shuffle(opts), opts2:shuffle(opts),
          big: dir==="e2c"?en:cn, cls: dir==="e2c"?"":"cn", say: dir==="e2c"?en:"",
-         tip: dir==="e2c" ? "🔊 单词 · 点击正确的中文意思（答对即换题）" : "🔊 单词 · 点击对应的英文单词（答对即换题）"};
+         tip: dir==="e2c" ? "🔊 单词 · 点击正确的中文意思（答对即换题）" : "单词 · 点击对应的英文单词（答对即换题）"};
   }else if(spec.t === "c1"){
     const c = CHUNKS[spec.i];
     const opts = shuffle([c[1]].concat(chunkDistractCn(spec.i)));

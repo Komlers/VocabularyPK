@@ -985,6 +985,9 @@
     /* 按钮里的「关 闭」也会在空格处折行，宁可整体换行也不要拆字 */
     .libViewBox .btnRow{flex-wrap:wrap;gap:10px;}
     .libViewBox .btnRow button{white-space:nowrap;}
+    /* 出题模式三项文字更长：收掉左缩进与字号，三个仍排成一行 */
+    #qModeRow{margin-left:0;gap:8px;}
+    #qModeRow .segOpt{min-width:0;max-width:none;padding:11px 8px;font-size:19px;}
   }
 
 /* ============ 老旧内核回退（无 flex gap / 无 :focus-visible） ============

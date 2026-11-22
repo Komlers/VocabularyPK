@@ -76,7 +76,8 @@ let S = {
   anim:"full",  /* 渲染动画档位：full 完全 / part 部分（只有小动效）/ off 禁用，跟设备走、不分班级 */
   fx:true, sound:true, speakWord:true,   /* 渲染设置：计分飘字 / 答题音效 / 自动朗读（设备级） */
   font:"",      /* 渲染设置：全局字体（设备级）；空 = 还没选过，按操作系统给默认值 */
-  questionTimeout:true, questionTimeoutDur:5, qTimer:null, mode:"mix",
+  questionTimeout:true, questionTimeoutDur:5, qTimer:null,
+  mode:"mix",   /* 单词出题方向：mix 混合 / c2e 中→英 / e2c 英→中；词块题不受影响 */
   comboBonus:true, wrongPenalty:false,   /* 连击加分 / 答错扣分（擂台设置） */
   scoreMode:"open",        /* 计分模式：open 无限制 / knockout 淘汰制 / accumulate 累加制 */
   scoreCap:100,            /* 限分模式的满分（50 / 100 / 150） */

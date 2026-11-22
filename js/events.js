@@ -310,6 +310,15 @@ $("capRow").addEventListener("click", e=>{
   planInfo();
   saveCfg();
 });
+/* 出题模式（混合 / 中→英 / 英→中）：只决定单词题的题干方向，题池与词块题不变 */
+$("qModeRow").addEventListener("click", e=>{
+  const btn = e.target.closest(".qModeOpt");
+  if(!btn || btn.dataset.mode === S.mode) return;
+  S.mode = btn.dataset.mode;
+  renderQModeUI();
+  renderSettingStatus();
+  saveCfg();
+});
 /* 连击加分 / 答错扣分：只影响计分，不改变题型与题池 */
 $("comboBonusChk").addEventListener("change", e=>{
   S.comboBonus = e.target.checked;
