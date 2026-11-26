@@ -1,0 +1,10 @@
+# 词汇擂台 PK · robots.txt
+# 站点：https://pk.danevan.top/
+
+User-agent: *
+Allow: /
+
+# 36 个词库 JSON 只给页面自己 fetch 用，抓了也没内容可展示
+Disallow: /lib/
+
+Sitemap: https://pk.danevan.top/sitemap.xml

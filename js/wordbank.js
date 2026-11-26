@@ -284,17 +284,42 @@ function chunkKindsFor(idxs){
   fill("c2", Math.round(n * 0.35), c => !!c[3]);
   return kinds.map(k => k || "c1");
 }
-/* 单词题干扰项：同单元优先 → 全书兜底；保证 3 个干扰项互不相同且 != 答案 */
+/* 单词干扰项：只从「离答案最近」的词库里取，逐层放宽
+   1. 当前选中词库（正常情况下只用这一层）
+   2. 同册其他单元（如只选了必修 2 U1，用必修 2 其余单元兜底）
+   3. 全部词库（选了词条很少的自定义词库，凑不满 3 个干扰项时才走到这里）
+   每层取够 3 个就停，不再往下一层混——以前是把「当前词库 + 全部词库」一起洗牌，
+   结果只选了 A 词库，干扰项却大多来自 B 词库甚至别的自定义词库。 */
+function libBookOf(tag){
+  const f = WORD_BANK_FILES.find(x => x.tag === tag);
+  /* 自定义词库的 file 统一是 "custom"，没有「册」的概念，返回空串 */
+  return (f && f.file !== "custom") ? f.file.slice(0, 2) : "";
+}
+function wordDistractTiers(){
+  const scope = libFiltered();
+  const books = new Set(scope.map(w => libBookOf(w[2])).filter(Boolean));
+  const sameBook = books.size
+    ? LIB.filter(w => !S.units.includes(w[2]) && books.has(libBookOf(w[2])))
+    : [];
+  return [scope, sameBook, LIB];
+}
 function wordDistract(spec, dir){
   const en = spec.w[0], cn = spec.w[1];
   const key = dir === "e2c" ? 1 : 0;
   const out = [], seen = new Set([dir === "e2c" ? cn : en]);
-  const pool = libFiltered().concat(LIB);
-  for(const w of shuffle(pool)){
-    if(w[0] === en) continue;
-    const v = w[key];
-    if(!v || seen.has(v)) continue;
-    seen.add(v); out.push(v);
+  /* 中→英时题干是中文：中文释义相同的另一个英文（如 register / registration）
+     同样算答对，不能拿来当干扰项，否则会出现「两个都对却只认一个」 */
+  const senses = s => String(s).split(/[；;，,、/]+/).map(x => x.trim()).filter(Boolean);
+  const ansSenses = new Set(senses(cn));
+  for(const tier of wordDistractTiers()){
+    for(const w of shuffle(tier)){
+      if(out.length >= 3) break;
+      if(w[0] === en) continue;
+      if(dir === "c2e" && senses(w[1]).some(s => ansSenses.has(s))) continue;
+      const v = w[key];
+      if(!v || seen.has(v)) continue;
+      seen.add(v); out.push(v);
+    }
     if(out.length >= 3) break;
   }
   return out;

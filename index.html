@@ -6,14 +6,20 @@
 
 <!-- ================= SEO 基础元信息 ================= -->
 <title>词汇擂台 PK | 高中英语课堂双人单词对战游戏</title>
-<meta name="description" content="词汇擂台是一款面向高中英语课堂的双人单词 PK 网页应用：红方擂主 vs 蓝方挑战者，限时答题，支持单词选义、词块选义、词块配对、词块重组等多种题型，败者守擂实现车轮战。纯前端运行，无需注册，数据本地保存，适合教室大屏互动教学。">
+<meta name="description" content="词汇擂台 PK 是面向高中英语课堂的双人单词对战网页应用：同屏限时抢答、词块三题型、败者守擂车轮战，纯前端免注册，数据只存本机。">
 <meta name="keywords" content="词汇擂台,英语单词PK,高中英语,单词游戏,课堂互动,英语词汇,单词对战,词块搭配,英语教学,双人PK,单词听写,词汇练习,人教版英语,必修英语,选择性必修">
-<meta name="author" content="词汇擂台">
+<meta name="author" content="Dan_Evan">
 <meta name="robots" content="index, follow">
 <meta name="language" content="zh-CN">
+<!-- 站长验证：Bing / Google / 百度（验证通过后保留即可，删掉会掉验证状态） -->
+<meta name="msvalidate.01" content="664EB11E2A1EEACBA6AE4178CD89BE67">
+<meta name="google-site-verification" content="I_emY9vT2S_G5BBp7YSAU1dNiRzx4Xc9oSWhOOJBsfY">
+<meta name="baidu-site-verification" content="codeva-gJXeOPkmha">
 <meta name="theme-color" content="#4a7fe0">
 <meta name="application-name" content="词汇擂台 PK">
 <link rel="canonical" href="https://pk.danevan.top/">
+<link rel="alternate" hreflang="zh-CN" href="https://pk.danevan.top/">
+<link rel="alternate" hreflang="x-default" href="https://pk.danevan.top/">
 
 <!-- ================= Open Graph（社交分享 / 搜索结果预览） ================= -->
 <meta property="og:type" content="website">
@@ -46,9 +52,24 @@
   "image": "https://pk.danevan.top/meta/toy-cover.png",
   "description": "面向高中英语课堂的双人单词对战网页应用：红方擂主对蓝方挑战者，同屏限时答题，败者守擂实现车轮战，也可切到单人练习。",
   "applicationCategory": "EducationalApplication",
+  "applicationSubCategory": "英语词汇教学",
   "operatingSystem": "Web",
   "inLanguage": "zh-CN",
+  "softwareVersion": "2.4",
   "isAccessibleForFree": true,
+  "keywords": "高中英语,单词对战,词块搭配,课堂互动,词汇练习",
+  "author": {
+    "@type": "Person",
+    "name": "Dan_Evan",
+    "url": "https://www.danevan.top/"
+  },
+  "featureList": [
+    "双人同屏限时对战与单人练习",
+    "单词选义、词块选义、词块配对、词块重组四种题型",
+    "36 个内置词库，可按册多选混合出题",
+    "败者守擂车轮战，战绩与错词记录按班级保存",
+    "纯前端运行，可安装为桌面应用，数据只存本机"
+  ],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
   "browserRequirements": "需要支持 ES2017 的现代浏览器（Chrome / Edge / Firefox / Safari）"
 }
@@ -75,7 +96,8 @@
 <!-- ================= 主页 ================= -->
 <div id="setup" class="screen">
   <div class="hero">
-    <div class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</div>
+    <!-- 品牌名做成页面上唯一的 h1：搜索引擎与读屏都靠它认标题 -->
+    <h1 class="logo"><span class="r">词</span>汇<span class="b">擂</span>台</h1>
     <div class="sub">双人同台 · 败者守擂 · 单人检测 · 数据只存本地</div>
     <div class="heroBtns">
       <button class="heroBtn" id="aboutBtn">ℹ️ 关于项目</button>
@@ -195,7 +217,7 @@
       </div>
       <div class="libChips" id="customChips" style="margin-top:16px"></div>
     </div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="libCancel">取消</button>
       <button class="startBtn small" id="libConfirm">确定</button>
     </div>
@@ -232,7 +254,7 @@
       </div>
       <div class="mini" style="text-align:center;margin-top:10px">每次调整 30 秒 · 范围 30 秒 ~ 5 分钟</div>
     </div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="durCancel">取消</button>
       <button class="startBtn small" id="durConfirm">确定</button>
     </div>
@@ -301,6 +323,16 @@
     </div>
 
     <div class="setItem">
+      <span class="wordsOnlyLabel setStaticLabel">出题模式</span>
+      <div class="segRow" id="qModeRow">
+        <button type="button" class="segOpt qModeOpt active" data-mode="mix">混合出题</button>
+        <button type="button" class="segOpt qModeOpt" data-mode="c2e">中 → 英</button>
+        <button type="button" class="segOpt qModeOpt" data-mode="e2c">英 → 中</button>
+      </div>
+      <div class="setHint">中 → 英看中文选英文，英 → 中看英文选中文；只影响单词题，词块题不变。</div>
+    </div>
+
+    <div class="setItem">
       <label class="wordsOnlyLabel">
         <input type="checkbox" id="rememberWrongChk">
         错词优先复现
@@ -310,7 +342,7 @@
 
 
     </div>
-    <div class="btnRow" style="margin-top:26px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="settingClose">关 闭</button>
     </div>
   </div>
@@ -322,7 +354,7 @@
   <div class="modalBox updateModalBox">
     <h3>🎉 网页已更新至 <span id="updateVer">?.?</span></h3>
     <div class="updateContent" id="updateContent"></div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="updateLater">稍后处理</button>
       <button class="startBtn small" id="updateGotIt">我知道了</button>
     </div>
@@ -379,7 +411,7 @@
     </div>
 
     </div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="renderClose">关 闭</button>
     </div>
   </div>
@@ -427,7 +459,7 @@
 
     <div class="edStat" id="edStat"></div>
 
-    <div class="btnRow" style="margin-top:14px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="edClose">完 成</button>
     </div>
   </div>
@@ -439,7 +471,7 @@
   <div class="modalBox updateModalBox">
     <h3>❓ 如何添加 / 导入名单</h3>
     <div class="updateContent" id="importHelpContent"></div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="importHelpClose">我知道了</button>
     </div>
   </div>
@@ -451,7 +483,7 @@
   <div class="modalBox updateModalBox">
     <h3>📝 如何制作自定义词库</h3>
     <div class="updateContent" id="customHelpContent"></div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="customHelpClose">我知道了</button>
     </div>
   </div>
@@ -471,7 +503,7 @@
     <!-- 中间正文从 res/about.md 加载（见 events.js 的 aboutBtn），先在占位里等它 -->
     <div class="updateContent modalScroll" id="aboutBody"></div>
 
-    <div class="btnRow" style="margin-top:22px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="aboutTipsBtn">📖 使用说明</button>
       <button class="startBtn small" id="aboutClose">关 闭</button>
     </div>
@@ -484,7 +516,7 @@
   <div class="modalBox updateModalBox">
     <h3>📖 使用说明</h3>
     <div class="updateContent" id="tipsContent"></div>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="startBtn small" id="tipsClose">我知道了</button>
     </div>
   </div>
@@ -502,7 +534,7 @@
       <button class="wbBulkBtn danger" id="wbClear">清空</button>
     </div>
     <div id="wbBody" class="wbBody modalScroll"></div>
-    <div class="btnRow" style="margin-top:18px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="wbClose">关 闭</button>
     </div>
   </div>
@@ -524,7 +556,7 @@
     </div>
     <div id="hisBody" class="modalScroll">暂无记录</div>
     <button class="clearBtn hidden" id="clearBtn">清空本班历史</button>
-    <div class="btnRow" style="margin-top:20px">
+    <div class="btnRow" style="margin-top:16px">
       <button class="drawBtn" id="hisClose">关闭</button>
     </div>
   </div>

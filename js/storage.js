@@ -220,6 +220,6 @@ function saveCfg(){
     units: S.units, dur: S.dur, wordsOnly: S.wordsOnly, rememberWrong: S.rememberWrong,
     questionTimeout: S.questionTimeout, questionTimeoutDur: S.questionTimeoutDur,
     comboBonus: S.comboBonus, wrongPenalty: S.wrongPenalty,
-    scoreMode: S.scoreMode, scoreCap: S.scoreCap
+    scoreMode: S.scoreMode, scoreCap: S.scoreCap, mode: S.mode
   });
 }

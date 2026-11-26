@@ -1267,6 +1267,7 @@ function restoreCfg(){
   S.wrongPenalty = false;
   S.scoreMode = "open";
   S.scoreCap = 100;
+  S.mode = "mix";          /* 单词出题方向：混合 / 中→英 / 英→中 */
   try{
     const c = JSON.parse(localStorage.getItem("vpk_cfg_" + S.cls));
     if(c){
@@ -1281,6 +1282,7 @@ function restoreCfg(){
       /* 计分模式与满分只接受白名单值，避免旧数据或手改配置把界面带崩 */
       if(["open","knockout","accumulate"].includes(c.scoreMode)) S.scoreMode = c.scoreMode;
       if([50,100,150].includes(c.scoreCap)) S.scoreCap = c.scoreCap;
+      if(["mix","c2e","e2c"].includes(c.mode)) S.mode = c.mode;
     }
   }catch(e){}
   /* 首次使用不默认勾选任何词库，由用户手动选择；
@@ -1293,6 +1295,7 @@ function restoreCfg(){
   $("wrongPenaltyChk").checked = S.wrongPenalty;
   renderQuestionTimeoutUI();
   renderScoreModeUI();
+  renderQModeUI();
   renderSettingStatus();
   /* 临时赛 / 单人作答 / 渲染设置：沿用上次退出前的选择，改动即落盘（不分班级） */
   const ui = loadUI();
@@ -1354,6 +1357,14 @@ function renderScoreModeUI(){
     if(box) box.classList.toggle("hidden", limited);
   });
 }
+/* 出题模式 UI：混合出题 / 中→英 / 英→中 三选一（只影响单词题） */
+function renderQModeUI(){
+  const row = $("qModeRow");
+  if(!row) return;
+  row.querySelectorAll(".qModeOpt").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === S.mode);
+  });
+}
 /* 主页第 4 段：临时赛开关与双人 / 单人切换的选中态 */
 function syncRuleUI(){
   const chip = $("tempBtn");
@@ -1396,6 +1407,7 @@ function renderSettingStatus(){
   parts.push(
     S.rememberWrong ? "错词优先复现" : "错词不复现",
     S.wordsOnly ? "只加载纯单词" : "加载完整词库",
+    S.mode === "c2e" ? "单词中→英" : (S.mode === "e2c" ? "单词英→中" : "单词双向"),
     S.questionTimeout ? "单题超时：" + S.questionTimeoutDur + "s" : "单题不限时"
   );
   box.innerHTML = parts.map(t => '<span>' + esc(t) + '</span>')
